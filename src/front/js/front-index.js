@@ -1,4 +1,5 @@
 console.log( 'geojson', geojson );
+console.log( 'mapOptions', mapOptions );
 
 const geojsonMarkerOptions = {
 	radius: 8,
@@ -11,9 +12,12 @@ const geojsonMarkerOptions = {
 //center: { lat: 38.5816, lng: -121.4944 } // Sacramento
 const map = L.map( 'ninety-map' ).setView( [ 38.5816, -121.4944 ], 10 );
 
-L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-} ).addTo( map );
+L.tileLayer(mapOptions.tileServer, {
+	attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+	maxZoom: 18,
+	id: 'mapbox.streets',
+	accessToken: mapOptions.apiKey
+}).addTo(map);
 
 function onEachFeature( feature, layer ) {
 	let popupContent = '<p>dsfasdfffasdf</p>';
