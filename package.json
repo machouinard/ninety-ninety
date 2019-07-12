@@ -1,0 +1,31 @@
+{
+  "name": "ninety-ninety",
+  "version": "1.0.0",
+  "description": "* WordPress 5.2 * PHP 5.6.2",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --mode=production --config webpack-config.js",
+    "watch": "webpack --mode=development --watch --config webpack-config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/machouinard/ninety-ninety.git"
+  },
+  "keywords": [],
+  "author": "Mark Chouinard",
+  "license": "GPL-2.0+",
+  "bugs": {
+    "url": "https://github.com/machouinard/ninety-ninety/issues"
+  },
+  "homepage": "https://github.com/machouinard/ninety-ninety#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.5.0",
+    "@babel/core": "^7.5.4",
+    "@babel/preset-env": "^7.5.4",
+    "@wordpress/eslint-plugin": "^2.3.0",
+    "babel-loader": "^8.0.6",
+    "lodash": "^4.17.14",
+    "webpack": "^4.35.3",
+    "webpack-cli": "^3.3.5"
+  }
+}

@@ -1,4 +1,1 @@
-07/01/2019;Chestnut;12:00PM;AA
-07/03/2019;Midtown Solutions;12:00PM;AA
-07/04/2019;Group One;12:00PM;AA
 07/11/2019;Group One;12:00PM;AA
