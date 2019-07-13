@@ -18,6 +18,9 @@ const config = {
 			},
 		],
 	},
+	externals: {
+		moment: 'moment',
+	},
 };
 
 module.exports = config;
