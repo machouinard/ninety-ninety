@@ -2,6 +2,17 @@
 
 Please post any issues you encounter [on GitHub](https://github.com/machouinard/ninety-ninety/issues)
 
+## What is this?
+Often referred to as “90 in 90”, the practice of attending a meeting of Alcoholics Anonymous every day for 90 days in a row is a common suggestion for a newcomer to AA.
+
+This plugin is a simple way to track your progress making it to these meetings.
+
+It's flexible enough to be used for any 12 Step program.
+
+...
+
+
+
 ### Requirements
 * WordPress 5.2
 * PHP 5.6.2
