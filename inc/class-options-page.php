@@ -353,7 +353,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			<select name='ninety_settings[ninety_default_mtg_location]'>
 				<option value="0"
 					<?php
-					selected( (int) $options['ninety_default_mtg_location'], 0 );
+					selected( $options['ninety_default_mtg_location'], 0 );
 					?>
 				>
 					-----
@@ -362,10 +362,10 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 
 				foreach ( $terms as $term ) {
 					$option = '<option 
-							value=" ' . (int) $term->term_id . '" ' .
+							value="' . $term->term_id . '" ' .
 					          selected( $options['ninety_default_mtg_location'], $term->term_id ) .
 					          '>' .
-					          esc_attr( $term->name ) .
+					          $term->name .
 					          "</option>\n";
 					echo $option;
 				}
@@ -556,7 +556,8 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		public function ninety_map_center_lat_render() {
 			$center_lat = ninety_ninety()->get_option( 'ninety_map_center_lat' );
 			?>
-			<label style="display: block;" for="ninety_settings[ninety_map_center_lat]">Lat/Lng Lookup <a href="https://www.latlong.net/" target="_blank">here.</a> </label>
+			<label style="display: block;" for="ninety_settings[ninety_map_center_lat]">Lat/Lng Lookup <a
+						href="https://www.latlong.net/" target="_blank">here.</a> </label>
 			<input type='text' name='ninety_settings[ninety_map_center_lat]' id='ninety_settings[ninety_map_center_lat]'
 				   value='<?php echo esc_attr( $center_lat ); ?>' size="20">
 			<?php
@@ -572,7 +573,8 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		public function ninety_map_center_lng_render() {
 			$center_lng = ninety_ninety()->get_option( 'ninety_map_center_lng' );
 			?>
-			<label style="display: block;" for="ninety_settings[ninety_map_center_lng]">Lat/Lng Lookup <a href="https://www.latlong.net/" target="_blank">here.</a> </label>
+			<label style="display: block;" for="ninety_settings[ninety_map_center_lng]">Lat/Lng Lookup <a
+						href="https://www.latlong.net/" target="_blank">here.</a> </label>
 			<input type='text' name='ninety_settings[ninety_map_center_lng]'
 				   value='<?php echo esc_attr( $center_lng ); ?>' size="20">
 			<?php
