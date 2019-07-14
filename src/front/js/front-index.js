@@ -1,6 +1,13 @@
+import meetingChart from '../../components/ninety-chart';
+
 window.onload = function () {
+
 	// console.log( 'geojson', geojson );
 	// console.log( 'mapOptions', mapOptions );
+
+	if ( geojson.showChart ) {
+		meetingChart();
+	}
 
 	//center: { lat: 38.5816, lng: -121.4944 } // Sacramento
 	const features = geojson.features,
