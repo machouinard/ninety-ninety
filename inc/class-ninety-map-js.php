@@ -59,7 +59,7 @@ if ( ! class_exists( 'Ninety_Map_JS' ) ) {
 			$lat = ninety_ninety()->get_option( 'ninety_map_center_lat' );
 
 			// If Lat hasn't been set, set it to Sacramento because, well, that's where I live.
-			if ( '' === $lat ) {
+			if ( ! $lat ) {
 				$lat = 54.525963;
 			}
 
@@ -67,7 +67,7 @@ if ( ! class_exists( 'Ninety_Map_JS' ) ) {
 			$lng = ninety_ninety()->get_option( 'ninety_map_center_lng' );
 
 			// If Lng hasn't been set, set it to Sacramento.
-			if ( '' === $lng ) {
+			if ( ! $lng ) {
 				$lng = - 105.255119;
 			}
 
@@ -75,11 +75,14 @@ if ( ! class_exists( 'Ninety_Map_JS' ) ) {
 			$zoom = ninety_ninety()->get_option( 'ninety_map_zoom' );
 
 			// If Zoom hasn't been set, set it to 1.
-			if ( '' === $zoom ) {
+			if ( ! $zoom ) {
 				$zoom = 1;
 			}
 			$center      = [ $lat, $lng ];
 			$tile_server = ninety_ninety()->get_option( 'ninety_tile_server' );
+			if ( ! $tile_server ) {
+				$tile_server = ninety_ninety()->default_tile_server;
+			}
 
 			$api_key = ( false !== strpos( $tile_server, 'thunderforest' ) ) ? ninety_ninety()->get_option( 'ninety_thunderforest_api_key' ) : ninety_ninety()->get_option( 'ninety_mapbox_api_key' );
 
