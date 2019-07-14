@@ -28,7 +28,7 @@ It's flexible enough to be used for any 12 Step program.
 
 #### Map Options
 There are currently 2 available mapping APIs for use.  Both have free usage tiers.
-1. Enter your [MapBox API key](https://docs.mapbox.com/help/how-mapbox-works/access-tokens/). This is required for geocoding
+1. Enter your [MapBox API key](https://account.mapbox.com/auth/signup/). This is required for geocoding
 Location addresses and displaying certain tile sets.
 1. Enter your [Thunderforest API key](https://www.thunderforest.com/pricing/) if you wish to use any of the Thunderforest tile sets. 
 1. Select a Tile Set to display on the map ( there must be a valid API key associated with the selected tile set ).
