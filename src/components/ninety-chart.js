@@ -8,7 +8,7 @@ const meetingChart = () => {
 	console.log( 'from ninety-chart.js' );
 
 	new Chart( ctx, {
-		type: 'pie',
+		type: geojson.chartType,
 		data: {
 			labels: [ 'done', 'remaining' ],
 			datasets: [ {

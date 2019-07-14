@@ -409,6 +409,10 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 					$data['showChart'] = true;
 				}
 
+				$chart_type = ninety_ninety()->get_option( 'ninety_chart_type', 'pie' );
+
+				$data['chartType'] = esc_attr( $chart_type );
+
 				$data['meetingCount'] = $this->get_setting( 'meeting_count' );
 
 				// localize script with geoJSON data for leafletjs.
