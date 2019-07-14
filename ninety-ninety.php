@@ -797,7 +797,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			// Check for archive template.
 			if ( is_post_type_archive( 'ninety_meeting' ) ) {
 
-				$plugin_archive_template = plugin_dir_path( __FILE__ ) . 'archive-ninety_meeting.php';
+				$plugin_archive_template = plugin_dir_path( __FILE__ ) . 'templates/archive-ninety_meeting.php';
 				$theme_files             = [ 'archive-ninety_meeting.php' ];
 				$exists                  = locate_template( $theme_files, false );
 
