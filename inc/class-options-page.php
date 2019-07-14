@@ -548,7 +548,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		}
 
 		/**
-		 * Output Map Center latitude input field
+		 * Output Default Map Center latitude input field
 		 *
 		 * @return void
 		 * @since 1.0.0
@@ -564,7 +564,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		}
 
 		/**
-		 * Output Map Center longitude input field
+		 * Output Default Map Center longitude input field
 		 *
 		 * @return void
 		 * @since 1.0.0
@@ -580,7 +580,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		}
 
 		/**
-		 * Output Map Zoom Level input field
+		 * Output Default Map Zoom Level input field
 		 *
 		 * @return void
 		 * @since 1.0.0

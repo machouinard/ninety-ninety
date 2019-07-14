@@ -55,9 +55,29 @@ if ( ! class_exists( 'Ninety_Map_JS' ) ) {
 
 			wp_enqueue_script( 'map-js', $leaflet_js_url, array( 'jquery' ), '1.0' );
 
-			$lat         = ninety_ninety()->get_option( 'ninety_map_center_lat' );
-			$lng         = ninety_ninety()->get_option( 'ninety_map_center_lng' );
-			$zoom        = ninety_ninety()->get_option( 'ninety_map_zoom' );
+			// Get default latitude from options page.
+			$lat = ninety_ninety()->get_option( 'ninety_map_center_lat' );
+
+			// If Lat hasn't been set, set it to Sacramento because, well, that's where I live.
+			if ( '' === $lat ) {
+				$lat = 54.525963;
+			}
+
+			// Get default longitude from options page.
+			$lng = ninety_ninety()->get_option( 'ninety_map_center_lng' );
+
+			// If Lng hasn't been set, set it to Sacramento.
+			if ( '' === $lng ) {
+				$lng = - 105.255119;
+			}
+
+			// Get default zoom from options page.
+			$zoom = ninety_ninety()->get_option( 'ninety_map_zoom' );
+
+			// If Zoom hasn't been set, set it to 1.
+			if ( '' === $zoom ) {
+				$zoom = 1;
+			}
 			$center      = [ $lat, $lng ];
 			$tile_server = ninety_ninety()->get_option( 'ninety_tile_server' );
 
