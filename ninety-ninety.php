@@ -403,7 +403,9 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 					'template-genesis-90-map.php',
 				];
 
-				if ( in_array( $template_name, $templates ) ) {
+				$show_chart = ninety_ninety()->get_option( 'ninety_show_chart' );
+
+				if ( in_array( $template_name, $templates ) && $show_chart ) {
 					$data['showChart'] = true;
 				}
 
