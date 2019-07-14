@@ -1,23 +1,35 @@
 # 90 Meetings in 90 Days
-## Requirements
+
+Please post any issues you encounter [on GitHub](https://github.com/machouinard/ninety-ninety/issues)
+
+### Requirements
 * WordPress 5.2
 * PHP 5.6.2
 
-## Setup
-#### Meetings
+# Setup
+### Meetings
 1. Add Meeting Locations ( Meetings > Meeting Locations )
-1. Add Meeting Types ( Meetings > Meeting Types )
+1. Add additional Meeting Types if desired ( Meetings > Meeting Types )
 
 
-#### Options ( Meetings > Options ). 
+
+### Options ( Meetings > Options ). 
+
+#### Map Options
 There are currently 2 available mapping APIs for use.  Both have free usage tiers.
-1. Enter your [MapBox API key](https://docs.mapbox.com/help/how-mapbox-works/access-tokens/). This is necessary for geocoding
-Location addresses and displaying the map.
-1. Enter your [Thunderforest API key](https://www.thunderforest.com/pricing/) if you wish to use any of those Tile Sets. 
+1. Enter your [MapBox API key](https://docs.mapbox.com/help/how-mapbox-works/access-tokens/). This is required for geocoding
+Location addresses and displaying certain tile sets.
+1. Enter your [Thunderforest API key](https://www.thunderforest.com/pricing/) if you wish to use any of the Thunderforest tile sets. 
 1. Select a Tile Set to display on the map ( there must be a valid API key associated with the selected tile set ).
 
-#### Optional
-* Set your preferred timezone in the WordPress admin ( for the Default Meeting Time option )
+1. (Optional) Set your preferred timezone in the WordPress admin ( for the Default Meeting Time option to work correctly )
+
+
+### Miscellaneous Options
+* `Keep Meetings Private` checkbox - Prevents non-logged-in users from viewing Meetings, archive pages, Maps, etc...  Also prevents
+Meeting related menu items from appearing when not logged in.
+* `Use Exclude option (PDF, Maps, Count, etc...` Each Meeting has an "exclude" checkbox.  If this box is checked, any
+Meetings that have their "exclude" checkboxes checked will not be shown on the PDF or the Map page.
 
 ## ACF Notes
 * Requires Advanced Custom Fields plugin, standard or Pro.
@@ -26,17 +38,24 @@ Location addresses and displaying the map.
 * ACF fields are used for Meetings.
 * Options page is not built with ACF since that requires Pro version.
 
-## Options
-* Open
+
 
 ## Actions & Filters
 * `ninety-programs` customize the available Meeting Programs to choose from - AA, NA, GA, OA...
 * `ninety-page-templates` not sure if this should be filterable...
-* `ninety_meeting_genesis_meta` customize Genesis entry meta
-* `ninety_map_page_title` filter title on the Meetings Map page
+* `ninety_meeting_genesis_meta` customize Genesis entry meta for Genesis child themes.
+* `ninety_map_page_title` filter title on the Meetings Map page.
 
 ## Misc.
 * Location addresses are geocoded upon saving.  Lat/Lng is displayed but not editable.  Address is 
-updated with results from API call.
-* Meeting Location name, description and address are displayed using information entered when 
+replaced with results from API call.
+* Meeting Location name, description and address are displayed on the map using information entered when 
 creating/updating Locations.  The displayed Meeting count is a dynamic value. 
+
+## Development
+* This plugin can be [forked on GitHub](https://github.com/machouinard/ninety-ninety)
+* After downloading, run `npm install` from within the directory
+* JS development files are in the `src/` directory and are compiled into the `assets/js/` directory by WebPack
+* While developing, run `npm run watch` from the plugin directory.  Changes will be automatically copied to the `assets/js` directory.
+* Running `npm run build` will minify the JavaScript, resulting in a much smaller file.
+* ...
