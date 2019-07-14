@@ -2,6 +2,17 @@
 
 Please post any issues you encounter [on GitHub](https://github.com/machouinard/ninety-ninety/issues)
 
+## What is this?
+Often referred to as “90 in 90”, the practice of attending a meeting of Alcoholics Anonymous every day for 90 days in a row is a common suggestion for a newcomer to AA.
+
+This plugin is a simple way to track your progress making it to these meetings.
+
+It's flexible enough to be used for any 12 Step program.
+
+...
+
+
+
 ### Requirements
 * WordPress 5.2
 * PHP 5.6.2
@@ -17,7 +28,7 @@ Please post any issues you encounter [on GitHub](https://github.com/machouinard/
 
 #### Map Options
 There are currently 2 available mapping APIs for use.  Both have free usage tiers.
-1. Enter your [MapBox API key](https://docs.mapbox.com/help/how-mapbox-works/access-tokens/). This is required for geocoding
+1. Enter your [MapBox API key](https://account.mapbox.com/auth/signup/). This is required for geocoding
 Location addresses and displaying certain tile sets.
 1. Enter your [Thunderforest API key](https://www.thunderforest.com/pricing/) if you wish to use any of the Thunderforest tile sets. 
 1. Select a Tile Set to display on the map ( there must be a valid API key associated with the selected tile set ).

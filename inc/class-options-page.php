@@ -262,6 +262,34 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			);
 
 			add_settings_field(
+				'ninety_show_chart',
+				__(
+					'Display chart',
+					'ninety-ninety'
+				),
+				[
+					$this,
+					'ninety_show_chart_render',
+				],
+				'pluginMisc',
+				'ninety_pluginPage_misc_section'
+			);
+
+			add_settings_field(
+				'ninety_chart_type',
+				__(
+					'Chart Type',
+					'ninety-ninety'
+				),
+				[
+					$this,
+					'ninety_chart_type_render',
+				],
+				'pluginMisc',
+				'ninety_pluginPage_misc_section'
+			);
+
+			add_settings_field(
 				'ninety_pdf_title',
 				__(
 					'PDF Title',
@@ -624,6 +652,43 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			<input type='checkbox'
 				   name='ninety_settings[ninety_use_exclude]' <?php checked( $exclude, 1 ); ?>
 				   value='1'>
+			<?php
+
+		}
+
+		/**
+		 * Output Display Chart checkbox
+		 *
+		 * @return void
+		 * @since 1.2.0
+		 */
+		public function ninety_show_chart_render() {
+			$exclude = ninety_ninety()->get_option( 'ninety_show_chart' );
+			?>
+			<input type='checkbox'
+				   name='ninety_settings[ninety_show_chart]' <?php checked( $exclude, 1 ); ?>
+				   value='1'>
+			<?php
+
+		}
+
+		/**
+		 * Output Chart Type radio buttons.
+		 *
+		 * @return void
+		 * @since 1.2.0
+		 */
+		public function ninety_chart_type_render() {
+			$type = ninety_ninety()->get_option( 'ninety_chart_type' );
+			?>
+			<label for="pie">Pie</label>
+			<input type='radio'
+				   name='ninety_settings[ninety_chart_type]' <?php checked( $type, 'pie' ); ?>
+				   value='pie'>
+			<label for="doughnut">Doughnut</label>
+			<input type='radio'
+				   name='ninety_settings[ninety_chart_type]' <?php checked( $type, 'doughnut' ); ?>
+				   value='doughnut'>
 			<?php
 
 		}
