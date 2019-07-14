@@ -814,7 +814,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			// Check for single template.
 			if ( is_singular( 'ninety_meeting' ) ) {
 
-				$plugin_single_template = plugin_dir_path( __FILE__ ) . 'single-ninety_meeting.php';
+				$plugin_single_template = plugin_dir_path( __FILE__ ) . 'templates/single-ninety_meeting.php';
 				$theme_files            = [ 'single-ninety_meeting.php' ];
 				$exists                 = locate_template( $theme_files, false );
 
