@@ -199,21 +199,39 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 				'ninety_pluginPage_map_section'
 			);
 
-			// TODO: If we use marker bounds we don't need lat/lng/zoom
-			//			add_settings_field( 'ninety_map_center_lat', __( 'Map Center Lat', 'ninety-ninety' ), array(
-			//				$this,
-			//				'ninety_map_center_lat_render',
-			//			), 'pluginMap', 'ninety_pluginPage_map_section' );
+			// TODO: If we use marker bounds we don't need lat/lng/zoom.
+			add_settings_field(
+				'ninety_map_center_lat',
+				__( 'Default Map Center Lat', 'ninety-ninety' ),
+				array(
+					$this,
+					'ninety_map_center_lat_render',
+				),
+				'pluginMap',
+				'ninety_pluginPage_map_section'
+			);
+
+			add_settings_field(
+				'ninety_map_center_lng',
+				__( 'Default Map Center Lng', 'ninety-ninety' ),
+				array(
+					$this,
+					'ninety_map_center_lng_render',
+				),
+				'pluginMap',
+				'ninety_pluginPage_map_section'
+			);
 //
-			//			add_settings_field( 'ninety_map_center_lng', __( 'Map Center Lng', 'ninety-ninety' ), array(
-			//				$this,
-			//				'ninety_map_center_lng_render',
-			//			), 'pluginMap', 'ninety_pluginPage_map_section' );
-//
-			//			add_settings_field( 'ninety_map_zoom', __( 'Map Zoom Level', 'ninety-ninety' ), array(
-			//				$this,
-			//				'ninety_map_zoom_render',
-			//			), 'pluginMap', 'ninety_pluginPage_map_section' );
+			add_settings_field(
+				'ninety_map_zoom',
+				__( 'Default Map Zoom Level', 'ninety-ninety' ),
+				array(
+					$this,
+					'ninety_map_zoom_render',
+				),
+				'pluginMap',
+				'ninety_pluginPage_map_section'
+			);
 
 			add_settings_field(
 				'ninety_keep_private',
@@ -486,7 +504,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * @since 1.0.0
 		 */
 		public function ninety_tile_server_render() {
-			$asdf               = [ 'sdfffsdf' => 'ljkjlj' ];
+
 			$tile_server_option = ninety_ninety()->get_option( 'ninety_tile_server' );
 
 			// Array of tile providers and style URLs.
@@ -538,9 +556,9 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		public function ninety_map_center_lat_render() {
 			$center_lat = ninety_ninety()->get_option( 'ninety_map_center_lat' );
 			?>
-			<input type='text' name='ninety_settings[ninety_map_center_lat]'
-				   value='<?php echo esc_attr( $center_lat ); ?>' size="20" disabled="disabled"
-				   placeholder="Not in use">
+			<label style="display: block;" for="ninety_settings[ninety_map_center_lat]">Lat/Lng Lookup <a href="https://www.latlong.net/" target="_blank">here.</a> </label>
+			<input type='text' name='ninety_settings[ninety_map_center_lat]' id='ninety_settings[ninety_map_center_lat]'
+				   value='<?php echo esc_attr( $center_lat ); ?>' size="20">
 			<?php
 
 		}
@@ -554,9 +572,9 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		public function ninety_map_center_lng_render() {
 			$center_lng = ninety_ninety()->get_option( 'ninety_map_center_lng' );
 			?>
+			<label style="display: block;" for="ninety_settings[ninety_map_center_lng]">Lat/Lng Lookup <a href="https://www.latlong.net/" target="_blank">here.</a> </label>
 			<input type='text' name='ninety_settings[ninety_map_center_lng]'
-				   value='<?php echo esc_attr( $center_lng ); ?>' size="20" disabled="disabled"
-				   placeholder="Not in use">
+				   value='<?php echo esc_attr( $center_lng ); ?>' size="20">
 			<?php
 
 		}
@@ -571,7 +589,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			$zoom = ninety_ninety()->get_option( 'ninety_map_zoom' );
 			?>
 			<input type='number' name='ninety_settings[ninety_map_zoom]'
-				   value='<?php echo (int) $zoom; ?>' min="1" max="18" step="1" disabled="disabled" placeholder="N/A">
+				   value='<?php echo (int) $zoom; ?>' min="1" max="18" step="1">
 			<?php
 
 		}
@@ -749,7 +767,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			$range = date( 'M d, Y', strtotime( $begin ) ) . ' to ' . date( 'M d, Y', strtotime( $end ) ) . PHP_EOL;
 
 			// MachPDF class extends FPDF for PDF creation.
-			require_once NINETY_NINETY_PATH . 'inc/class.ninety-pdf.php';
+			require_once NINETY_NINETY_PATH . 'inc/class-ninety-pdf.php';
 
 			$pdf = new NinetyPDF();
 			$pdf->AliasNbPages();
