@@ -1,6 +1,6 @@
 <?php
 
-include_once NINETY_NINETY_PATH . 'inc/class.ninety-map-js.php';
+include_once NINETY_NINETY_PATH . 'inc/class-ninety-map-js.php';
 
 get_header();
 

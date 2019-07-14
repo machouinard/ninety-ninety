@@ -3,7 +3,7 @@
  * Template Name: Genesis Map
  */
 
-require_once NINETY_NINETY_PATH . 'inc/class.ninety-map-js.php';
+require_once NINETY_NINETY_PATH . 'inc/class-ninety-map-js.php';
 
 //* TODO: Build map page
 
