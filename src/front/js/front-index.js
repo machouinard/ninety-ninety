@@ -3,8 +3,8 @@ import meetingMap from '../../components/ninety-map';
 
 window.onload = function () {
 
-	// console.log( 'geojson', geojson );
-	// console.log( 'mapOptions', mapOptions );
+	console.log( 'geojson', geojson );
+	console.log( 'mapOptions', mapOptions );
 
 	// Conditionally display Meeting Chart.
 	if ( geojson.showChart ) {
@@ -12,7 +12,7 @@ window.onload = function () {
 	}
 
 	// Conditionally display Meeting Map.
-	if ( geojson.mapOptions ) {
+	if ( mapOptions ) {
 		meetingMap();
 	}
 
