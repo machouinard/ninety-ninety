@@ -11,7 +11,7 @@
  * Plugin Name: 90 in 90
  * Plugin URI:
  * Description: Track 90 meetings in 90 days.  Built for AA but customizable to any program.
- * Version: 1.0.0
+ * Version: 1.3.0
  * Author: Mark Chouinard
  * Author URI: https://chouinard.me
  * Text Domain: ninety-ninety
@@ -35,7 +35,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		/**
 		 * @var string Plugin version
 		 */
-		public $version = '1.2.0';
+		public $version = '1.3.0';
 		/**
 		 * @var array Settings array
 		 */
@@ -44,6 +44,10 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @var array array
 		 */
 		public $options = [];
+		/**
+		 * @var string Default Tile Set
+		 */
+		public $default_tile_server;
 
 		/**
 		 * NinetyNinety constructor.
@@ -77,6 +81,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			$this->define( 'NINETY_COUNT_OPTION_KEY', 'ninety_meeting_count' );
 
 			$meeting_count = get_option( NINETY_COUNT_OPTION_KEY, 0 );
+
+			$this->default_tile_server = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png';
 
 			$this->settings = [
 				'name'          => __( '90 in 90', 'ninety-ninety' ),
