@@ -3,7 +3,7 @@
  * WordPress plugin used to track AA Meetings
  *
  * @package     Ninety-Ninety
- * @since       1.2.0
+ * @since       1.0.0
  * @author      machouinard
  */
 
@@ -11,7 +11,7 @@
  * Plugin Name: 90 in 90
  * Plugin URI:
  * Description: Track 90 meetings in 90 days.  Built for AA but customizable to any program.
- * Version: 1.3.0
+ * Version: 1.4.0
  * Author: Mark Chouinard
  * Author URI: https://chouinard.me
  * Text Domain: ninety-ninety
@@ -35,7 +35,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		/**
 		 * @var string Plugin version
 		 */
-		public $version = '1.3.0';
+		public $version = '1.4.0';
 		/**
 		 * @var array Settings array
 		 */
@@ -135,6 +135,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			require_once $path . 'inc/widget-meeting-calendar.php';
 
+			require_once $path . 'inc/widget-meeting-search.php';
+
 			$this->add_actions_and_filters();
 
 		}
@@ -162,7 +164,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 					]
 				);
 			}
-			add_action( 'widgets_init', [ $this, 'register_widgets'] );
+			add_action( 'widgets_init', [ $this, 'register_widgets' ] );
 			add_filter( 'acf/settings/show_admin', [ $this, 'acf_show_admin' ] );
 			add_filter( 'template_include', [ $this, 'ninety_archive_template' ] );
 			add_filter( 'wp_setup_nav_menu_item', [ $this, 'hide_meeting_nav_menu_objects' ] );
@@ -172,16 +174,26 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_filter( 'acf/load_field/key=field_5d18480b686a6', [ $this, 'set_default_meeting_location' ] );
 			add_filter( 'acf/load_field/key=field_5d18255d071c8', [ $this, 'set_default_meeting_type' ] );
 			add_filter( 'acf/load_field/key=field_5d184b55fa43e', [ $this, 'filter_meeting_programs' ] );
+			add_filter( 'posts_search', 'Ninety_Meeting_Search::advanced_custom_search', 500, 2 );
+//			add_filter( 'pre_get_posts', [ $this, 'search_it_all' ] );
 		}
+
+//		public function search_it_all( $query ) {
+//			if ( $query->is_search ) {
+//				$types = get_post_types( ['public'=> true ], 'names' );
+//				$query->set( 'post_type', $types );
+//			}
+//		}
 
 		/**
 		 * Register our widgets
 		 *
 		 * @return void
-		 * @since 1.4.0
+		 * @since 1.0.0
 		 */
 		public function register_widgets() {
 			register_widget( 'Ninety_Meeting_Calendar' );
+			register_widget( 'Ninety_Meeting_Search' );
 		}
 
 		/**
@@ -352,7 +364,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 *                      if false, remove option.
 		 *
 		 * @return void
-		 * @since 1.2.0
+		 * @since 1.0.0
 		 */
 		public function update_option( $name, $value = false ) {
 
@@ -594,7 +606,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param array $field ACF field for Location coords.
 		 *
 		 * @return mixed
-		 * @since 1.1.0
+		 * @since 1.0.0
 		 */
 		public function ninety_coords_readonly( $field ) {
 
@@ -656,7 +668,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param string $address Location address.
 		 *
 		 * @return void
-		 * @since 1.1.0
+		 * @since 1.0.0
 		 */
 		public function geocode_meeting_location( $term_id, $address ) {
 
@@ -688,7 +700,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param string $address Address to geocode.
 		 *
 		 * @return array $ret
-		 * @since 1.1.0
+		 * @since 1.0.0
 		 */
 		protected function geo_lookup( $address ) {
 
@@ -718,7 +730,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param array $args Args to be used for WP_Query.
 		 *
 		 * @return void
-		 * @since 1.2.0
+		 * @since 1.0.0
 		 */
 		public function maybe_add_exclude_meta_query( &$args ) {
 

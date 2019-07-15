@@ -26,10 +26,10 @@ function ninety_meeting_entry_content() {
 
 //	$program  = get_field( 'ninety_meeting_program', get_the_ID() );
 //	$type     = get_field( 'ninety_meeting_type', get_the_ID() );
-	$location    = get_field( 'ninety_meeting_location', get_the_ID() );
-	$notes       = get_field( 'ninety_meeting_notes', get_the_ID() );
-	$speaker     = get_field( 'ninety_meeting_speaker', get_the_ID(), true );
-	$topic       = get_field( 'ninety_meeting_topic', get_the_ID(), true );
+	$location = get_field( 'ninety_meeting_location', get_the_ID() );
+	$notes    = get_field( 'ninety_meeting_notes', get_the_ID() );
+	$speaker  = get_field( 'ninety_meeting_speaker', get_the_ID() );
+	$topic    = get_field( 'ninety_meeting_topic', get_the_ID() );
 
 	if ( $location instanceof WP_Term ) {
 		echo '<h3><a href="/meetings/' . esc_attr( $location->slug ) . '">' . esc_html( $location->name ) . '</a></h3>';
@@ -38,11 +38,15 @@ function ninety_meeting_entry_content() {
 	echo '<div class="single-details">';
 
 	if ( $speaker ) {
+		echo '<p>';
 		echo esc_html( __( 'Speaker:&nbsp;', 'ninety-ninety' ) . $speaker );
+		echo '</p>';
 	}
 
 	if ( $topic ) {
+		echo '<p>';
 		echo esc_html( __( 'Topic:&nbsp;', 'ninety-ninety' ) . $topic );
+		echo '</p>';
 	}
 
 	if ( ! $notes ) {
