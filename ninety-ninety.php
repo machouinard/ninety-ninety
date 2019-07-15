@@ -358,9 +358,10 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @since 1.0.0
 		 */
 		public function enqueue_admin_stuff() {
+			wp_enqueue_style( 'wp-color-picker' );
 			$admin_script     = NINETY_NINETY_URL . 'assets/js/ninety-admin.js';
 			$admin_script_ver = filemtime( NINETY_NINETY_PATH . 'assets/js/ninety-admin.js' );
-			wp_enqueue_script( 'ninety-admin-js', $admin_script, [ 'jquery' ], $admin_script_ver, true );
+			wp_enqueue_script( 'ninety-admin-js', $admin_script, [ 'jquery', 'wp-color-picker' ], $admin_script_ver, true );
 		}
 
 		/**
