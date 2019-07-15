@@ -135,6 +135,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			require_once $path . 'inc/widget-meeting-calendar.php';
 
+			require_once $path . 'inc/widget-meeting-search.php';
+
 			$this->add_actions_and_filters();
 
 		}
@@ -162,7 +164,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 					]
 				);
 			}
-			add_action( 'widgets_init', [ $this, 'register_widgets'] );
+			add_action( 'widgets_init', [ $this, 'register_widgets' ] );
 			add_filter( 'acf/settings/show_admin', [ $this, 'acf_show_admin' ] );
 			add_filter( 'template_include', [ $this, 'ninety_archive_template' ] );
 			add_filter( 'wp_setup_nav_menu_item', [ $this, 'hide_meeting_nav_menu_objects' ] );
@@ -172,16 +174,26 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_filter( 'acf/load_field/key=field_5d18480b686a6', [ $this, 'set_default_meeting_location' ] );
 			add_filter( 'acf/load_field/key=field_5d18255d071c8', [ $this, 'set_default_meeting_type' ] );
 			add_filter( 'acf/load_field/key=field_5d184b55fa43e', [ $this, 'filter_meeting_programs' ] );
+			add_filter( 'posts_search', 'Ninety_Meeting_Search::advanced_custom_search', 500, 2 );
+//			add_filter( 'pre_get_posts', [ $this, 'search_it_all' ] );
 		}
+
+//		public function search_it_all( $query ) {
+//			if ( $query->is_search ) {
+//				$types = get_post_types( ['public'=> true ], 'names' );
+//				$query->set( 'post_type', $types );
+//			}
+//		}
 
 		/**
 		 * Register our widgets
 		 *
 		 * @return void
-		 * @since 1.4.0
+		 * @since 1.0.0
 		 */
 		public function register_widgets() {
 			register_widget( 'Ninety_Meeting_Calendar' );
+			register_widget( 'Ninety_Meeting_Search' );
 		}
 
 		/**
