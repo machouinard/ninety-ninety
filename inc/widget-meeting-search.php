@@ -109,7 +109,7 @@ class Ninety_Meeting_Search extends WP_Widget {
 	 */
 	public static function list_searchable_acf() {
 		$list_searchable_acf = array(
-			'ninety_mtg_speaker',
+			'ninety_meeting_speaker',
 			'ninety_meeting_topic',
 			'ninety_meeting_notes',
 		);
