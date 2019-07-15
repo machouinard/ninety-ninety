@@ -411,10 +411,17 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				];
 
 				$show_chart = ninety_ninety()->get_option( 'ninety_show_chart' );
+				$remaining_color = ninety_ninety()->get_option( 'ninety_remaining_color' , '#dd3333');
+				$done_color = ninety_ninety()->get_option( 'ninety_done_color', '#81d742' );
 
 				if ( in_array( $template_name, $templates ) && $show_chart ) {
 					$data['showChart'] = true;
 				}
+
+				$data['colors'] = [
+					'remaining' => $remaining_color,
+					'done' => $done_color,
+				];
 
 				$chart_type = ninety_ninety()->get_option( 'ninety_chart_type', 'pie' );
 

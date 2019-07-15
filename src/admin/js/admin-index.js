@@ -1,6 +1,4 @@
-const test = ( num ) => {
-	console.log( 'num', num );
-	return num * 5;
-};
+jQuery( document ).ready( function ( $ ) {
+	$( '.ninety-color-field' ).wpColorPicker();
+} );
 
-test( 4 );

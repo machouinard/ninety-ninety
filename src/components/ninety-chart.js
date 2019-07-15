@@ -12,7 +12,7 @@ const meetingChart = () => {
 		datasets: [ {
 			label: 'Meeting Count',
 			data: [ meetingCount, remaining ],
-			backgroundColor: [ 'green', 'yellow' ],
+			backgroundColor: [ geojson.colors.done, geojson.colors.remaining ],
 		} ],
 	};
 

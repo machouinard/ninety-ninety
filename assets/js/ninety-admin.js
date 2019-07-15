@@ -93,7 +93,7 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("var test = function test(num) {\n  console.log('num', num);\n  return num * 5;\n};\n\ntest(4);\n\n//# sourceURL=webpack:///./src/admin/js/admin-index.js?");
+eval("jQuery(document).ready(function ($) {\n  $('.ninety-color-field').wpColorPicker();\n});\n\n//# sourceURL=webpack:///./src/admin/js/admin-index.js?");
 
 /***/ })
 
