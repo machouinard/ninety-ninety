@@ -133,6 +133,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			// Setup ACF Fields.
 			require_once $path . 'inc/acf-fields.php';
 
+			require_once $path . 'inc/widget-meeting-calendar.php';
+
 			$this->add_actions_and_filters();
 
 		}
@@ -160,6 +162,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 					]
 				);
 			}
+			add_action( 'widgets_init', [ $this, 'register_widgets'] );
 			add_filter( 'acf/settings/show_admin', [ $this, 'acf_show_admin' ] );
 			add_filter( 'template_include', [ $this, 'ninety_archive_template' ] );
 			add_filter( 'wp_setup_nav_menu_item', [ $this, 'hide_meeting_nav_menu_objects' ] );
@@ -169,6 +172,16 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_filter( 'acf/load_field/key=field_5d18480b686a6', [ $this, 'set_default_meeting_location' ] );
 			add_filter( 'acf/load_field/key=field_5d18255d071c8', [ $this, 'set_default_meeting_type' ] );
 			add_filter( 'acf/load_field/key=field_5d184b55fa43e', [ $this, 'filter_meeting_programs' ] );
+		}
+
+		/**
+		 * Register our widgets
+		 *
+		 * @return void
+		 * @since 1.4.0
+		 */
+		public function register_widgets() {
+			register_widget( 'Ninety_Meeting_Calendar' );
 		}
 
 		/**
@@ -361,7 +374,10 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			wp_enqueue_style( 'wp-color-picker' );
 			$admin_script     = NINETY_NINETY_URL . 'assets/js/ninety-admin.js';
 			$admin_script_ver = filemtime( NINETY_NINETY_PATH . 'assets/js/ninety-admin.js' );
-			wp_enqueue_script( 'ninety-admin-js', $admin_script, [ 'jquery', 'wp-color-picker' ], $admin_script_ver, true );
+			wp_enqueue_script( 'ninety-admin-js', $admin_script, [
+				'jquery',
+				'wp-color-picker',
+			], $admin_script_ver, true );
 		}
 
 		/**
@@ -410,9 +426,9 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 					'template-genesis-90-map.php',
 				];
 
-				$show_chart = ninety_ninety()->get_option( 'ninety_show_chart' );
-				$remaining_color = ninety_ninety()->get_option( 'ninety_remaining_color' , '#dd3333');
-				$done_color = ninety_ninety()->get_option( 'ninety_done_color', '#81d742' );
+				$show_chart      = ninety_ninety()->get_option( 'ninety_show_chart' );
+				$remaining_color = ninety_ninety()->get_option( 'ninety_remaining_color', '#dd3333' );
+				$done_color      = ninety_ninety()->get_option( 'ninety_done_color', '#81d742' );
 
 				if ( in_array( $template_name, $templates ) && $show_chart ) {
 					$data['showChart'] = true;
@@ -420,7 +436,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 				$data['colors'] = [
 					'remaining' => $remaining_color,
-					'done' => $done_color,
+					'done'      => $done_color,
 				];
 
 				$chart_type = ninety_ninety()->get_option( 'ninety_chart_type', 'pie' );
