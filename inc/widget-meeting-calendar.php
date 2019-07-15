@@ -11,7 +11,7 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 	/**
 	 * Ensure that the ID attribute only appears in the markup once
 	 *
-	 * @since  4.4.0
+	 * @since  1.4.0
 	 * @static
 	 * @access private
 	 * @var int
@@ -27,12 +27,11 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 	}
 
 	public function widget( $args, $instance ) {
-		$title    = apply_filters( 'widget_title', empty( $instance['title'] ) ? __( 'Calendar', 'ninety-ninety' ) : $instance['title'], $instance, $this->id_base );
-		$posttype = ! empty( $instance['posttype'] ) ? $instance['posttype'] : 'post';
+		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? __( 'Calendar', 'ninety-ninety' ) : $instance['title'], $instance, $this->id_base );
 
 		add_filter( 'get_calendar', array( $this, 'get_meeting_calendar' ), 10, 3 );
-		add_filter( 'month_link', array( $this, 'get_month_link_custom_post_type' ), 10, 3 );
-		add_filter( 'day_link', array( $this, 'get_day_link_custom_post_type' ), 10, 4 );
+		add_filter( 'month_link', array( $this, 'get_month_link_meeting' ), 10, 3 );
+		add_filter( 'day_link', array( $this, 'get_day_link_meeting' ), 10, 4 );
 
 		echo $args['before_widget'];
 
@@ -44,21 +43,24 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 		} else {
 			echo '<div class="calendar_wrap">';
 		}
+
 		get_calendar();
+
 		echo '</div>';
 		echo $args['after_widget'];
 
 		remove_filter( 'get_calendar', array( $this, 'get_meeting_calendar' ) );
-		remove_filter( 'month_link', array( $this, 'get_month_link_custom_post_type' ) );
-		remove_filter( 'day_link', array( $this, 'get_day_link_custom_post_type' ) );
+		remove_filter( 'month_link', array( $this, 'get_month_link_meeting' ) );
+		remove_filter( 'day_link', array( $this, 'get_day_link_meeting' ) );
 
 		self::$instance ++;
 	}
 
 	public function update( $new_instance, $old_instance ) {
-		$instance             = $old_instance;
-		$instance['title']    = sanitize_text_field( $new_instance['title'] );
-		$instance['posttype'] = strip_tags( $new_instance['posttype'] );
+		$instance          = $old_instance;
+		$instance['title'] = sanitize_text_field( $new_instance['title'] );
+
+//		$instance['posttype'] = strip_tags( $new_instance['posttype'] );
 
 		return $instance;
 	}
@@ -66,7 +68,6 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 	public function form( $instance ) {
 		$instance = wp_parse_args( (array) $instance, array( 'title' => '' ) );
 		$title    = isset( $instance['title'] ) ? sanitize_text_field( $instance['title'] ) : '';
-		$posttype = isset( $instance['posttype'] ) ? $instance['posttype'] : 'post';
 		?>
 		<p>
 			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', 'ninety-ninety' ); ?></label>
@@ -75,30 +76,6 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 				   value="<?php echo esc_attr( $title ); ?>"/></p>
 
 		<?php
-		$post_types = get_post_types( array( 'public' => true ), 'objects' );
-
-		printf(
-			'<p><label for="%1$s">%2$s</label>' .
-			'<select class="widefat" id="%1$s" name="%3$s">',
-			$this->get_field_id( 'posttype' ),
-			__( 'Post Type:', 'ninety-ninety' ),
-			$this->get_field_name( 'posttype' )
-		);
-
-		foreach ( $post_types as $post_type => $value ) {
-			if ( 'attachment' === $post_type || 'page' === $post_type ) {
-				continue;
-			}
-
-			printf(
-				'<option value="%s"%s>%s</option>',
-				esc_attr( $post_type ),
-				selected( $post_type, $posttype, false ),
-				__( $value->label, 'ninety-ninety' )
-			);
-
-		}
-		echo '</select></p>';
 	}
 
 	/**
@@ -114,8 +91,7 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 	public function get_meeting_calendar( $calendar_output, $initial = true, $echo = true ) {
 		global $wpdb, $m, $monthnum, $year, $wp_locale, $posts;
 
-		$options  = get_option( $this->option_name );
-		$posttype = ! empty( $options[ $this->number ]['posttype'] ) ? $options[ $this->number ]['posttype'] : 'post';
+		$posttype = 'ninety_meeting';
 
 		// Quick check. If we have no posts at all, abort!
 		if ( ! $posts ) {
@@ -138,7 +114,8 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 			// We need to get the month from MySQL.
 			$thisyear = (int) substr( $m, 0, 4 );
 			// it seems MySQL's weeks disagree with PHP's.
-			$d         = ( ( $w - 1 ) * 7 ) + 6;
+			$d = ( ( $w - 1 ) * 7 ) + 6;
+
 			$thismonth = $wpdb->get_var( "SELECT DATE_FORMAT((DATE_ADD('{$thisyear}0101', INTERVAL $d DAY) ), '%m')" );
 		} elseif ( ! empty( $m ) ) {
 			$thisyear = (int) substr( $m, 0, 4 );
@@ -262,8 +239,9 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 
 			if ( in_array( $day, $daywithpost ) ) {
 				// any posts today?
-				$date_format     = date( _x( 'F j, Y', 'daily archives date format' ), strtotime( "{$thisyear}-{$thismonth}-{$day}" ) );
-				$label           = sprintf( __( 'Posts published on %s' ), $date_format );
+				$date_format = date( _x( 'F j, Y', 'daily archives date format' ), strtotime( "{$thisyear}-{$thismonth}-{$day}" ) );
+				// translators: when the meetings happened.
+				$label           = sprintf( __( 'Meetings took place on %s' ), $date_format );
 				$calendar_output .= sprintf(
 					'<a href="%s" aria-label="%s">%s</a>',
 					get_day_link( $thisyear, $thismonth, $day ),
@@ -295,11 +273,10 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 		}
 	}
 
-	public function get_day_link_custom_post_type( $daylink, $year, $month, $day ) {
+	public function get_day_link_meeting( $daylink, $year, $month, $day ) {
 		global $wp_rewrite;
 
-		$options  = get_option( $this->option_name );
-		$posttype = ! empty( $options[ $this->number ]['posttype'] ) ? $options[ $this->number ]['posttype'] : 'post';
+		$posttype = 'ninety_meeting';
 
 		if ( ! $year ) {
 			$year = gmdate( 'Y', current_time( 'timestamp' ) );
@@ -340,11 +317,10 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 		return $daylink;
 	}
 
-	public function get_month_link_custom_post_type( $monthlink, $year, $month ) {
+	public function get_month_link_meeting( $monthlink, $year, $month ) {
 		global $wp_rewrite;
 
-		$options  = get_option( $this->option_name );
-		$posttype = ! empty( $options[ $this->number ]['posttype'] ) ? $options[ $this->number ]['posttype'] : 'post';
+		$posttype = 'ninety_meeting';
 
 		if ( ! $year ) {
 			$year = gmdate( 'Y', current_time( 'timestamp' ) );
