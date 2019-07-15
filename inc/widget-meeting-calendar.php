@@ -2,7 +2,9 @@
 /**
  * Ninety Meeting Calendar widget class
  *
- * @since   1.4.0
+ * Heavily based on https://github.com/thingsym/custom-post-type-widgets/blob/master/inc/widget-custom-post-type-calendar.php
+ *
+ * @since   1.0.0
  * @package Ninety in Ninety
  */
 
@@ -11,7 +13,7 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 	/**
 	 * Ensure that the ID attribute only appears in the markup once
 	 *
-	 * @since  1.4.0
+	 * @since  1.0.0
 	 * @static
 	 * @access private
 	 * @var int

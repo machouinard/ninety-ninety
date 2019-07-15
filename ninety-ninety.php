@@ -3,7 +3,7 @@
  * WordPress plugin used to track AA Meetings
  *
  * @package     Ninety-Ninety
- * @since       1.2.0
+ * @since       1.0.0
  * @author      machouinard
  */
 
@@ -11,7 +11,7 @@
  * Plugin Name: 90 in 90
  * Plugin URI:
  * Description: Track 90 meetings in 90 days.  Built for AA but customizable to any program.
- * Version: 1.3.0
+ * Version: 1.4.0
  * Author: Mark Chouinard
  * Author URI: https://chouinard.me
  * Text Domain: ninety-ninety
@@ -35,7 +35,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		/**
 		 * @var string Plugin version
 		 */
-		public $version = '1.3.0';
+		public $version = '1.4.0';
 		/**
 		 * @var array Settings array
 		 */
@@ -364,7 +364,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 *                      if false, remove option.
 		 *
 		 * @return void
-		 * @since 1.2.0
+		 * @since 1.0.0
 		 */
 		public function update_option( $name, $value = false ) {
 
@@ -606,7 +606,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param array $field ACF field for Location coords.
 		 *
 		 * @return mixed
-		 * @since 1.1.0
+		 * @since 1.0.0
 		 */
 		public function ninety_coords_readonly( $field ) {
 
@@ -668,7 +668,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param string $address Location address.
 		 *
 		 * @return void
-		 * @since 1.1.0
+		 * @since 1.0.0
 		 */
 		public function geocode_meeting_location( $term_id, $address ) {
 
@@ -700,7 +700,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param string $address Address to geocode.
 		 *
 		 * @return array $ret
-		 * @since 1.1.0
+		 * @since 1.0.0
 		 */
 		protected function geo_lookup( $address ) {
 
@@ -730,7 +730,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param array $args Args to be used for WP_Query.
 		 *
 		 * @return void
-		 * @since 1.2.0
+		 * @since 1.0.0
 		 */
 		public function maybe_add_exclude_meta_query( &$args ) {
 
