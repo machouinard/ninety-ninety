@@ -290,6 +290,34 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			);
 
 			add_settings_field(
+				'ninety_chart_done_color',
+				__(
+					'Completed Meetings Color',
+					'ninety-ninety'
+				),
+				[
+					$this,
+					'ninety_chart_done_color_render',
+				],
+				'pluginMisc',
+				'ninety_pluginPage_misc_section'
+			);
+
+			add_settings_field(
+				'ninety_chart_remaining_color',
+				__(
+					'Remaining Meetings Color',
+					'ninety-ninety'
+				),
+				[
+					$this,
+					'ninety_chart_remaining_color_render',
+				],
+				'pluginMisc',
+				'ninety_pluginPage_misc_section'
+			);
+
+			add_settings_field(
 				'ninety_pdf_title',
 				__(
 					'PDF Title',
@@ -691,6 +719,50 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 				   value='doughnut'>
 			<?php
 
+		}
+
+		/**
+		 * Output color picker for completed Meetings color
+		 *
+		 * @return void
+		 * @since 1.3.0
+		 */
+		public function ninety_chart_done_color_render() {
+			$done_color = ninety_ninety()->get_option( 'ninety_done_color', '#00ff00' );
+			?>
+
+			<input
+					name='ninety_settings[ninety_done_color]'
+					type="text"
+					value="<?php echo esc_attr( $done_color ); ?>"
+					class="ninety-color-field"
+					data-default-color="#00ff00"
+			/>
+
+
+			<?php
+		}
+
+		/**
+		 * Output color picker field for remaining Meetings color
+		 *
+		 * @return void
+		 * @since 1.3.0
+		 */
+		public function ninety_chart_remaining_color_render() {
+			$remaining_color = ninety_ninety()->get_option( 'ninety_remaining_color', '#ff0000' );
+			?>
+
+			<input
+					name='ninety_settings[ninety_remaining_color]'
+					type="text"
+					value="<?php echo esc_attr( $remaining_color ); ?>"
+					class="ninety-color-field"
+					data-default-color="#ff0000"
+			/>
+
+
+			<?php
 		}
 
 		/**
