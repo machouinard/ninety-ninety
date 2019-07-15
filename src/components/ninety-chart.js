@@ -5,7 +5,7 @@ const meetingChart = () => {
 	const meetingCount = geojson.meetingCount;
 	const remaining = 90 - meetingCount;
 
-	console.log( 'from ninety-chart.js' );
+	// console.log( 'from ninety-chart.js' );
 
 	const data = {
 		labels: [ 'done', 'remaining' ],
