@@ -4,29 +4,29 @@
  * Class NinetyNinety_CPT
  */
 class NinetyNinety_CPT {
-	
+
 	/**
 	 * NinetyNinety_CPT constructor.
 	 */
 	function __construct() {
-		
+
 		//* Register Meeting post type
 		add_action( 'init', [ $this, 'register_post_type' ], 0 );
-		
+
 		//* Register custom taxonomies
 		add_action( 'init', [ $this, 'register_taxonomies' ], 1 );
-		
+
 		//* Add rewrite rules
 		add_action( 'generate_rewrite_rules', [ $this, 'generate_rewrite_rules' ] );
-		
+
 		//* If option is set to keep Meetings private, run the redirect function
 		$private = ninety_ninety()->get_option( 'ninety_keep_private' );
 		if ( $private ) {
 			add_action( 'wp', [ $this, 'redirect_anon_users' ] );
 		}
-		
+
 	}
-	
+
 	/**
 	 * Add Meeting CPT
 	 *
@@ -35,7 +35,7 @@ class NinetyNinety_CPT {
 	 *
 	 */
 	function register_post_type() {
-		
+
 		$plan_labels = [
 			'name'                  => 'Meetings',
 			'singular_name'         => 'Meeting',
@@ -57,7 +57,7 @@ class NinetyNinety_CPT {
 			'items_list_navigation' => 'Meetings list navigation',
 			'filter_items_list'     => 'Filter meetings list',
 		];
-		
+
 		$plan_args = [
 			'labels'              => $plan_labels,
 			'description'         => 'AA Meetings',
@@ -81,11 +81,11 @@ class NinetyNinety_CPT {
 			'exclude_from_search' => true,
 			'taxonomies'          => [ 'ninety_meeting_location', 'ninety_meeting_type' ],
 		];
-		
+
 		register_post_type( 'ninety_meeting', $plan_args );
-		
+
 	}
-	
+
 	/**
 	 * Add Meeting Type & Location taxonomies
 	 *
@@ -94,7 +94,7 @@ class NinetyNinety_CPT {
 	 *
 	 */
 	function register_taxonomies() {
-		
+
 		// Meeting Locations
 		$labels = [
 			'name'                       => 'Meeting Locations',
@@ -116,7 +116,7 @@ class NinetyNinety_CPT {
 			'add_or_remove_items'        => 'Add or remove meeting locations',
 			'choose_from_most_used'      => 'Choose from the most used meeting locations',
 		];
-		
+
 		$args = [
 			'labels'             => $labels,
 			'hierarchical'       => false,
@@ -128,9 +128,9 @@ class NinetyNinety_CPT {
 			'show_in_nav_menus'  => true,
 			'show_tagcloud'      => true,
 		];
-		
+
 		register_taxonomy( 'ninety_meeting_location', 'ninety_meeting', $args );
-		
+
 		// Meeting Types
 		$labels = [
 			'name'                       => 'Meeting Types',
@@ -152,7 +152,7 @@ class NinetyNinety_CPT {
 			'add_or_remove_items'        => 'Add or remove meeting types',
 			'choose_from_most_used'      => 'Choose from the most used meeting types',
 		];
-		
+
 		$args = [
 			'labels'             => $labels,
 			'hierarchical'       => false,
@@ -166,11 +166,11 @@ class NinetyNinety_CPT {
 			'show_in_nav_menus'  => true,
 			'show_tagcloud'      => true,
 		];
-		
+
 		register_taxonomy( 'ninety_meeting_type', 'ninety_meeting', $args );
-		
+
 	}
-	
+
 	/**
 	 * Add rewrite rules for Locations
 	 *
@@ -181,7 +181,7 @@ class NinetyNinety_CPT {
 	 *
 	 */
 	function generate_rewrite_rules( $wp_rewrite ) {
-		
+
 		$rules      = [];
 		$post_types = get_post_types( [
 			'name'     => 'ninety_meeting',
@@ -193,11 +193,11 @@ class NinetyNinety_CPT {
 			'public'   => true,
 			'_builtin' => false,
 		], 'objects' );
-		
+
 		foreach ( $post_types as $post_type ) {
 			$post_type_name = $post_type->name;
 			$post_type_slug = $post_type->rewrite['slug'];
-			
+
 			foreach ( $taxonomies as $taxonomy ) {
 				if ( $taxonomy->object_type[0] == $post_type_name ) {
 					$terms = get_categories( [
@@ -212,12 +212,18 @@ class NinetyNinety_CPT {
 					}
 				}
 			}
+			$rules[ $post_type_slug . '/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/page/?([0-9]{1,})/?$' ] = 'index.php?post_type=' . $post_type_name . '&year=$matches[1]&monthnum=$matches[2]&day=$matches[3]&paged=$matches[4]';
+			$rules[ $post_type_slug . '/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/?$' ]                   = 'index.php?post_type=' . $post_type_name . '&year=$matches[1]&monthnum=$matches[2]&day=$matches[3]';
+			$rules[ $post_type_slug . '/([0-9]{4})/([0-9]{1,2})/page/?([0-9]{1,})/?$' ]              = 'index.php?post_type=' . $post_type_name . '&year=$matches[1]&monthnum=$matches[2]&paged=$matches[3]';
+			$rules[ $post_type_slug . '/([0-9]{4})/([0-9]{1,2})/?$' ]                                = 'index.php?post_type=' . $post_type_name . '&year=$matches[1]&monthnum=$matches[2]';
+			$rules[ $post_type_slug . '/([0-9]{4})/page/?([0-9]{1,})/?$' ]                           = 'index.php?post_type=' . $post_type_name . '&year=$matches[1]&paged=$matches[2]';
+			$rules[ $post_type_slug . '/([0-9]{4})/?$' ]                                             = 'index.php?post_type=' . $post_type_name . '&year=$matches[1]';
 		}
-		
+
 		$wp_rewrite->rules = $rules + $wp_rewrite->rules;
-		
+
 	}
-	
+
 	/**
 	 * Redirect not-logged-in users to home page from Meetings pages
 	 *
@@ -228,30 +234,30 @@ class NinetyNinety_CPT {
 	 *
 	 */
 	public function redirect_anon_users( $wp ) {
-		
+
 		if ( is_admin() ) {
 			return $wp;
 		}
-		
+
 		global $post;
-		
+
 		//* No $post object on 404 page...
 		if ( ! $post ) {
 			return $wp;
 		}
-		
+
 		//* Get array of page templates used for Meetings
 		$templates = ninety_ninety()->get_setting( 'page_templates' );
-		
+
 		if ( ( 'ninety_meeting' == $post->post_type || is_post_type_archive( 'ninety_meeting' ) || is_tax( 'ninety_meeting_location' ) || is_page_template( $templates ) ) && ! is_user_logged_in() ) {
 			wp_redirect( get_home_url() );
 			exit;
 		}
-		
+
 		return $wp;
-		
+
 	}
-	
+
 	/**
 	 * Create some default Meeting Types on activation
 	 *
@@ -260,9 +266,9 @@ class NinetyNinety_CPT {
 	 *
 	 */
 	public static function activate() {
-		
+
 		$self = new NinetyNinety_CPT();
-		
+
 		$meeting_types = [
 			'Regular',
 			'Speaker',
@@ -271,19 +277,19 @@ class NinetyNinety_CPT {
 			'Big Book',
 			'Fireball',
 		];
-		
+
 		$self->register_taxonomies();
-		
+
 		$self->register_post_type();
-		
+
 		foreach ( apply_filters( 'ninety_meeting_types', $meeting_types ) as $type ) {
-			
+
 			wp_insert_term( $type, 'ninety_meeting_type' );
-			
+
 		}
-		
+
 		flush_rewrite_rules();
-		
+
 	}
-	
+
 }
