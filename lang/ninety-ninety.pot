@@ -1,0 +1,202 @@
+# Copyright (C) 2019 Mark Chouinard
+# This file is distributed under the same license as the 90 in 90 plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: 90 in 90 1.4.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/ninety-ninety\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2019-07-16T06:54:33+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.2.0\n"
+"X-Domain: ninety-ninety\n"
+
+#. Plugin Name of the plugin
+#: ninety-ninety.php:88
+msgid "90 in 90"
+msgstr ""
+
+#. Description of the plugin
+msgid "Track 90 meetings in 90 days.  Built for AA but customizable to any program."
+msgstr ""
+
+#. Author of the plugin
+msgid "Mark Chouinard"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://chouinard.me"
+msgstr ""
+
+#: inc/class-ninety-help-tabs.php:39
+msgid "Extra Tab"
+msgstr ""
+
+#: inc/class-ninety-help-tabs.php:40
+#: inc/class-ninety-help-contents.php:25
+msgid "Some stuff that stays above every help text"
+msgstr ""
+
+#: inc/widget-meeting-search.php:19
+msgid "A search form for your site."
+msgstr ""
+
+#: inc/widget-meeting-search.php:21
+msgid "Search ( Meetings )"
+msgstr ""
+
+#: inc/widget-meeting-search.php:54
+msgid "Search"
+msgstr ""
+
+#: inc/widget-meeting-search.php:96
+#: inc/widget-meeting-calendar.php:75
+msgid "Title:"
+msgstr ""
+
+#: inc/widget-meeting-calendar.php:26
+msgid "A calendar of your Meetings."
+msgstr ""
+
+#: inc/widget-meeting-calendar.php:28
+msgid "Calendar ( Meetings )"
+msgstr ""
+
+#: inc/widget-meeting-calendar.php:32
+msgid "Calendar"
+msgstr ""
+
+#: inc/class-options-page.php:72
+msgid "Meeting Options"
+msgstr ""
+
+#: inc/class-options-page.php:85
+msgid "Map Options"
+msgstr ""
+
+#: inc/class-options-page.php:98
+msgid "Miscellaneous Options"
+msgstr ""
+
+#: inc/class-options-page.php:111
+msgid "PDF Options"
+msgstr ""
+
+#: inc/class-options-page.php:124
+msgid "Default Meeting Location"
+msgstr ""
+
+#: inc/class-options-page.php:138
+msgid "Default Meeting Time"
+msgstr ""
+
+#: inc/class-options-page.php:152
+msgid "Default Meeting Type"
+msgstr ""
+
+#: inc/class-options-page.php:166
+msgid "MapBox API Key"
+msgstr ""
+
+#: inc/class-options-page.php:180
+msgid "Thunderforest API Key"
+msgstr ""
+
+#: inc/class-options-page.php:194
+msgid "Tile Set"
+msgstr ""
+
+#: inc/class-options-page.php:209
+msgid "Default Map Center Lat"
+msgstr ""
+
+#: inc/class-options-page.php:220
+msgid "Default Map Center Lng"
+msgstr ""
+
+#: inc/class-options-page.php:231
+msgid "Default Map Zoom Level"
+msgstr ""
+
+#: inc/class-options-page.php:242
+msgid "Keep Meetings Private"
+msgstr ""
+
+#: inc/class-options-page.php:256
+msgid "Use Exclude option (PDF, Maps, Count, etc..."
+msgstr ""
+
+#: inc/class-options-page.php:270
+msgid "Display chart"
+msgstr ""
+
+#: inc/class-options-page.php:284
+msgid "Chart Type"
+msgstr ""
+
+#: inc/class-options-page.php:298
+msgid "Completed Meetings Color"
+msgstr ""
+
+#: inc/class-options-page.php:312
+msgid "Remaining Meetings Color"
+msgstr ""
+
+#: inc/class-options-page.php:326
+msgid "PDF Title"
+msgstr ""
+
+#: inc/class-options-page.php:340
+msgid "Show number of days on PDF?"
+msgstr ""
+
+#: inc/class-options-page.php:354
+msgid "PDF Printout"
+msgstr ""
+
+#: inc/class-options-page.php:819
+msgid "Set Meeting defaults"
+msgstr ""
+
+#: inc/class-options-page.php:829
+msgid "Set Map defaults"
+msgstr ""
+
+#: inc/class-options-page.php:839
+msgid "Set Other options"
+msgstr ""
+
+#: inc/class-options-page.php:849
+msgid "Set PDF Options"
+msgstr ""
+
+#. translators: singular and plural forms of Meeting.
+#: ninety-ninety.php:529
+msgid "%d meeting"
+msgid_plural "%d meetings"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/template-90-map.php:10
+#: templates/template-genesis-90-map.php:14
+msgid "Meetings Map"
+msgstr ""
+
+#: templates/single-genesis.php:42
+msgid "Speaker:&nbsp;"
+msgstr ""
+
+#: templates/single-genesis.php:48
+msgid "Topic:&nbsp;"
+msgstr ""
+
+#: templates/single-genesis.php:53
+msgid "No notes"
+msgstr ""
+
+#: templates/template-genesis-90-map.php:26
+msgid "Meetings"
+msgstr ""
