@@ -193,6 +193,11 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @since 1.0.0
 		 */
 		public function register_widgets() {
+
+			if ( $this->get_option( 'ninety_keep_private' ) && ! is_user_logged_in() ) {
+				return;
+			}
+
 			register_widget( 'Ninety_Meeting_Calendar' );
 			register_widget( 'Ninety_Meeting_Search' );
 		}
