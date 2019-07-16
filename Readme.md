@@ -28,19 +28,23 @@ It's flexible enough to be used for any 12 Step program.
 
 #### Map Options
 There are currently 2 available mapping APIs for use.  Both have free usage tiers.
-1. Enter your [MapBox API key](https://account.mapbox.com/auth/signup/). This is required for geocoding
+1. Enter your [MapBox API key](https://account.mapbox.com/auth/signup/). This is __required__ for geocoding
 Location addresses and displaying certain tile sets.
 1. Enter your [Thunderforest API key](https://www.thunderforest.com/pricing/) if you wish to use any of the Thunderforest tile sets. 
 1. Select a Tile Set to display on the map ( there must be a valid API key associated with the selected tile set ).
 
 1. (Optional) Set your preferred timezone in the WordPress admin ( for the Default Meeting Time option to work correctly )
-
+1. (Optional) Set __Default Map Center Lat__ and __Default Map Center Lng__ - This will center the map on a specific area when first loaded.
+1. (Optional) Set __Default Map Zoom Level__ - This sets the zoom level when the map is initially loaded.
 
 ### Miscellaneous Options
 * `Keep Meetings Private` checkbox - Prevents non-logged-in users from viewing Meetings, archive pages, Maps, etc...  Also prevents
 Meeting related menu items from appearing when not logged in.
 * `Use Exclude option (PDF, Maps, Count, etc...` Each Meeting has an "exclude" checkbox.  If this box is checked, any
 Meetings that have their "exclude" checkboxes checked will not be shown on the PDF or the Map page.
+* `Display Chart` Whether or not to display a chart depicting progress.
+* `Chart Type` Which chart type to use - Pie or Doughnut
+* `Meeting Colors` Change chart colors used for Meetings attended and Meetings remaining.
 
 ## ACF Notes
 * Requires Advanced Custom Fields plugin, standard or Pro.
