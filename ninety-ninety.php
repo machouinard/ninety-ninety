@@ -135,6 +135,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			require_once $path . 'inc/widget-meeting-search.php';
 
+			require_once $path . 'inc/class-ninety-help-tabs.php';
+
 			$this->add_actions_and_filters();
 
 		}
@@ -163,8 +165,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				);
 			}
 			add_action( 'widgets_init', [ $this, 'register_widgets' ] );
-//			add_action( 'load-post.php', 'NinetyHelpTabs::init' );
-//			add_action( 'load-post-new.php', [ 'NinetyHelptabs', 'init' ] );
+			add_action( 'load-post.php', 'NinetyHelpTabs::add_meeting_help_tab' );
+			add_action( 'load-post-new.php', 'NinetyHelptabs::add_meeting_help_tab' );
 			add_action( 'init', [ $this, 'load_text_domain'] );
 			add_filter( 'acf/settings/show_admin', [ $this, 'acf_show_admin' ] );
 			add_filter( 'template_include', [ $this, 'ninety_archive_template' ] );

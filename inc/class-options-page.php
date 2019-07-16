@@ -35,7 +35,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * @since 1.0.0
 		 */
 		public function ninety_add_admin_menu() {
-			add_submenu_page(
+			$options_page = add_submenu_page(
 				'edit.php?post_type=ninety_meeting',
 				'Ninety Ninety',
 				'Options',
@@ -43,7 +43,11 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 				'ninety-settings',
 				[ $this, 'ninety_options_page' ]
 			);
+
+			add_action( 'load-' . $options_page, 'NinetyHelptabs::add_options_help_tabs' );
 		}
+
+
 
 		/**
 		 * Description
@@ -417,7 +421,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 				<?php
 
 				foreach ( $terms as $term ) {
-					$option = '<option 
+					$option = '<option
 							value="' . $term->term_id . '" ' .
 					          selected( $options['ninety_default_mtg_location'], $term->term_id ) .
 					          '>' .
