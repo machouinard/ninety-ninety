@@ -322,6 +322,20 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			);
 
 			add_settings_field(
+				'ninety_create_pdf',
+				__(
+					'Create PDF?',
+					'ninety-ninety'
+				),
+				[
+					$this,
+					'ninety_create_pdf_render',
+				],
+				'pluginPdf',
+				'ninety_pluginPage_pdf_section'
+			);
+
+			add_settings_field(
 				'ninety_pdf_title',
 				__(
 					'PDF Title',
@@ -770,6 +784,21 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		}
 
 		/**
+		 * Output Create PDF checkbox
+		 *
+		 * @return void
+		 * @since 1.0.0
+		 */
+		public function ninety_create_pdf_render() {
+			$create = ninety_ninety()->get_option( 'ninety_create_pdf' );
+			?>
+			<input type='checkbox'
+				   name='ninety_settings[ninety_create_pdf]' <?php checked( $create, 1 ); ?> value='1'>
+			<?php
+
+		}
+
+		/**
 		 * Output PDF Title field
 		 *
 		 * @return void
@@ -778,7 +807,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		public function ninety_pdf_title_render() {
 			$title = ninety_ninety()->get_option( 'ninety_pdf_title' );
 			?>
-			<input type='text' name='ninety_settings[ninety_pdf_title]' value='<?php echo esc_html( $title ); ?>'
+			<input class='pdf-display' type='text' name='ninety_settings[ninety_pdf_title]' value='<?php echo esc_html( $title ); ?>'
 				   size="125">
 			<?php
 
@@ -793,7 +822,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		public function ninety_pdf_show_days_render() {
 			$show_days = ninety_ninety()->get_option( 'ninety_pdf_show_days' );
 			?>
-			<input type='checkbox'
+			<input class='pdf-display' type='checkbox'
 				   name='ninety_settings[ninety_pdf_show_days]' <?php checked( $show_days, 1 ); ?> value='1'>
 			<?php
 
@@ -856,6 +885,11 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * @since 1.1.0
 		 */
 		public function ninety_create_pdf() {
+
+			if ( ! ninety_ninety()->get_option( 'ninety_create_pdf' ) ) {
+				return;
+			}
+
 			$meetings = ninety_ninety()->get_meetings();
 
 			// Bail if no Meetings found.
