@@ -109,8 +109,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			// Get stored options set on plugin options page.
 			$this->options = get_option( 'ninety_settings' );
 
-			load_plugin_textdomain( 'ninety-ninety', false, NINETY_NINETY_PATH . 'lang' );
-
 			// Meeting CPT and taxonomies.
 			require_once NINETY_NINETY_PATH . 'inc/class-cpt-tax.php';
 			// Instantiate CPT class.
@@ -165,6 +163,9 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				);
 			}
 			add_action( 'widgets_init', [ $this, 'register_widgets' ] );
+//			add_action( 'load-post.php', 'NinetyHelpTabs::init' );
+//			add_action( 'load-post-new.php', [ 'NinetyHelptabs', 'init' ] );
+			add_action( 'init', [ $this, 'load_text_domain'] );
 			add_filter( 'acf/settings/show_admin', [ $this, 'acf_show_admin' ] );
 			add_filter( 'template_include', [ $this, 'ninety_archive_template' ] );
 			add_filter( 'wp_setup_nav_menu_item', [ $this, 'hide_meeting_nav_menu_objects' ] );
@@ -178,12 +179,10 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 //			add_filter( 'pre_get_posts', [ $this, 'search_it_all' ] );
 		}
 
-//		public function search_it_all( $query ) {
-//			if ( $query->is_search ) {
-//				$types = get_post_types( ['public'=> true ], 'names' );
-//				$query->set( 'post_type', $types );
-//			}
-//		}
+		public static function load_text_domain() {
+			$p = NINETY_NINETY_PATH . 'lang';
+			load_plugin_textdomain( 'ninety-ninety', false, $p );
+		}
 
 		/**
 		 * Register our widgets
