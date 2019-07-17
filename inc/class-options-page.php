@@ -438,7 +438,9 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 
 			$count ++;
 
-			return $input;
+			$sanitized_input = array_map( 'sanitize_text_field', $input );
+
+			return $sanitized_input;
 		}
 
 		/**
