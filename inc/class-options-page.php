@@ -413,20 +413,25 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			static $count = 0;
 
 			if ( $count < 1 ) {
+				// If no MapBox API key is entered, display an error message - this is needed for geolocation
+				// as well as some of the tile sets.
 				if ( '' === $input['ninety_mapbox_api_key'] ) {
 					add_settings_error(
 						'ninety_mapbox_key',
 						esc_attr( 'settings_updated' ),
 						'MapBox API key is needed for geocoding Locations and displaying some of the tile sets.',
-						'error'
+						'notice-error'
 					);
 				}
-				if ( '' === $input['ninety_thunderforest_api_key'] ) {
+
+				$thunderforest_tile_set = false !== strpos( $input['ninety_tile_server'], 'thunder' ) ? true : false;
+				// If a Thunderforest tile set is selected and no API key is entered, display an error message.
+				if ( '' === $input['ninety_thunderforest_api_key'] && $thunderforest_tile_set ) {
 					add_settings_error(
 						'ninety_thunderforest_key',
 						esc_attr( 'settings_updated' ),
-						'Thunderforest API key is needed for displaying some of the tile sets.',
-						'error'
+						'Thunderforest API key is needed to display the selected tile set.',
+						'notice-error'
 					);
 				}
 			}

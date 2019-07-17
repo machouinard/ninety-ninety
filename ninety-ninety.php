@@ -11,7 +11,7 @@
  * Plugin Name: 90 in 90
  * Plugin URI:
  * Description: Track 90 meetings in 90 days.  Built for AA but customizable to any program.
- * Version: 1.4.0
+ * Version: 1.0.0
  * Author: Mark Chouinard
  * Author URI: https://chouinard.me
  * Text Domain: ninety-ninety
@@ -35,7 +35,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		/**
 		 * @var string Plugin version
 		 */
-		public $version = '1.4.0';
+		public $version = '1.0.0';
 		/**
 		 * @var array Settings array
 		 */
