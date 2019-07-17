@@ -410,7 +410,8 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * @since 1.2.0
 		 */
 		public function sanitize_callback( $input = [] ) {
-			static $count = 0;
+
+			static $count = 0; // Ensure errors are only added once.
 
 			if ( $count < 1 ) {
 				// If no MapBox API key is entered, display an error message - this is needed for geolocation

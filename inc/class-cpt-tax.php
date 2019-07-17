@@ -77,7 +77,7 @@ class NinetyNinety_CPT {
 			'has_archive'         => true,
 			'hierarchical'        => false,
 			'menu_position'       => 25,
-			'supports'            => [ 'permalink', 'genesis-cpt-archives-settings' ],
+			'supports'            => [ 'editor', 'permalink', 'genesis-cpt-archives-settings' ],
 			'exclude_from_search' => true,
 			'taxonomies'          => [ 'ninety_meeting_location', 'ninety_meeting_type' ],
 		];
