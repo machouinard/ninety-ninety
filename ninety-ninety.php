@@ -15,7 +15,6 @@
  * Author: Mark Chouinard
  * Author URI: https://chouinard.me
  * Text Domain: ninety-ninety
- * Domain Path: /lang
  * License: GNU General Public License v2 or later
  * License URI: http://www.gnu.org/licenses/gpl-2.0.html
  */
@@ -353,8 +352,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @since 1.0.0
 		 */
 		public static function load_text_domain() {
-			$p = NINETY_NINETY_PATH . 'lang';
-			load_plugin_textdomain( 'ninety-ninety', false, $p );
+			load_plugin_textdomain( 'ninety-ninety', false, 'ninety-ninety/lang' );
 		}
 
 		/**
