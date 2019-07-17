@@ -17,7 +17,7 @@ div.single-details {
 	border: 1px solid navy;
 	position: relative;
 	padding: 1em;
-	margin-top: 2em;
+	margin: 1em 0;
 	background-color: lightgrey;
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
