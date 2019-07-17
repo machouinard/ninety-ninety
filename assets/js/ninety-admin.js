@@ -93,7 +93,7 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("jQuery(document).ready(function ($) {\n  $('.ninety-color-field').wpColorPicker();\n});\n\n//# sourceURL=webpack:///./src/admin/js/admin-index.js?");
+eval("jQuery(document).ready(function ($) {\n  $('.ninety-color-field').wpColorPicker();\n  $('.ninety-datepicker').datepicker(); // Handle click on \"x\" by datepicker fields to clear value.\n\n  $('.pdf-clear').click(function (e) {\n    // (e.target).previousSibling is the date input field.\n    e.target.previousSibling.value = '';\n  });\n});\n\n//# sourceURL=webpack:///./src/admin/js/admin-index.js?");
 
 /***/ })
 

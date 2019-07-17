@@ -45,9 +45,8 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			);
 
 			add_action( 'load-' . $options_page, 'NinetyHelptabs::add_options_help_tabs' );
+
 		}
-
-
 
 		/**
 		 * Description
@@ -203,7 +202,6 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 				'ninety_pluginPage_map_section'
 			);
 
-			// TODO: If we use marker bounds we don't need lat/lng/zoom.
 			add_settings_field(
 				'ninety_map_center_lat',
 				__( 'Default Map Center Lat', 'ninety-ninety' ),
@@ -322,6 +320,20 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			);
 
 			add_settings_field(
+				'ninety_create_pdf',
+				__(
+					'Create PDF?',
+					'ninety-ninety'
+				),
+				[
+					$this,
+					'ninety_create_pdf_render',
+				],
+				'pluginPdf',
+				'ninety_pluginPage_pdf_section'
+			);
+
+			add_settings_field(
 				'ninety_pdf_title',
 				__(
 					'PDF Title',
@@ -344,6 +356,34 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 				[
 					$this,
 					'ninety_pdf_show_days_render',
+				],
+				'pluginPdf',
+				'ninety_pluginPage_pdf_section'
+			);
+
+			add_settings_field(
+				'ninety_pdf_start_date',
+				__(
+					'Start Date for PDF? (optional)',
+					'ninety-ninety'
+				),
+				[
+					$this,
+					'ninety_pdf_start_date_render',
+				],
+				'pluginPdf',
+				'ninety_pluginPage_pdf_section'
+			);
+
+			add_settings_field(
+				'ninety_pdf_end_date',
+				__(
+					'End Date for PDF? (optional)',
+					'ninety-ninety'
+				),
+				[
+					$this,
+					'ninety_pdf_end_date_render',
 				],
 				'pluginPdf',
 				'ninety_pluginPage_pdf_section'
@@ -770,6 +810,21 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		}
 
 		/**
+		 * Output Create PDF checkbox
+		 *
+		 * @return void
+		 * @since 1.0.0
+		 */
+		public function ninety_create_pdf_render() {
+			$create = ninety_ninety()->get_option( 'ninety_create_pdf' );
+			?>
+			<input type='checkbox'
+				   name='ninety_settings[ninety_create_pdf]' <?php checked( $create, 1 ); ?> value='1'>
+			<?php
+
+		}
+
+		/**
 		 * Output PDF Title field
 		 *
 		 * @return void
@@ -778,7 +833,8 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		public function ninety_pdf_title_render() {
 			$title = ninety_ninety()->get_option( 'ninety_pdf_title' );
 			?>
-			<input type='text' name='ninety_settings[ninety_pdf_title]' value='<?php echo esc_html( $title ); ?>'
+			<input class='pdf-display' type='text' name='ninety_settings[ninety_pdf_title]'
+				   value='<?php echo esc_html( $title ); ?>'
 				   size="125">
 			<?php
 
@@ -793,10 +849,48 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		public function ninety_pdf_show_days_render() {
 			$show_days = ninety_ninety()->get_option( 'ninety_pdf_show_days' );
 			?>
-			<input type='checkbox'
+			<input class='pdf-display' type='checkbox'
 				   name='ninety_settings[ninety_pdf_show_days]' <?php checked( $show_days, 1 ); ?> value='1'>
 			<?php
 
+		}
+
+		/**
+		 * Output PDF Start Date field
+		 *
+		 * @return void
+		 * @since 1.0.0
+		 */
+		public function ninety_pdf_start_date_render() {
+			$start_date = ninety_ninety()->get_option( 'ninety_pdf_start_date' );
+			?>
+			<style>
+				span.pdf-clear {
+					color: #8c0000;
+					margin-left: 1rem;
+					cursor: pointer;
+				}
+			</style>
+			<input class='ninety-datepicker' readonly name='ninety_settings[ninety_pdf_start_date]'
+				   value='<?php echo esc_attr( $start_date ); ?>' placeholder='Select Date'><span
+					class="pdf-clear">x</span>
+			<?php
+		}
+
+		/**
+		 * Output PDF End Date field
+		 *
+		 * @return void
+		 * @since 1.0.0
+		 */
+		public function ninety_pdf_end_date_render() {
+			$end_date = ninety_ninety()->get_option( 'ninety_pdf_end_date' );
+			?>
+			<input class='ninety-datepicker' readonly name='ninety_settings[ninety_pdf_end_date]'
+				   value='<?php echo esc_attr( $end_date ); ?>' placeholder='Select Date'><span
+					class="pdf-clear">x</span>
+
+			<?php
 		}
 
 		/**
@@ -856,7 +950,26 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * @since 1.1.0
 		 */
 		public function ninety_create_pdf() {
-			$meetings = ninety_ninety()->get_meetings();
+
+			if ( ! ninety_ninety()->get_option( 'ninety_create_pdf' ) ) {
+				return;
+			}
+
+			$args       = [];
+			$start_date = ninety_ninety()->get_option( 'ninety_pdf_start_date' );
+			$end_date   = ninety_ninety()->get_option( 'ninety_pdf_end_date' );
+
+			if ( $start_date && $end_date ) {
+				$args['date_query'] = [
+					[
+						'after'     => $start_date,
+						'before'    => $end_date,
+						'inclusive' => true,
+					],
+				];
+			}
+
+			$meetings = ninety_ninety()->get_meetings( $args );
 
 			// Bail if no Meetings found.
 			if ( empty( $meetings ) ) {
