@@ -14,7 +14,8 @@ add_filter(
 	]
 );
 //remove_action( 'genesis_entry_content', 'genesis_do_post_content' );
-// Extend Entry content with our own.
+
+// Prepend Entry content with our own.
 add_action( 'genesis_entry_content', 'ninety_meeting_entry_content', 5 );
 /**
  * Output single Meeting content
@@ -30,7 +31,6 @@ function ninety_meeting_entry_content() {
 	$notes         = get_field( 'ninety_meeting_notes', get_the_ID() );
 	$speaker       = get_field( 'ninety_meeting_speaker', get_the_ID() );
 	$topic         = get_field( 'ninety_meeting_topic', get_the_ID() );
-	$private_notes = get_field( 'ninety_meeting_private_notes', get_the_ID() );
 
 	if ( $location instanceof WP_Term ) {
 		echo '<h3><a href="/meetings/' . esc_attr( $location->slug ) . '">' . esc_html( $location->name ) . '</a></h3>';
@@ -39,20 +39,22 @@ function ninety_meeting_entry_content() {
 	echo '<div class="single-details">';
 
 	if ( $speaker ) {
-		echo '<p>';
-		echo esc_html( __( 'Speaker:&nbsp;', 'ninety-ninety' ) . $speaker );
+		echo '<p class="ninety-speaker">';
+		echo esc_html( __( 'Speaker', 'ninety-ninety' ) . ':&nbsp;' . $speaker );
 		echo '</p>';
 	}
 
 	if ( $topic ) {
-		echo '<p>';
-		echo esc_html( __( 'Topic:&nbsp;', 'ninety-ninety' ) . $topic );
+		echo '<p class="ninety-topic">';
+		echo esc_html( __( 'Topic', 'ninety-ninety' ) . ':&nbsp;' . $topic );
 		echo '</p>';
 	}
 
-	// If we have notes and they're not private, put 'em on the page.
-	if ( $notes && ! $private_notes ) {
+	// If we have notes, put 'em on the page.
+	if ( $notes ) {
+		echo '<div class="ninety-notes-container">';
 		echo apply_filters( 'the_content', $notes );
+		echo '</div>';
 	}
 
 	echo '<span class="locked-bottom"><a href="/meetings/">back to meetings</a></span>';
