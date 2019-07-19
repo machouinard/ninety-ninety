@@ -131,8 +131,6 @@ class Ninety_Meeting_Archives extends WP_Widget {
 				   name="<?php echo esc_html( $this->get_field_name( 'title' ) ); ?>" type="text"
 				   value="<?php echo esc_attr( $title ); ?>"/></p>
 
-		?>
-
 		<p><input class="checkbox" type="checkbox" <?php echo $dropdown; ?>
 				  id="<?php echo $this->get_field_id( 'dropdown' ); ?>"
 				  name="<?php echo $this->get_field_name( 'dropdown' ); ?>"/> <label
