@@ -134,6 +134,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			require_once $path . 'inc/widget-meeting-search.php';
 
+			require_once $path . 'inc/class-widget-meeting-archives.php';
+
 			require_once $path . 'inc/class-ninety-help-tabs.php';
 
 			$this->add_actions_and_filters();
@@ -343,6 +345,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			register_widget( 'Ninety_Meeting_Calendar' );
 			register_widget( 'Ninety_Meeting_Search' );
+			register_widget( 'Ninety_Meeting_Archives' );
 		}
 
 		/**
