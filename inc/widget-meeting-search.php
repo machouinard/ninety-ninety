@@ -32,7 +32,6 @@ class Ninety_Meeting_Search extends WP_Widget {
 	 * @since 1.0.0
 	 */
 	public function add_form_input_post_type( $form ) {
-//		$options  = get_option( $this->option_name );
 		$posttype = 'ninety_meeting';
 		$insert   = '<input type="hidden" name="post_type" value="' . $posttype . '">';
 
