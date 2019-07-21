@@ -59,7 +59,7 @@ const meetingMap = () => {
 			// Create Marker
 			// const marker = L.marker( new L.latLng( g[ 1 ], g[ 0 ] ), markerOptions );
 			// Bind tooltip to Marker
-			marker.bindTooltip( p.title );
+			marker.bindTooltip( p.title + '&nbsp;(' + parseInt( p.count ) + ')' );
 			// Bind popup to Marker
 			marker.bindPopup( popupContent );
 			// Add Marker to array for later
