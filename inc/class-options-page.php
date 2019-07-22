@@ -971,7 +971,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 				$args['date_query'] = [
 					[
 						'after'     => $start_date,
-						'before'    => $end_date,
+						'before'    => $end_date . ' + 1 day - 1 second', // Make sure we include all of the end date.
 						'inclusive' => true,
 					],
 				];
