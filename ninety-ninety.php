@@ -157,7 +157,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			add_action( 'acf/init', 'ninety_init_acf_import' );
 			add_action( 'acf/save_post', [ $this, 'set_meeting_title_time' ], PHP_INT_MAX );
-			add_action( 'template_redirect', [ $this, 'redirect_single_archive' ] );
+			add_action( 'template_redirect', [ $this, 'redirect_single_result' ] );
 			// Run as late as possible.
 			if ( ! class_exists( 'ACF' ) ) {
 				add_filter( 'acf/settings/dir', [ $this, 'acf_settings_dir' ] );
@@ -327,14 +327,23 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @return void
 		 * @since 1.0.0
 		 */
-		public function redirect_single_archive() {
-			if ( is_archive( 'ninety_meeting' ) ) {
+		public function redirect_single_result() {
+			if ( is_post_type_archive( 'ninety_meeting' ) ) {
 				global $wp_query;
 				if ( 1 == $wp_query->post_count ) {
 					// Get Location using term ID from post meta
 					$location = get_term_by( 'id', $wp_query->post->ninety_meeting_location, 'ninety_meeting_location' );
 					// Redirect to single Meeting page with location to hide next/prev links
 					wp_redirect( site_url( 'meetings/' . $location->slug . '/' ) . $wp_query->posts[0]->post_name );
+					exit;
+				}
+			}
+
+			if ( is_search() || is_archive() ) {
+				global $wp_query;
+				if ( 1 === $wp_query->post_count ) {
+					wp_safe_redirect( get_permalink( $wp_query->posts[0]->ID ) );
+					exit;
 				}
 			}
 		}
