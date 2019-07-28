@@ -13,6 +13,10 @@ div.ninety-chart-container {
 	margin: 2em auto 0;
 }
 
+div.ninety-notes-container {
+	margin-bottom: 2em;
+}
+
 div.single-details {
 	border: 1px solid navy;
 	position: relative;
