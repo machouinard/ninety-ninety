@@ -55,7 +55,7 @@ function ninety_correct_post_link( $output, $format, $link, $post, $adjacent ) {
 		return $output;
 	}
 
-	if ( '‌ninety_meeting' !== $post->post_type ) {
+	if ( 'ninety_meeting' !== $post->post_type ) {
 		return $output;
 	}
 

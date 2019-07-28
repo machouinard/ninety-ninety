@@ -3,7 +3,7 @@
  * Conditional single template for Genesis child themes
  */
 
-// TODO: build template.
+// TODO: 2019-07-27: Improve template.
 
 // Filter entry meta ( static function in NinetyNinety class ).
 add_filter(
