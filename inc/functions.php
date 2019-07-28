@@ -50,6 +50,18 @@ function ninety_meeting_entry_content() {
 
 }
 
+/**
+ * Ensure prev/next links include Location if on Location tax page
+ *
+ * @param $output
+ * @param $format
+ * @param $link
+ * @param $post
+ * @param $adjacent
+ *
+ * @return mixed
+ * @since 1.0.0
+ */
 function ninety_correct_post_link( $output, $format, $link, $post, $adjacent ) {
 	if ( empty( $output ) ) {
 		return $output;
@@ -70,7 +82,13 @@ function ninety_correct_post_link( $output, $format, $link, $post, $adjacent ) {
 	return $new_output;
 }
 
-
+/**
+ * Output prev/next links conditionally using same tax arg
+ *
+ * @return void
+ * @since 1.0.0
+ *
+ */
 function ninety_single_post_nav() {
 
 	echo '<div class="navigation pagination">';
