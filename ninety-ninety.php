@@ -138,6 +138,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			require_once $path . 'inc/class-ninety-help-tabs.php';
 
+			require_once $path . 'inc/functions.php';
+
 			$this->add_actions_and_filters();
 
 		}
@@ -938,8 +940,9 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			$location = get_field( 'ninety_meeting_location', get_the_ID() );
 
 			$program = empty( $program ) ? '' : $program;
+			$link = get_site_url( null, 'meetings/' . $location->slug );
 
-			$post_info = apply_filters( 'ninety_meeting_genesis_meta', '[post_categories before="" after=" &middot;"] <strong>' . esc_attr( $location->name ) . '</strong> &middot; <em>' . esc_attr( $type->name ) . '</em> &middot; ' . esc_attr( $program ) . ' [post_edit before=" &middot; "]' );
+			$post_info = apply_filters( 'ninety_meeting_genesis_meta', '[post_categories before="" after=" &middot;"] <strong><a href="' . $link . '">' . esc_attr( $location->name ) . '</a></strong> &middot; <em>' . esc_attr( $type->name ) . '</em> &middot; ' . esc_attr( $program ) . ' [post_edit before=" &middot; "]' );
 
 			return $post_info;
 

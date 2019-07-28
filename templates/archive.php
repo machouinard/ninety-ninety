@@ -4,50 +4,45 @@ get_header();
 // TODO: build template.
 ?>
 
-	<section id="primary" class="content-area">
-		<main id="main" class="site-main">
+	<div class="wrap">
+		<section id="primary" class="content-area">
+			<main id="main" class="site-main" role="main">
 
-			<?php if ( have_posts() ) : ?>
+				<?php if ( have_posts() ) : ?>
 
-				<header class="page-header">
-					<?php
-					the_archive_title( '<h1 class="page-title">', '</h1>' );
-					?>
-				</header><!-- .page-header -->
+				<article <?php post_class(); ?>>
+					<header class="entry-header">
+						<?php
+						the_archive_title( '<h1 class="page-title">', '</h1>' );
+						?>
+					</header><!-- .page-header -->
 
-				<?php
-				// Start the Loop.
-				while ( have_posts() ) :
-					the_post();
+					<div class="entry-content">
+						<?php
+						// Start the Loop.
+						while ( have_posts() ) :
+							the_post();
 
-					printf( '<a href="%s"><h2>%s</h2></a>', get_the_permalink(), get_the_title() );
+							printf( '<a href="%s"><h2>%s</h2></a>', get_the_permalink(), get_the_title() );
 
-					$loc = get_field( 'ninety_meeting_location', get_the_ID() );
-					echo esc_attr( $loc->name );
+							$loc = get_field( 'ninety_meeting_location', get_the_ID() );
+							echo esc_attr( $loc->name );
 
-					/*
-					 * Include the Post-Format-specific template for the content.
-					 * If you want to override this in a child theme, then include a file
-					 * called content-___.php (where ___ is the Post Format name) and that will be used instead.
-					 */
-					get_template_part( 'template-parts/content/content', 'excerpt' );
+							// End the loop.
+						endwhile;
+						endif;
+						?>
+					</div>
+				</article>
 
-					// End the loop.
-				endwhile;
-				?>
-			<?php
-			// Previous/next page navigation.
-//			twentynineteen_the_posts_navigation();
+				<div class="navigation pagination">
+					<?php posts_nav_link(); ?>
+				</div>
+			</main><!-- #main -->
 
-			// If no content, include the "No posts found" template.
-			else :
-				get_template_part( 'template-parts/content/content', 'none' );
+		</section><!-- #primary -->
 
-			endif;
-			?>
-		</main><!-- #main -->
-	</section><!-- #primary -->
+	</div>
 
 <?php
 get_footer();
-
