@@ -157,6 +157,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			add_action( 'acf/init', 'ninety_init_acf_import' );
 			add_action( 'acf/save_post', [ $this, 'set_meeting_title_time' ], PHP_INT_MAX );
+			add_action( 'template_redirect', [ $this, 'redirect_single_archive' ] );
 			// Run as late as possible.
 			if ( ! class_exists( 'ACF' ) ) {
 				add_filter( 'acf/settings/dir', [ $this, 'acf_settings_dir' ] );
@@ -316,6 +317,21 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 				if ( $address ) {
 					$this->geocode_meeting_location( $term_id, $address );
+				}
+			}
+		}
+
+		/**
+		 * Redirect to single template if only 1 Meeting archive
+		 *
+		 * @return void
+		 * @since 1.0.0
+		 */
+		public function redirect_single_archive() {
+			if ( is_archive( 'ninety_meeting' ) ) {
+				global $wp_query;
+				if ( 1 == $wp_query->post_count ) {
+					wp_redirect( site_url( 'meetings/' ) . $wp_query->posts[0]->post_name );
 				}
 			}
 		}
@@ -940,7 +956,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			$location = get_field( 'ninety_meeting_location', get_the_ID() );
 
 			$program = empty( $program ) ? '' : $program;
-			$link = get_site_url( null, 'meetings/' . $location->slug );
+			$link    = get_site_url( null, 'meetings/' . $location->slug );
 
 			$post_info = apply_filters( 'ninety_meeting_genesis_meta', '[post_categories before="" after=" &middot;"] <strong><a href="' . $link . '">' . esc_attr( $location->name ) . '</a></strong> &middot; <em>' . esc_attr( $type->name ) . '</em> &middot; ' . esc_attr( $program ) . ' [post_edit before=" &middot; "]' );
 
