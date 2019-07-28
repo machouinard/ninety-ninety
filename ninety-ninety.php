@@ -138,6 +138,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			require_once $path . 'inc/class-ninety-help-tabs.php';
 
+			require_once $path . 'inc/functions.php';
+
 			$this->add_actions_and_filters();
 
 		}
