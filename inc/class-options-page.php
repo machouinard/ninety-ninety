@@ -963,18 +963,22 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 				return;
 			}
 
-			$args       = [];
 			$start_date = ninety_ninety()->get_option( 'ninety_pdf_start_date' );
 			$end_date   = ninety_ninety()->get_option( 'ninety_pdf_end_date' );
 
-			if ( $start_date && $end_date ) {
+			if ( $start_date || $end_date ) {
 				$args['date_query'] = [
 					[
-						'after'     => $start_date,
-						'before'    => $end_date . ' + 1 day - 1 second', // Make sure we include all of the end date.
 						'inclusive' => true,
 					],
 				];
+
+				if ( $start_date ) {
+					$args['date_query'][0]['after'] = $start_date;
+				}
+				if ( $end_date ) {
+					$args['date_query'][0]['before'] = $end_date . ' + 1 day - 1 second';
+				}
 			}
 
 			$meetings = ninety_ninety()->get_meetings( $args );
@@ -1091,7 +1095,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			// Output file path and filename.
 			$meetings_pdf_file = NINETY_NINETY_PATH . 'meeting-files/' . $title;
 
-			// Create PDF.
+			// Create PDF. 'F' - save to file
 			$pdf->Output(
 				'F',
 				$meetings_pdf_file
