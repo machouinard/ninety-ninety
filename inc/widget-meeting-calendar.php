@@ -1,8 +1,8 @@
 <?php
 /**
  * Ninety Meeting Calendar widget class
- *
- * Heavily based on https://github.com/thingsym/custom-post-type-widgets/blob/master/inc/widget-custom-post-type-calendar.php
+ * Heavily based on
+ * https://github.com/thingsym/custom-post-type-widgets/blob/master/inc/widget-custom-post-type-calendar.php
  *
  * @since   1.0.0
  * @package Ninety in Ninety
@@ -100,14 +100,16 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 		// Remove filter before applying it below to prevent max function nesting level error.
 		// Do this outside the if statement because it needs to be removed regardless.
 		remove_filter( 'get_calendar', array( $this, 'get_meeting_calendar' ) );
-		
+
 		if ( $cache && is_array( $cache ) && isset( $cache[ $key ] ) ) {
 			/** This filter is documented in wp-includes/general-template.php */
 			$output = apply_filters( 'get_calendar', $cache[ $key ] );
 			if ( $echo ) {
 				echo $output;
+
 				return;
 			}
+
 			return $output;
 		}
 
@@ -121,6 +123,7 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 			if ( ! $gotsome ) {
 				$cache[ $key ] = '';
 				wp_cache_set( 'get_calendar', $cache, 'calendar' );
+
 				return;
 			}
 		}
@@ -261,12 +264,11 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 			     current_time( 'm' ) == $thismonth &&
 			     current_time( 'Y' ) == $thisyear ) {
 				$calendar_output .= '<td id="today">';
-			}
-			else {
+			} else {
 				$calendar_output .= '<td>';
 			}
 
-			if ( isset( $daywithpost[$day]) ) {
+			if ( isset( $daywithpost[ $day ] ) ) {
 				// any posts today?
 				$date_format = date( _x( 'F j, Y', 'daily archives date format' ), strtotime( "{$thisyear}-{$thismonth}-{$day}" ) );
 				// translators: when the meetings happened.
@@ -276,7 +278,7 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 					get_day_link( $thisyear, $thismonth, $day ),
 					// $this->get_custom_post_type_day_link( $posttype, $thisyear, $thismonth, $day ),
 					esc_attr( $label ),
-					$this->maybe_bold_day( $day, $daywithpost[$day] )
+					$this->maybe_bold_day( $day, $daywithpost[ $day ] )
 				);
 			} else {
 				$calendar_output .= $day;
