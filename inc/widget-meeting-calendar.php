@@ -51,7 +51,6 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 		echo '</div>';
 		echo $args['after_widget'];
 
-		remove_filter( 'get_calendar', array( $this, 'get_meeting_calendar' ) );
 		remove_filter( 'month_link', array( $this, 'get_month_link_meeting' ) );
 		remove_filter( 'day_link', array( $this, 'get_day_link_meeting' ) );
 
@@ -81,7 +80,7 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 	}
 
 	/**
-	 * Function that extend the get_calendar
+	 * Extend the get_calendar
 	 *
 	 * @param string  $calendar_output
 	 * @param boolean $initial
@@ -95,9 +94,35 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 
 		$posttype = 'ninety_meeting';
 
+		$key   = md5( $posttype . $m . $monthnum . $year );
+		$cache = wp_cache_get( 'get_calendar', 'calendar' );
+
+		// Remove filter before applying it below to prevent max function nesting level error.
+		// Do this outside the if statement because it needs to be removed regardless.
+		remove_filter( 'get_calendar', array( $this, 'get_meeting_calendar' ) );
+		
+		if ( $cache && is_array( $cache ) && isset( $cache[ $key ] ) ) {
+			/** This filter is documented in wp-includes/general-template.php */
+			$output = apply_filters( 'get_calendar', $cache[ $key ] );
+			if ( $echo ) {
+				echo $output;
+				return;
+			}
+			return $output;
+		}
+
+		if ( ! is_array( $cache ) ) {
+			$cache = array();
+		}
+
 		// Quick check. If we have no posts at all, abort!
 		if ( ! $posts ) {
 			$gotsome = $wpdb->get_var( "SELECT 1 as test FROM $wpdb->posts WHERE post_type = '$posttype' AND post_status = 'publish' LIMIT 1" );
+			if ( ! $gotsome ) {
+				$cache[ $key ] = '';
+				wp_cache_set( 'get_calendar', $cache, 'calendar' );
+				return;
+			}
 		}
 
 		if ( isset( $_GET['w'] ) ) {
@@ -206,13 +231,14 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 		$daywithpost = array();
 
 		// Get days with posts
-		$dayswithposts = $wpdb->get_results( "SELECT DISTINCT DAYOFMONTH(post_date)
+		$dayswithposts = $wpdb->get_results( "SELECT DAYOFMONTH(post_date) AS meeting_date, COUNT(post_title) as meeting_count
 			FROM $wpdb->posts WHERE post_date >= '{$thisyear}-{$thismonth}-01 00:00:00'
 			AND post_type = '$posttype' AND post_status = 'publish'
-			AND post_date <= '{$thisyear}-{$thismonth}-{$last_day} 23:59:59'", ARRAY_N );
+			AND post_date <= '{$thisyear}-{$thismonth}-{$last_day} 23:59:59' GROUP BY meeting_date ORDER BY meeting_date", ARRAY_N );
+
 		if ( $dayswithposts ) {
 			foreach ( (array) $dayswithposts as $daywith ) {
-				$daywithpost[] = $daywith[0];
+				$daywithpost[ $daywith[0] ] = $daywith[1];
 			}
 		}
 
@@ -231,15 +257,16 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 			}
 			$newrow = false;
 
-			if ( $day == gmdate( 'j', current_time( 'timestamp' ) ) &&
-			     $thismonth == gmdate( 'm', current_time( 'timestamp' ) ) &&
-			     $thisyear == gmdate( 'Y', current_time( 'timestamp' ) ) ) {
+			if ( current_time( 'j' ) == $day &&
+			     current_time( 'm' ) == $thismonth &&
+			     current_time( 'Y' ) == $thisyear ) {
 				$calendar_output .= '<td id="today">';
-			} else {
+			}
+			else {
 				$calendar_output .= '<td>';
 			}
 
-			if ( in_array( $day, $daywithpost ) ) {
+			if ( isset( $daywithpost[$day]) ) {
 				// any posts today?
 				$date_format = date( _x( 'F j, Y', 'daily archives date format' ), strtotime( "{$thisyear}-{$thismonth}-{$day}" ) );
 				// translators: when the meetings happened.
@@ -249,7 +276,7 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 					get_day_link( $thisyear, $thismonth, $day ),
 					// $this->get_custom_post_type_day_link( $posttype, $thisyear, $thismonth, $day ),
 					esc_attr( $label ),
-					$day
+					$this->maybe_bold_day( $day, $daywithpost[$day] )
 				);
 			} else {
 				$calendar_output .= $day;
@@ -268,11 +295,20 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 
 		$calendar_output .= "\n\t</tr>\n\t</tbody>\n\t</table>";
 
+		$cache[ $key ] = $calendar_output;
+		wp_cache_set( 'get_calendar', $cache, 'calendar' );
+
 		if ( $echo ) {
 			echo $calendar_output;
 		} else {
 			return $calendar_output;
 		}
+	}
+
+	private function maybe_bold_day( $day, $num_meetings ) {
+		$day = $num_meetings > 1 ? '<strong>' . $day . '</strong>' : strval( $day );
+
+		return $day;
 	}
 
 	public function get_day_link_meeting( $daylink, $year, $month, $day ) {
