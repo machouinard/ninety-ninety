@@ -13,10 +13,8 @@ get_header();
 
 </div>
 
-<div class="ninety-chart-container">
-    <canvas id="ninety-chart" width="250" height="250"></canvas>
-</div>
-
 <?php
+
+ninety_add_chart_markup();
 
 get_footer();

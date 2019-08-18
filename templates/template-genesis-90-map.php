@@ -27,9 +27,7 @@ function ninety_map_page_content() {
 
 	echo '<div id="ninety-map"></div>';
 
-	echo '<div class="ninety-chart-container">';
-	echo '<canvas id="ninety-chart"></canvas>';
-	echo '</div>';
+	ninety_add_chart_markup();
 
 }
 

@@ -133,3 +133,17 @@ function ninety_maybe_tax_specific_permalink( $url, $post ) {
 
 	return $url;
 }
+
+function ninety_add_chart_markup() {
+
+	$show_chart = ninety_ninety()->get_option( 'ninety_show_chart' );
+
+	if ( $show_chart ) {
+
+		echo '<div class="ninety-chart-container">';
+		echo '<canvas id="ninety-chart"></canvas>';
+		echo '</div>';
+
+	}
+
+}
