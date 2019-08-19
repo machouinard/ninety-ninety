@@ -80,6 +80,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			$this->define( 'NINETY_COUNT_OPTION_KEY', 'ninety_meeting_count' );
 
 			$meeting_count = get_option( NINETY_COUNT_OPTION_KEY, 0 );
+			$last_updated = get_option( 'ninety_last_updated', current_time( 'timestamp' ) + 60 );// make sure default is ahead of who's asking to trigger update
 
 			$this->default_tile_server = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png';
 
@@ -94,6 +95,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				'show_admin'    => true,
 				'capability'    => 'manage_options',
 				'meeting_count' => $meeting_count,
+				'last_updated'  => $last_updated,
 			];
 
 			// Set filterable page templates used by this plugin.
@@ -166,6 +168,9 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_action( 'load-post.php', 'NinetyHelpTabs::add_meeting_help_tab' );
 			add_action( 'load-post-new.php', 'NinetyHelptabs::add_meeting_help_tab' );
 			add_action( 'init', [ $this, 'load_text_domain' ] );
+			add_action( 'save_post_ninety_meeting', [ $this, 'update_timestamp' ] );
+			add_action( 'edited_ninety_meeting_location', [ $this, 'update_timestamp' ] );
+			add_action( 'edited_ninety_meeting_type', [ $this, 'update_timestamp' ] );
 			add_filter( 'acf/settings/show_admin', [ $this, 'acf_show_admin' ] );
 			add_filter( 'template_include', [ $this, 'ninety_archive_template' ] );
 			add_filter( 'acf/load_field/key=field_5d182c40c6e57', [ $this, 'set_default_meeting_time' ] );
@@ -973,6 +978,23 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			$post_info = apply_filters( 'ninety_meeting_genesis_meta', '[post_categories before="" after=" &middot;"] <strong><a href="' . $link . '">' . esc_attr( $location->name ) . '</a></strong> &middot; <em>' . esc_attr( $type->name ) . '</em> &middot; ' . esc_attr( $program ) . ' [post_edit before=" &middot; "]' );
 
 			return $post_info;
+
+		}
+
+		/**
+		 * Update option when Meetings/Taxonomies change
+		 *
+		 * This is for future plans
+		 *
+		 * @return void
+		 * @since 1.0.0
+		 *
+		 */
+		public function update_timestamp( ) {
+
+			$time = current_time( 'timestamp' );
+			update_option( 'ninety_last_updated', $time );
+			$this->update_setting( 'last_updated', $time );
 
 		}
 
