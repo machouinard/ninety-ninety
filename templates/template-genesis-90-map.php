@@ -16,7 +16,7 @@ function ninety_map_title_output( $title ) {
 }
 
 //* Remove the post content (requires HTML5 theme support)
-remove_action( 'genesis_entry_content', 'genesis_do_post_content' );
+//remove_action( 'genesis_entry_content', 'genesis_do_post_content' );
 add_action( 'genesis_entry_content', 'ninety_map_page_content' );
 
 function ninety_map_page_content() {
