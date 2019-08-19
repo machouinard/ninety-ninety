@@ -769,6 +769,10 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			<input type='radio'
 				   name='ninety_settings[ninety_chart_type]' <?php checked( $type, 'doughnut' ); ?>
 				   value='doughnut'>
+			<label for="bar">Bar</label>
+			<input type='radio'
+				   name='ninety_settings[ninety_chart_type]' <?php checked( $type, 'bar' ); ?>
+				   value='bar'>
 			<?php
 
 		}

@@ -2,34 +2,82 @@ import Chart from 'chart.js';
 
 const meetingChart = () => {
 	const ctx = document.getElementById( 'ninety-chart' );
-	const meetingCount = geojson.meetingCount;
-	const remaining = 90 - meetingCount;
+	let meetingCount = geojson.meetingCount;
+	let remaining = 90 - meetingCount;
+	let legendDisplay;
 
-	// console.log( 'from ninety-chart.js' );
+	switch ( geojson.chartType ) {
+		case 'pie':
+			legendDisplay = true;
+			break;
+		case 'bar':
+			legendDisplay = false;
+			break;
+		default:
+			legendDisplay = false;
 
-	const data = {
-		labels: [ 'done', 'remaining' ],
-		datasets: [ {
-			label: 'Meeting Count',
-			data: [ meetingCount, remaining ],
-			backgroundColor: [ geojson.colors.done, geojson.colors.remaining ],
-		} ],
-	};
+	}
 
-	const legendDisplay = 'pie' === geojson.chartType ? true : false;
+	if ( 'bar' === geojson.chartType ) {
 
-	const options = {
-		responsive: true,
-		legend: {
-			display: legendDisplay
+		const barData = {
+			labels: ['Goal', 'Completed'],
+			datasets: [{
+				label: '',
+				data: [90, meetingCount],
+				backgroundColor: [ geojson.colors.done, geojson.colors.remaining ],
+			} ],
+		};
+
+		new Chart( ctx, {
+			type: 'bar',
+			data: barData,
+			options: {
+				responsive: true,
+				legend: {
+					display: legendDisplay
+				},
+				scales: {
+					xAxes: [{
+						stacked: true
+					}],
+					yAxes: [{
+						stacked: true
+					}]
+				}
+			}
+		} );
+
+	} else {
+
+		if ( 0 > remaining ) {
+			remaining = 0;
 		}
-	};
 
-	new Chart( ctx, {
-		type: geojson.chartType,
-		data: data,
-		options: options
-	} );
+		const data = {
+			labels: [ 'Done', 'To go' ],
+			datasets: [ {
+				label: 'Meeting Count',
+				data: [ meetingCount, remaining ],
+				backgroundColor: [ geojson.colors.done, geojson.colors.remaining ],
+			} ],
+		};
+
+		const options = {
+			responsive: true,
+			legend: {
+				display: legendDisplay
+			}
+		};
+
+		new Chart( ctx, {
+			type: geojson.chartType,
+			data: data,
+			options: options
+		} );
+
+	}
+
 };
 
 /**
@@ -38,6 +86,7 @@ const meetingChart = () => {
  * @see https://stackoverflow.com/a/34947440/774793
  */
 if ( 'doughnut' === geojson.chartType ) {
+
 	Chart.pluginService.register(
 		{
 			beforeDraw: function ( chart ) {
@@ -46,7 +95,7 @@ if ( 'doughnut' === geojson.chartType ) {
 					ctx = chart.chart.ctx;
 
 				ctx.restore();
-				var fontSize = ( height / 114 ).toFixed( 2 );
+				var fontSize = ( height / 132 ).toFixed( 2 );// Was 114.  Increased to fit numbers over 100
 				ctx.font = fontSize + "em sans-serif";
 				ctx.textBaseline = "middle";
 
