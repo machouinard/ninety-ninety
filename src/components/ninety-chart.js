@@ -21,10 +21,10 @@ const meetingChart = () => {
 	if ( 'bar' === geojson.chartType ) {
 
 		const barData = {
-			labels: ['Goal', 'Completed'],
-			datasets: [{
+			labels: [ 'Goal', 'Completed' ],
+			datasets: [ {
 				label: '',
-				data: [90, meetingCount],
+				data: [ 90, meetingCount ],
 				backgroundColor: [ geojson.colors.done, geojson.colors.remaining ],
 			} ],
 		};
@@ -38,12 +38,12 @@ const meetingChart = () => {
 					display: legendDisplay
 				},
 				scales: {
-					xAxes: [{
+					xAxes: [ {
 						stacked: true
-					}],
-					yAxes: [{
+					} ],
+					yAxes: [ {
 						stacked: true
-					}]
+					} ]
 				}
 			}
 		} );
