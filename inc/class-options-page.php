@@ -937,6 +937,8 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 				return;
 			}
 
+			$args = [];
+
 			$start_date = ninety_ninety()->get_option( 'ninety_pdf_start_date' );
 			$end_date   = ninety_ninety()->get_option( 'ninety_pdf_end_date' );
 
