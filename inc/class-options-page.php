@@ -682,7 +682,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * @since 1.0.0
 		 */
 		public function ninety_map_zoom_render() {
-			$zoom = ninety_ninety()->get_option( 'ninety_map_zoom' );
+			$zoom = ninety_ninety()->get_option( 'ninety_map_zoom', 2 );
 			?>
 			<input type='number' name='ninety_settings[ninety_map_zoom]'
 				   value='<?php echo (int) $zoom; ?>' min="1" max="18" step="1">
@@ -729,7 +729,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * @since 1.2.0
 		 */
 		public function ninety_chart_type_render() {
-			$type = ninety_ninety()->get_option( 'ninety_chart_type' );
+			$type = ninety_ninety()->get_option( 'ninety_chart_type', 'pie' );
 			?>
 			<label for="pie">Pie</label>
 			<input type='radio'

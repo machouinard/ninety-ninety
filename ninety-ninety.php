@@ -152,7 +152,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function add_actions_and_filters() {
 
-			// Actions
+			// Actions.
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_stuff' ] );
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_stuff' ] );
 			add_action( 'acf/init', 'ninety_init_acf_import' );
@@ -166,7 +166,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_action( 'save_post_ninety_meeting', [ $this, 'update_timestamp' ] );
 			add_action( 'edited_ninety_meeting_location', [ $this, 'update_timestamp' ] );
 			add_action( 'edited_ninety_meeting_type', [ $this, 'update_timestamp' ] );
-			// Filters
+			// Filters.
 			add_filter( 'acf/settings/show_admin', [ $this, 'acf_show_admin' ] );
 			add_filter( 'template_include', [ $this, 'archive_template' ] );
 			add_filter( 'acf/load_field/key=field_5d182c40c6e57', [ $this, 'set_default_meeting_time' ] );
@@ -190,7 +190,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function enqueue_admin_stuff() {
 			wp_enqueue_style( 'wp-color-picker' );
-			wp_enqueue_style( 'jquery-ui-datepicker-style', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css' );
+			wp_enqueue_style( 'jquery-ui-datepicker-style', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', [], $this->get_setting( 'version' ) );
 			$admin_script     = NINETY_NINETY_URL . 'assets/js/ninety-admin.js';
 			$admin_script_ver = filemtime( NINETY_NINETY_PATH . 'assets/js/ninety-admin.js' );
 			wp_enqueue_script(
@@ -264,10 +264,10 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				// localize script with geoJSON data for leafletjs.
 				wp_localize_script( 'ninety-ninety-script', 'geojson', $data );
 
-				/******** Leaflet JS **************/
+				/******** Leaflet JS ************* */
 				$leaflet_js_url = NINETY_NINETY_URL . 'assets/js/leaflet/leaflet.js';
 
-				wp_enqueue_script( 'map-js', $leaflet_js_url, array( 'jquery' ), '1.0' );
+				wp_enqueue_script( 'map-js', $leaflet_js_url, array( 'jquery' ), $this->get_setting( 'version' ) );
 
 				// Get default latitude from options page.
 				$lat = ninety_ninety()->get_option( 'ninety_map_center_lat' );
@@ -459,11 +459,11 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			$map_options = wp_parse_args( $atts, $defaults );
 
-			$chart_type = false !== $map_options['chart_type'] ? $map_options['chart_type'] : ninety_ninety()->get_option( 'ninety_chart_type' );
+			$chart_type = false !== $map_options['chart_type'] ? $map_options['chart_type'] : ninety_ninety()->get_option( 'ninety_chart_type', 'pie' );
 
-			$show_chart = false !== $map_options['show_chart'] ? true : ninety_ninety()->get_option( 'ninety_show_chart' );
+			$show_chart = false !== $map_options['show_chart'] ? true : ninety_ninety()->get_option( 'ninety_show_chart', false );
 
-			$zoom = false !== $map_options['zoom'] ? intval( $map_options['zoom'] ) : ninety_ninety()->get_option( 'ninety_map_zoom' );
+			$zoom = false !== $map_options['zoom'] ? intval( $map_options['zoom'] ) : ninety_ninety()->get_option( 'ninety_map_zoom', 1 );
 
 			$count = ninety_ninety()->get_setting( 'meeting_count' );
 
@@ -562,7 +562,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			$default_time = $this->get_option( 'ninety_default_mtg_time' );
 
-			if ( empty( $default_time ) ) {
+			if ( ! $default_time ) {
 				return $field;
 			}
 
@@ -601,6 +601,10 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			$location = $this->get_option( 'ninety_default_mtg_location' );
 
+			if ( ! $location ) {
+				return $field;
+			}
+
 			$field['default_value'] = $location;
 
 			return $field;
@@ -620,6 +624,10 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			// get default type option.
 			$type = $this->get_option( 'ninety_default_mtg_type' );
+
+			if ( ! $type ) {
+				return $field;
+			}
 
 			$field['default_value'] = $type;
 
