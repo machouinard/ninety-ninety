@@ -18,8 +18,7 @@ const meetingChart = () => {
 			legendDisplay = false;
 
 	}
-	// console.log( 'ctx', ctx );
-// console.log('chart type', chartType );
+
 	if ( 'bar' === chartType ) {
 
 		const barData = {
@@ -95,7 +94,7 @@ const meetingChart = () => {
 						ctx = chart.chart.ctx;
 
 					ctx.restore();
-					var fontSize = ( height / 132 ).toFixed( 2 );// Was 114.  Increased to fit numbers over 100
+					var fontSize = ( height / 132 ).toFixed( 2 );// Increased from 114.
 					ctx.font = fontSize + "em sans-serif";
 					ctx.textBaseline = "middle";
 
