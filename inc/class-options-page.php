@@ -306,6 +306,20 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			);
 
 			add_settings_field(
+				'ninety_delete_data',
+				__(
+					'Remove data when deleting plugin',
+					'ninety-ninety'
+				),
+				[
+					$this,
+					'ninety_delete_data_render',
+				],
+				'pluginMisc',
+				'ninety_pluginPage_misc_section'
+			);
+
+			add_settings_field(
 				'ninety_create_pdf',
 				__(
 					'Create PDF?',
@@ -789,6 +803,18 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 
 
 			<?php
+		}
+
+		public function ninety_delete_data_render() {
+			$exclude = ninety_ninety()->get_option( 'ninety_delete_data' );
+			?>
+			<input type='checkbox'
+				   class='ninety-danger'
+				   name='ninety_settings[ninety_delete_data]' <?php checked( $exclude, 1 ); ?>
+				   value='1'>
+			<span>This only removes plugin settings on this page, not Meetings or their associated taxonomies.</span>
+			<?php
+
 		}
 
 		/**
