@@ -48,7 +48,10 @@ if ( ! class_exists( 'Ninety_Map_JS' ) ) {
 		 * @since 1.0.0
 		 */
 		public function ninety_enqueue_map_scripts() {
-
+			global $post;
+			if ( ! is_a( $post, 'WP_Post' ) || ! has_shortcode( $post->post_content, 'ninety_map' ) ) {
+				return;
+			}
 			$leaflet_js_url = NINETY_NINETY_URL . 'assets/js/leaflet/leaflet.js';
 
 			wp_enqueue_script( 'map-js', $leaflet_js_url, array( 'jquery' ), '1.0' );
@@ -96,7 +99,7 @@ if ( ! class_exists( 'Ninety_Map_JS' ) ) {
 			);
 
 		}
-		
+
 	}
 
 	new Ninety_Map_JS();

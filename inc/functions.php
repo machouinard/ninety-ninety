@@ -134,16 +134,37 @@ function ninety_maybe_tax_specific_permalink( $url, $post ) {
 	return $url;
 }
 
-function ninety_add_chart_markup() {
+function ninety_add_chart_markup( $return = false, $chart_type = 'pie', $show_chart = null ) {
 
-	$show_chart = ninety_ninety()->get_option( 'ninety_show_chart' );
+	if ( null === $show_chart ) {
+		$show_chart = ninety_ninety()->get_option( 'ninety_show_chart' );
+	}
 
-	if ( $show_chart ) {
+	if ( ! $show_chart ) {
+		return;
+	}
 
-		echo '<div class="ninety-chart-container">';
+	if ( $return ) {
+		$output = '<div 
+			class="ninety-chart-container" 
+			id="ninety-chart-container" 
+			data-chart-type="' . $chart_type . '"
+			data-show-chart="' . $show_chart . '"
+			>';
+		$output .= '<canvas id="ninety-chart"></canvas>';
+		$output .= '</div>';
+
+		return $output;
+
+	} else {
+		echo '<div 
+			class="ninety-chart-container" 
+			id="ninety-chart-container" 
+			data-chart-type="' . $chart_type . '"
+			data-show-chart="' . $show_chart . '"
+			>';
 		echo '<canvas id="ninety-chart"></canvas>';
 		echo '</div>';
-
 	}
 
 }

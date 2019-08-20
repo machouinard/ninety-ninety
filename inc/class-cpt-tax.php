@@ -236,25 +236,24 @@ class NinetyNinety_CPT {
 	public function redirect_anon_users( $wp ) {
 
 		if ( is_admin() ) {
-			return $wp;
+			return;
 		}
 
 		global $post;
 
 		//* No $post object on 404 page...
 		if ( ! $post ) {
-			return $wp;
+			return;
 		}
 
-		//* Get array of page templates used for Meetings
-		$templates = ninety_ninety()->get_setting( 'page_templates' );
+		$has_shortcode = is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'ninety_map' );
 
-		if ( ( 'ninety_meeting' == $post->post_type || is_post_type_archive( 'ninety_meeting' ) || is_tax( 'ninety_meeting_location' ) || is_page_template( $templates ) ) && ! is_user_logged_in() ) {
+		if ( ( 'ninety_meeting' == $post->post_type || is_post_type_archive( 'ninety_meeting' ) || is_tax( 'ninety_meeting_location' ) ) && ! is_user_logged_in() ) {
 			wp_redirect( get_home_url() );
 			exit;
 		}
 
-		return $wp;
+		return;
 
 	}
 

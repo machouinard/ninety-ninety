@@ -250,23 +250,9 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			);
 
 			add_settings_field(
-				'ninety_use_exclude',
-				__(
-					'Use Exclude option (PDF, Maps, Count, etc...',
-					'ninety-ninety'
-				),
-				[
-					$this,
-					'ninety_use_exclude_render',
-				],
-				'pluginMisc',
-				'ninety_pluginPage_misc_section'
-			);
-
-			add_settings_field(
 				'ninety_show_chart',
 				__(
-					'Display chart',
+					'Display chart (default)',
 					'ninety-ninety'
 				),
 				[
@@ -280,7 +266,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			add_settings_field(
 				'ninety_chart_type',
 				__(
-					'Chart Type',
+					'Chart Type (default)',
 					'ninety-ninety'
 				),
 				[
@@ -715,22 +701,6 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			?>
 			<input type='checkbox'
 				   name='ninety_settings[ninety_keep_private]' <?php checked( $private, 1 ); ?>
-				   value='1'>
-			<?php
-
-		}
-
-		/**
-		 * Output Exclude checkbox
-		 *
-		 * @return void
-		 * @since 1.0.0
-		 */
-		public function ninety_use_exclude_render() {
-			$exclude = ninety_ninety()->get_option( 'ninety_use_exclude' );
-			?>
-			<input type='checkbox'
-				   name='ninety_settings[ninety_use_exclude]' <?php checked( $exclude, 1 ); ?>
 				   value='1'>
 			<?php
 

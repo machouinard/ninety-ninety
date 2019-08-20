@@ -125,7 +125,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				require_once NINETY_ACF_PATH . 'acf.php';
 			}
 			// Add custom page templates from this plugin.
-			require_once $path . 'inc/class-page-templater.php';
+//			require_once $path . 'inc/class-page-templater.php';
 
 			require_once $path . 'inc/mapbox/Mapbox.php';
 
@@ -141,6 +141,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			require_once $path . 'inc/class-ninety-help-tabs.php';
 
 			require_once $path . 'inc/functions.php';
+
+			require_once NINETY_NINETY_PATH . 'inc/class-ninety-map-js.php';
 
 			$this->add_actions_and_filters();
 
@@ -168,6 +170,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_action( 'load-post.php', 'NinetyHelpTabs::add_meeting_help_tab' );
 			add_action( 'load-post-new.php', 'NinetyHelptabs::add_meeting_help_tab' );
 			add_action( 'init', [ $this, 'load_text_domain' ] );
+			add_action( 'init', [ $this, 'setup_shortcodes' ] );
 			add_action( 'save_post_ninety_meeting', [ $this, 'update_timestamp' ] );
 			add_action( 'edited_ninety_meeting_location', [ $this, 'update_timestamp' ] );
 			add_action( 'edited_ninety_meeting_type', [ $this, 'update_timestamp' ] );
@@ -218,7 +221,9 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function enqueue_stuff() {
 
-			$map_page             = is_page_template( $this->settings['page_templates'] );
+			global $post;
+
+			$map_page = ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'ninety_map' ) );
 			$meeting_archive_page = is_post_type_archive( 'ninety_meeting' );
 			$singular_meeting     = is_singular( 'ninety_meeting' );
 
@@ -259,9 +264,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				$remaining_color = ninety_ninety()->get_option( 'ninety_remaining_color', '#dd3333' );
 				$done_color      = ninety_ninety()->get_option( 'ninety_done_color', '#81d742' );
 
-				if ( in_array( $template_name, $templates ) && $show_chart ) {
-					$data['showChart'] = true;
-				}
+				$data['showChart'] = $show_chart;
 
 				$data['colors'] = [
 					'remaining' => $remaining_color,
@@ -391,6 +394,53 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public static function load_text_domain() {
 			load_plugin_textdomain( 'ninety-ninety', false, 'ninety-ninety/lang' );
+		}
+
+		public function setup_shortcodes() {
+			add_shortcode( 'ninety_map', [ $this, 'handle_map_shortcode' ] );
+		}
+
+		public function handle_map_shortcode( $atts, $content, $tag ) {
+
+			if ( ninety_ninety()->get_option( 'ninety_keep_private' ) && ! is_user_logged_in() ) {
+				return;
+			}
+
+			if ( ! is_singular() ) {
+				return;
+			}
+
+			$defaults = [
+				'show_count' => false,
+				'chart_type' => false,
+				'show_chart' => false,
+				'title' => false,
+			];
+
+			$opts = wp_parse_args( $atts, $defaults );
+
+			$chart_type = false !== $opts['chart_type'] ? $opts['chart_type'] : ninety_ninety()->get_option( 'ninety_chart_type' );
+
+			$show_chart = false !== $opts['show_chart'] ? true : ninety_ninety()->get_option( 'ninety_show_chart' );
+
+			$count = ninety_ninety()->get_setting( 'meeting_count' );
+
+			$output = '';
+
+			if ( $opts['title'] ) {
+				$output .= sprintf( '<h4>%s</h4>', esc_html( $opts['title'] ) );
+			}
+
+			if ( $opts['show_count'] ) {
+				$output .= sprintf( '<h4>%d %s</h4>', $count, __( 'Meetings', 'ninety-ninety' ) );
+			}
+
+			$output .= '<div id="ninety-map" style="height: 400px"></div>';
+
+			$output .= ninety_add_chart_markup( true, $chart_type, $show_chart );
+
+			return $output;
+
 		}
 
 		/**
@@ -572,13 +622,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function update_meeting_count( $old_value = null, $new_value = null ) {
 
-			// If called from options page save, make sure we update option as needed.
-			if ( isset( $new_value['ninety_use_exclude'] ) && '1' === $new_value['ninety_use_exclude'] ) {
-				$this->update_option( 'ninety_use_exclude', '1' );
-			} elseif ( null !== $new_value ) {
-				$this->update_option( 'ninety_use_exclude' );
-			}
-
 			$count = $this->get_meetings( [], true );
 
 			// Update option if new count differs from existing count.
@@ -614,12 +657,17 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 				if ( 'page' === $item->object && $logged_out ) {
 
-					$slug = get_page_template_slug( $item->object_id );
-
-					// If page_template_slug is for either map page template, set _invalid to true to skip menu item.
-					if ( in_array( $slug, $this->settings['page_templates'] ) ) {
+					$page = get_post( $item->object_id );
+					if ( is_a( $page, 'WP_POST' ) && has_shortcode( $page->post_content, 'ninety_map' ) ) {
 						$item->_invalid = true;
 					}
+
+//					$slug = get_page_template_slug( $item->object_id );
+//
+//					// If page_template_slug is for either map page template, set _invalid to true to skip menu item.
+//					if ( in_array( $slug, $this->settings['page_templates'] ) ) {
+//						$item->_invalid = true;
+//					}
 				}
 			}
 
@@ -786,39 +834,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		}
 
 		/**
-		 * Conditionally add meta query excluding Meetings
-		 * Uses the 'ninety_use_exclude' option value
-		 *
-		 * @param array $args Args to be used for WP_Query.
-		 *
-		 * @return void
-		 * @since 1.0.0
-		 */
-		public function maybe_add_exclude_meta_query( &$args ) {
-
-			/**
-			 * If "Use Exclude Option" is checked on the options page, add meta query to
-			 * query all Meetings that are set to not exclude or are missing that meta ( posts created
-			 * after that ACF field was created )
-			 */
-			if ( $this->get_option( 'ninety_use_exclude' ) ) {
-				$args['meta_query'] = [
-					'relation' => 'OR',
-					[
-						'key'     => 'ninety_exclude_meeting',
-						'value'   => 0,
-						'compare' => '=',
-					],
-					[
-						'key'     => 'ninety_exclude_meeting',
-						'compare' => 'NOT EXISTS',
-					],
-				];
-			}
-
-		}
-
-		/**
 		 * Get Meetings/Meeting count
 		 *
 		 * @param array $args  Args for WP_Query.
@@ -839,9 +854,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			];
 
 			$new_args = wp_parse_args( $args, $default );
-
-			// Possibly add meta query to exclude Meetings based on checkbox.
-			$this->maybe_add_exclude_meta_query( $new_args );
 
 			$q = get_posts( $new_args );
 
@@ -883,11 +895,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			if ( ! empty( $meetings ) ) {
 
 				foreach ( $meetings as $meeting ) {
-
-					// Check ACF fields for excluding meeting from PDF, Map and Count ( ninety_exclude_meeting = field_5d223c6a1e849 ).
-					if ( $this->get_option( 'ninety_use_exclude' ) && get_field( 'ninety_exclude_meeting', $meeting->ID ) ) {
-						continue;
-					}
 
 					// Reduce meetings into array of locations with counts.
 					$location = get_field( 'ninety_meeting_location', $meeting->ID );
