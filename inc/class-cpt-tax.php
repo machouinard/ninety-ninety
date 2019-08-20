@@ -286,4 +286,70 @@ class NinetyNinety_CPT {
 
 	}
 
+	/**
+	 * Conditionally delete options when plugin is deleted
+	 *
+	 * @return void
+	 * @since 1.0.0
+	 */
+	public static function uninstall() {
+
+		// Get option to remove data on post deletion.
+		$delete_data = ninety_ninety()->get_option( 'delete_data', 0 );
+
+		if ( ! $delete_data ) {
+			return;
+		}
+
+		delete_option( NINETY_COUNT_OPTION_KEY );
+		delete_option( 'ninety_last_updated' );
+		delete_option( 'ninety_settings' );
+
+		// Add action to remove any attachments when deleting meetings.
+		add_action( 'before_delete_post', 'NinetyNinety_CPT::delete_attachments' );
+
+		$meetings = get_posts(
+			[
+				'post_type'   => 'ninety_meeting',
+				'post_status' => 'any',
+				'numberposts' => - 1,
+			]
+		);
+
+		foreach ( $meetings as $meeting ) {
+			self::delete_attachments( $meeting->ID );
+			wp_delete_post( $meeting->ID );
+		}
+
+		// Remove attachment deletion action.
+		remove_action( 'before_delete_post', 'NinetyNinety_CPT::delete_attachments' );
+
+		flush_rewrite_rules();
+	}
+
+	/**
+	 * Delete any meeting attachments
+	 *
+	 * @param Int $post_id Meeting ID.
+	 *
+	 * @return void
+	 * @since 1.0.0
+	 */
+	public static function delete_attachments( $post_id ) {
+
+		$attachments = get_posts(
+			[
+				'post_type'      => 'attachment',
+				'posts_per_page' => - 1,
+				'post_status'    => 'any',
+				'post_parent'    => $post_id,
+			]
+		);
+
+		foreach ( $attachments as $attachment ) {
+			wp_delete_attachment( $attachment->ID );
+		}
+
+	}
+
 }

@@ -112,12 +112,15 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			// Meeting CPT and taxonomies.
 			require_once NINETY_NINETY_PATH . 'inc/class-cpt-tax.php';
-			// Instantiate CPT class.
+			// Instantiate CPT class to create meeting post type and taxonomies.
 			new NinetyNinety_CPT();
 
 			// Add default Meeting Locations on plugin activation.
 			register_activation_hook( __FILE__, [ 'NinetyNinety_CPT', 'activate' ] );
 			register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
+			// Do stuff when plugin is deleted.
+			register_uninstall_hook( __FILE__, [ 'NinetyNinety_CPT', 'uninstall' ] );
+
 			// Add options page for plugin settings.
 			require_once NINETY_NINETY_PATH . 'inc/class-options-page.php';
 			// Require included ACF ( free version ) if ACF is not already active.
