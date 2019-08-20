@@ -251,28 +251,13 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				$data              = $this->get_meeting_data();
 				$data['showChart'] = false;
 
-				global $template;
-
-				$template_name = basename( $template );
-				$templates     = [
-					'template-90-map.php',
-					'template-genesis-90-map.php',
-				];
-
-				$show_chart      = ninety_ninety()->get_option( 'ninety_show_chart' );
 				$remaining_color = ninety_ninety()->get_option( 'ninety_remaining_color', '#dd3333' );
 				$done_color      = ninety_ninety()->get_option( 'ninety_done_color', '#81d742' );
-
-				$data['showChart'] = $show_chart;
 
 				$data['colors'] = [
 					'remaining' => $remaining_color,
 					'done'      => $done_color,
 				];
-
-				$chart_type = ninety_ninety()->get_option( 'ninety_chart_type', 'pie' );
-
-				$data['chartType'] = esc_attr( $chart_type );
 
 				$data['meetingCount'] = $this->get_setting( 'meeting_count' );
 
