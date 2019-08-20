@@ -22,8 +22,8 @@ if ( ! class_exists( 'Ninety_Map_JS' ) ) {
 		 */
 		public function enqueue() {
 
-			add_action( 'wp_enqueue_scripts', [ $this, 'ninety_enqueue_map_style' ] );
-			add_action( 'wp_enqueue_scripts', [ $this, 'ninety_enqueue_map_scripts' ] );
+			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_styles' ] );
+			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 		}
 
 		/**
@@ -32,7 +32,7 @@ if ( ! class_exists( 'Ninety_Map_JS' ) ) {
 		 * @return void
 		 * @since 1.0.0
 		 */
-		public function ninety_enqueue_map_style() {
+		public function enqueue_styles() {
 
 			$leaflet_css_url = NINETY_NINETY_URL . 'assets/js/leaflet/leaflet.css';
 
@@ -47,7 +47,7 @@ if ( ! class_exists( 'Ninety_Map_JS' ) ) {
 		 * @return void
 		 * @since 1.0.0
 		 */
-		public function ninety_enqueue_map_scripts() {
+		public function enqueue_scripts() {
 			global $post;
 			if ( ! is_a( $post, 'WP_Post' ) || ! has_shortcode( $post->post_content, 'ninety_map' ) ) {
 				return;
