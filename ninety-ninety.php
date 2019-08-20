@@ -124,8 +124,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			if ( ! class_exists( 'ACF' ) ) {
 				require_once NINETY_ACF_PATH . 'acf.php';
 			}
-			// Add custom page templates from this plugin.
-//			require_once $path . 'inc/class-page-templater.php';
 
 			require_once $path . 'inc/mapbox/Mapbox.php';
 
@@ -142,8 +140,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			require_once $path . 'inc/functions.php';
 
-			require_once NINETY_NINETY_PATH . 'inc/class-ninety-map-js.php';
-
 			$this->add_actions_and_filters();
 
 		}
@@ -156,16 +152,12 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function add_actions_and_filters() {
 
+			// Actions
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_stuff' ] );
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_stuff' ] );
-
 			add_action( 'acf/init', 'ninety_init_acf_import' );
-			add_action( 'acf/save_post', [ $this, 'set_meeting_title_time' ], PHP_INT_MAX );
+			add_action( 'acf/save_post', [ $this, 'set_meeting_title_time' ], PHP_INT_MAX );// Run as late as possible.
 			add_action( 'template_redirect', [ $this, 'redirect_single_result' ] );
-			// Run as late as possible.
-			if ( ! class_exists( 'ACF' ) ) {
-				add_filter( 'acf/settings/dir', [ $this, 'acf_settings_dir' ] );
-			}
 			add_action( 'widgets_init', [ $this, 'register_widgets' ] );
 			add_action( 'load-post.php', 'NinetyHelpTabs::add_meeting_help_tab' );
 			add_action( 'load-post-new.php', 'NinetyHelptabs::add_meeting_help_tab' );
@@ -174,6 +166,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_action( 'save_post_ninety_meeting', [ $this, 'update_timestamp' ] );
 			add_action( 'edited_ninety_meeting_location', [ $this, 'update_timestamp' ] );
 			add_action( 'edited_ninety_meeting_type', [ $this, 'update_timestamp' ] );
+			// Filters
 			add_filter( 'acf/settings/show_admin', [ $this, 'acf_show_admin' ] );
 			add_filter( 'template_include', [ $this, 'ninety_archive_template' ] );
 			add_filter( 'acf/load_field/key=field_5d182c40c6e57', [ $this, 'set_default_meeting_time' ] );
@@ -183,8 +176,10 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_filter( 'acf/load_field/key=field_5d197bc132ced', [ $this, 'ninety_coords_readonly' ] );
 			add_action( 'update_option_ninety_settings', [ $this, 'update_meeting_count' ], 10, 2 );
 			add_filter( 'wp_setup_nav_menu_item', [ $this, 'hide_meeting_nav_menu_objects' ] );
-
 			add_filter( 'posts_search', 'Ninety_Meeting_Search::advanced_custom_search', 500, 2 );
+			if ( ! class_exists( 'ACF' ) ) {
+				add_filter( 'acf/settings/dir', [ $this, 'acf_settings_dir' ] );
+			}
 		}
 
 		/**
@@ -230,6 +225,11 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				return;
 			}
 
+			$leaflet_css_url = NINETY_NINETY_URL . 'assets/js/leaflet/leaflet.css';
+
+			$version = ninety_ninety()->version;
+			wp_enqueue_style( 'map-style', $leaflet_css_url, [], $version );
+
 			$style_file                    = NINETY_NINETY_URL . 'assets/css/ninety-style.css';
 			$style_ver                     = filemtime( NINETY_NINETY_PATH . 'assets/css/ninety-style.css' );
 			$leaflet_cluster_style         = NINETY_NINETY_URL . 'assets/js/markercluster/MarkerCluster.css';
@@ -263,6 +263,53 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 				// localize script with geoJSON data for leafletjs.
 				wp_localize_script( 'ninety-ninety-script', 'geojson', $data );
+
+				/******** Leaflet JS **************/
+				$leaflet_js_url = NINETY_NINETY_URL . 'assets/js/leaflet/leaflet.js';
+
+				wp_enqueue_script( 'map-js', $leaflet_js_url, array( 'jquery' ), '1.0' );
+
+				// Get default latitude from options page.
+				$lat = ninety_ninety()->get_option( 'ninety_map_center_lat' );
+
+				// If Lat hasn't been set, set it to Sacramento because, well, that's where I live.
+				if ( ! $lat ) {
+					$lat = 54.525963;
+				}
+
+				// Get default longitude from options page.
+				$lng = ninety_ninety()->get_option( 'ninety_map_center_lng' );
+
+				// If Lng hasn't been set, set it to Sacramento.
+				if ( ! $lng ) {
+					$lng = - 105.255119;
+				}
+
+				// Get default zoom from options page.
+				$zoom = ninety_ninety()->get_option( 'ninety_map_zoom' );
+
+				// If Zoom hasn't been set, set it to 1.
+				if ( ! $zoom ) {
+					$zoom = 1;
+				}
+				$center      = [ $lat, $lng ];
+				$tile_server = ninety_ninety()->get_option( 'ninety_tile_server' );
+				if ( ! $tile_server ) {
+					$tile_server = ninety_ninety()->default_tile_server;
+				}
+
+				$api_key = ( false !== strpos( $tile_server, 'thunderforest' ) ) ? ninety_ninety()->get_option( 'ninety_thunderforest_api_key' ) : ninety_ninety()->get_option( 'ninety_mapbox_api_key' );
+
+				wp_localize_script(
+					'map-js',
+					'mapOptions',
+					[
+						'apiKey'     => $api_key,
+						'tileServer' => $tile_server,
+						'mapCenter'  => $center,
+						'zoom'       => $zoom,
+					]
+				);
 			}
 
 		}
