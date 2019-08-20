@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Import ACF fields
+ *
+ * @return void
+ * @since 1.0.0
+ *
+ */
 function ninety_init_acf_import() {
 
 	if ( function_exists( 'acf_add_local_field_group' ) ):
@@ -99,7 +106,6 @@ function ninety_init_acf_import() {
 						'allow_quickedit'    => 1,
 						'allow_bulkedit'     => 1,
 						'multiple'           => 0,
-						'default_value'      => '10',
 					),
 					array(
 						'key'               => 'field_5d182c40c6e57',
@@ -117,7 +123,7 @@ function ninety_init_acf_import() {
 						'display_format'    => 'F j, Y g:i a',
 						'return_format'     => 'F j, Y g:i a',
 						'first_day'         => 0,
-						'default_value'     => '18-07-2019 23:30:00',
+						'default_value'     => '19-08-2019 12:00:00',
 					),
 					array(
 						'key'               => 'field_5d18255d071c8',
@@ -140,7 +146,6 @@ function ninety_init_acf_import() {
 						'load_terms'        => 0,
 						'return_format'     => 'object',
 						'multiple'          => 0,
-						'default_value'     => '4',
 					),
 					array(
 						'key'               => 'field_5d184939bb3dd',
@@ -224,25 +229,6 @@ function ninety_init_acf_import() {
 						'toolbar'           => 'full',
 						'media_upload'      => 1,
 						'delay'             => 0,
-					),
-					array(
-						'key'               => 'field_5d223c6a1e849',
-						'label'             => 'Exclude',
-						'name'              => 'ninety_exclude_meeting',
-						'type'              => 'true_false',
-						'instructions'      => 'Excludes Meeting from certain areas.	This is only used if "Use Exclude option" is checked on Options page.',
-						'required'          => 0,
-						'conditional_logic' => 0,
-						'wrapper'           => array(
-							'width' => '',
-							'class' => '',
-							'id'    => '',
-						),
-						'message'           => '',
-						'default_value'     => 0,
-						'ui'                => 0,
-						'ui_on_text'        => '',
-						'ui_off_text'       => '',
 					),
 					array(
 						'key'               => 'field_5d184b55fa43e',
