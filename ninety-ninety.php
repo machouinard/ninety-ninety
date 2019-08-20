@@ -8,9 +8,9 @@
  */
 
 /**
- * Plugin Name: 90 in 90
+ * Plugin Name: 90 in 90+
  * Plugin URI:
- * Description: Track 90 meetings in 90 days.  Built for AA but customizable to any program.
+ * Description: Track 90 meetings in 90 days, for starters.  Built for AA but customizable to any program.
  * Version: 1.0.0
  * Author: Mark Chouinard
  * Author URI: https://chouinard.me
@@ -168,7 +168,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_action( 'edited_ninety_meeting_type', [ $this, 'update_timestamp' ] );
 			// Filters
 			add_filter( 'acf/settings/show_admin', [ $this, 'acf_show_admin' ] );
-			add_filter( 'template_include', [ $this, 'ninety_archive_template' ] );
+			add_filter( 'template_include', [ $this, 'archive_template' ] );
 			add_filter( 'acf/load_field/key=field_5d182c40c6e57', [ $this, 'set_default_meeting_time' ] );
 			add_filter( 'acf/load_field/key=field_5d18480b686a6', [ $this, 'set_default_meeting_location' ] );
 			add_filter( 'acf/load_field/key=field_5d18255d071c8', [ $this, 'set_default_meeting_type' ] );
@@ -427,10 +427,26 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			load_plugin_textdomain( 'ninety-ninety', false, 'ninety-ninety/lang' );
 		}
 
+		/**
+		 * Add shortcode
+		 *
+		 * @return void
+		 * @since 1.0.0
+		 */
 		public function setup_shortcodes() {
 			add_shortcode( 'ninety_map', [ $this, 'handle_map_shortcode' ] );
 		}
 
+		/**
+		 * Map shortcode handler
+		 *
+		 * @param array  $atts    Shortcode attributes.
+		 * @param string $content Shortcode content.
+		 * @param string $tag     Tag for use in shared callbacks.
+		 *
+		 * @return string|void
+		 * @since 1.0.0
+		 */
 		public function handle_map_shortcode( $atts, $content, $tag ) {
 
 			if ( ninety_ninety()->get_option( 'ninety_keep_private' ) && ! is_user_logged_in() ) {
@@ -448,21 +464,21 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				'title'      => false,
 			];
 
-			$opts = wp_parse_args( $atts, $defaults );
+			$map_options = wp_parse_args( $atts, $defaults );
 
-			$chart_type = false !== $opts['chart_type'] ? $opts['chart_type'] : ninety_ninety()->get_option( 'ninety_chart_type' );
+			$chart_type = false !== $map_options['chart_type'] ? $map_options['chart_type'] : ninety_ninety()->get_option( 'ninety_chart_type' );
 
-			$show_chart = false !== $opts['show_chart'] ? true : ninety_ninety()->get_option( 'ninety_show_chart' );
+			$show_chart = false !== $map_options['show_chart'] ? true : ninety_ninety()->get_option( 'ninety_show_chart' );
 
 			$count = ninety_ninety()->get_setting( 'meeting_count' );
 
 			$output = '';
 
-			if ( $opts['title'] ) {
-				$output .= sprintf( '<h4>%s</h4>', esc_html( $opts['title'] ) );
+			if ( $map_options['title'] ) {
+				$output .= sprintf( '<h4>%s</h4>', esc_html( $map_options['title'] ) );
 			}
 
-			if ( $opts['show_count'] ) {
+			if ( $map_options['show_count'] ) {
 				$output .= sprintf( '<h4>%d %s</h4>', $count, __( 'Meetings', 'ninety-ninety' ) );
 			}
 
@@ -498,21 +514,21 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @return string
 		 * @since 1.0.0
 		 */
-		public function ninety_archive_template( $template ) {
+		public function archive_template( $template ) {
 
 			// Check for archive template.
 			if ( is_post_type_archive( 'ninety_meeting' ) ) {
 
-				$plugin_archive_template = plugin_dir_path( __FILE__ ) . 'templates/archive-ninety_meeting.php';
-				$theme_files             = [ 'archive-ninety_meeting.php' ];
-				$exists                  = locate_template( $theme_files, false );
+				$archive_template = plugin_dir_path( __FILE__ ) . 'templates/archive-ninety_meeting.php';
+				$theme_files      = [ 'archive-ninety_meeting.php' ];
+				$exists           = locate_template( $theme_files, false );
 
 				if ( $exists ) {
 					return $exists;
 				} else {
 					// Make sure template hasn't been deleted.
-					if ( file_exists( $plugin_archive_template ) ) {
-						return $plugin_archive_template;
+					if ( file_exists( $archive_template ) ) {
+						return $archive_template;
 					}
 				}
 			}
@@ -520,16 +536,16 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			// Check for single template.
 			if ( is_singular( 'ninety_meeting' ) ) {
 
-				$plugin_single_template = plugin_dir_path( __FILE__ ) . 'templates/single-ninety_meeting.php';
-				$theme_files            = [ 'single-ninety_meeting.php' ];
-				$exists                 = locate_template( $theme_files, false );
+				$single_template = plugin_dir_path( __FILE__ ) . 'templates/single-ninety_meeting.php';
+				$theme_files     = [ 'single-ninety_meeting.php' ];
+				$exists          = locate_template( $theme_files, false );
 
 				if ( $exists ) {
 					return $exists;
 				} else {
 					// Make sure template hasn't been deleted.
-					if ( file_exists( $plugin_single_template ) ) {
-						return $plugin_single_template;
+					if ( file_exists( $single_template ) ) {
+						return $single_template;
 					}
 				}
 			}
@@ -566,7 +582,11 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			// Create new DateTime object based on current hour, default meeting hour and WP timezone
 			// example strings: today 19:00, yesterday 09:30.
-			$default = new DateTime( $day . $default_time, $timezone );
+			try {
+				$default = new DateTime( $day . $default_time, $timezone );
+			} catch ( Exception $e ) {
+				error_log( $e->getMessage() );
+			}
 
 			$field['default_value'] = $default->format( 'd-m-Y G:i:s' );
 
@@ -875,8 +895,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function get_meetings( $args = [], $count = false ) {
 
-			// TODO: add option for number of Meetings to include?
-			// Query all Meetings that haven't been excluded.
+			// Query Meetings
 			$default = [
 				'post_type'      => 'ninety_meeting',
 				'post_status'    => 'publish',
@@ -967,7 +986,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			}
 
 			// https://color.adobe.com/ninety-color-theme-12942667.
-			$default_marker_colors = [
+			$default_colors = [
 				'default' => '#FF9912',
 				'fifteen' => '#B32410',
 				'thirty'  => '#52C7FF',
@@ -976,21 +995,21 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			];
 
 			// Allow customizing colors.
-			$custom_marker_colors = apply_filters( 'ninety_meeting_colors', $default_marker_colors );
+			$custom_colors = apply_filters( 'ninety_meeting_colors', $default_colors );
 
 			// Ensure no keys were left out when filtered.
-			$marker_colors = wp_parse_args( $custom_marker_colors, $default_marker_colors );
+			$marker_colors = wp_parse_args( $custom_colors, $default_colors );
 
 			$geojson['markerColors'] = $marker_colors;
 
 			// For testing geojson file.
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				$file    = NINETY_NINETY_PATH . 'test.geojson';
-				$fh      = fopen( $file, 'w' );
-				$encoded = json_encode( $geojson );
-				fwrite( $fh, $encoded );
-				fclose( $fh );
-			}
+//			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+//				$file    = NINETY_NINETY_PATH . 'test.geojson';
+//				$fh      = fopen( $file, 'w' );
+//				$encoded = json_encode( $geojson );
+//				fwrite( $fh, $encoded );
+//				fclose( $fh );
+//			}
 
 			return $geojson;
 		}
