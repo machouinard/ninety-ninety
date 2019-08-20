@@ -285,13 +285,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 					$lng = - 105.255119;
 				}
 
-				// Get default zoom from options page.
-				$zoom = ninety_ninety()->get_option( 'ninety_map_zoom' );
-
-				// If Zoom hasn't been set, set it to 1.
-				if ( ! $zoom ) {
-					$zoom = 1;
-				}
 				$center      = [ $lat, $lng ];
 				$tile_server = ninety_ninety()->get_option( 'ninety_tile_server' );
 				if ( ! $tile_server ) {
@@ -307,7 +300,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 						'apiKey'     => $api_key,
 						'tileServer' => $tile_server,
 						'mapCenter'  => $center,
-						'zoom'       => $zoom,
 					]
 				);
 			}
@@ -462,6 +454,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				'chart_type' => false,
 				'show_chart' => false,
 				'title'      => false,
+				'zoom'       => false,
 			];
 
 			$map_options = wp_parse_args( $atts, $defaults );
@@ -469,6 +462,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			$chart_type = false !== $map_options['chart_type'] ? $map_options['chart_type'] : ninety_ninety()->get_option( 'ninety_chart_type' );
 
 			$show_chart = false !== $map_options['show_chart'] ? true : ninety_ninety()->get_option( 'ninety_show_chart' );
+
+			$zoom = false !== $map_options['zoom'] ? intval( $map_options['zoom'] ) : ninety_ninety()->get_option( 'ninety_map_zoom' );
 
 			$count = ninety_ninety()->get_setting( 'meeting_count' );
 
@@ -484,7 +479,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			$output .= '<div id="ninety-map" style="height: 400px"></div>';
 
-			$output .= ninety_add_chart_markup( true, $chart_type, $show_chart );
+			$output .= ninety_add_chart_markup( true, $chart_type, $show_chart, $zoom );
 
 			return $output;
 

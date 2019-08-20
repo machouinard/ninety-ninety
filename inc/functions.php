@@ -133,7 +133,7 @@ function ninety_maybe_tax_specific_permalink( $url, $post ) {
 	return $url;
 }
 
-function ninety_add_chart_markup( $return = false, $chart_type = 'pie', $show_chart = null ) {
+function ninety_add_chart_markup( $return = false, $chart_type = 'pie', $show_chart = null, $zoom = null ) {
 
 	if ( null === $show_chart ) {
 		$show_chart = ninety_ninety()->get_option( 'ninety_show_chart' );
@@ -143,12 +143,20 @@ function ninety_add_chart_markup( $return = false, $chart_type = 'pie', $show_ch
 		return;
 	}
 
+	if ( null === $zoom ) {
+		$zoom = ninety_ninety()->get_option( 'ninety_map_zoom' );
+	}
+	if ( ! $zoom ) {
+		$zoom = 1;
+	}
+
 	if ( $return ) {
 		$output = '<div 
 			class="ninety-chart-container" 
 			id="ninety-chart-container" 
 			data-chart-type="' . $chart_type . '"
 			data-show-chart="' . $show_chart . '"
+			data-zoom="' . $zoom . '"
 			>';
 		$output .= '<canvas id="ninety-chart"></canvas>';
 		$output .= '</div>';
@@ -161,6 +169,7 @@ function ninety_add_chart_markup( $return = false, $chart_type = 'pie', $show_ch
 			id="ninety-chart-container" 
 			data-chart-type="' . $chart_type . '"
 			data-show-chart="' . $show_chart . '"
+			data-zoom="' . $zoom . '"
 			>';
 		echo '<canvas id="ninety-chart"></canvas>';
 		echo '</div>';

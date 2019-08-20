@@ -5,14 +5,16 @@ window.onload = function () {
 
 	// console.log( 'geojson', geojson );
 	// console.log( 'mapOptions', mapOptions );
-	let showChart;
+	let showChart, zoom;
 
 	// Grab chart container if it's available and set showChart
 	let chartContainer = document.getElementById( 'ninety-chart-container' );
 	if ( null === chartContainer ) {
 		showChart = false;
+		zoom = 1;
 	} else {
 		showChart = chartContainer.dataset.showChart;
+		zoom = chartContainer.dataset.zoom;
 	}
 
 	// console.log( 'showChart', showChart );
@@ -24,7 +26,7 @@ window.onload = function () {
 
 	// Conditionally display Meeting Map.
 	if ( mapOptions ) {
-		meetingMap();
+		meetingMap( zoom );
 	}
 
 };
