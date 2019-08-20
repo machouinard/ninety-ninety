@@ -80,7 +80,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			$this->define( 'NINETY_COUNT_OPTION_KEY', 'ninety_meeting_count' );
 
 			$meeting_count = get_option( NINETY_COUNT_OPTION_KEY, 0 );
-			$last_updated = get_option( 'ninety_last_updated', current_time( 'timestamp' ) + 60 );// make sure default is ahead of who's asking to trigger update
+			$last_updated  = get_option( 'ninety_last_updated', current_time( 'timestamp' ) + 60 );// make sure default is ahead of who's asking to trigger update
 
 			$this->default_tile_server = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png';
 
@@ -185,7 +185,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_filter( 'wp_setup_nav_menu_item', [ $this, 'hide_meeting_nav_menu_objects' ] );
 
 			add_filter( 'posts_search', 'Ninety_Meeting_Search::advanced_custom_search', 500, 2 );
-//			add_filter( 'pre_get_posts', [ $this, 'search_it_all' ] );
 		}
 
 		/**
@@ -223,7 +222,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			global $post;
 
-			$map_page = ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'ninety_map' ) );
+			$map_page             = ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'ninety_map' ) );
 			$meeting_archive_page = is_post_type_archive( 'ninety_meeting' );
 			$singular_meeting     = is_singular( 'ninety_meeting' );
 
@@ -414,7 +413,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				'show_count' => false,
 				'chart_type' => false,
 				'show_chart' => false,
-				'title' => false,
+				'title'      => false,
 			];
 
 			$opts = wp_parse_args( $atts, $defaults );
@@ -990,14 +989,12 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 		/**
 		 * Update option when Meetings/Taxonomies change
-		 *
 		 * This is for future plans
 		 *
 		 * @return void
 		 * @since 1.0.0
-		 *
 		 */
-		public function update_timestamp( ) {
+		public function update_timestamp() {
 
 			$time = current_time( 'timestamp' );
 			update_option( 'ninety_last_updated', $time );

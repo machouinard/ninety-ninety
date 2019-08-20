@@ -32,7 +32,6 @@ class NinetyNinety_CPT {
 	 *
 	 * @return void
 	 * @since 1.0.0
-	 *
 	 */
 	function register_post_type() {
 
@@ -91,7 +90,6 @@ class NinetyNinety_CPT {
 	 *
 	 * @return void
 	 * @since 1.0.0
-	 *
 	 */
 	function register_taxonomies() {
 
@@ -178,21 +176,20 @@ class NinetyNinety_CPT {
 	 *
 	 * @return void
 	 * @since 1.0.0
-	 *
 	 */
 	function generate_rewrite_rules( $wp_rewrite ) {
 
 		$rules      = [];
 		$post_types = get_post_types( [
-			'name'     => 'ninety_meeting',
-			'public'   => true,
-			'_builtin' => false,
-		], 'objects' );
+			                              'name'     => 'ninety_meeting',
+			                              'public'   => true,
+			                              '_builtin' => false,
+		                              ], 'objects' );
 		$taxonomies = get_taxonomies( [
-			'name'     => 'ninety_meeting_location',
-			'public'   => true,
-			'_builtin' => false,
-		], 'objects' );
+			                              'name'     => 'ninety_meeting_location',
+			                              'public'   => true,
+			                              '_builtin' => false,
+		                              ], 'objects' );
 
 		foreach ( $post_types as $post_type ) {
 			$post_type_name = $post_type->name;
@@ -201,10 +198,10 @@ class NinetyNinety_CPT {
 			foreach ( $taxonomies as $taxonomy ) {
 				if ( $taxonomy->object_type[0] == $post_type_name ) {
 					$terms = get_categories( [
-						'type'       => $post_type_name,
-						'taxonomy'   => $taxonomy->name,
-						'hide_empty' => 0,
-					] );
+						                         'type'       => $post_type_name,
+						                         'taxonomy'   => $taxonomy->name,
+						                         'hide_empty' => 0,
+					                         ] );
 					foreach ( $terms as $term ) {
 						$rules[ $post_type_slug . '/' . $term->slug . '/page/([0-9]{1,})/?' ] = 'index.php?post_type=' . $post_type_name . '&' . $term->taxonomy . '=' . $term->slug . '&paged=$matches[1]';
 						$rules[ $post_type_slug . '/' . $term->slug . '/([^/]+)/?$' ]         = 'index.php?post_type=' . $post_type_name . '&' . $post_type_name . '=$matches[1]&' . $term->taxonomy . '=' . $term->slug;
@@ -231,7 +228,6 @@ class NinetyNinety_CPT {
 	 *
 	 * @return mixed
 	 * @since 1.0.0
-	 *
 	 */
 	public function redirect_anon_users( $wp ) {
 
@@ -262,7 +258,6 @@ class NinetyNinety_CPT {
 	 *
 	 * @return void
 	 * @since 1.0.0
-	 *
 	 */
 	public static function activate() {
 

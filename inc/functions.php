@@ -87,7 +87,6 @@ function ninety_correct_post_link( $output, $format, $link, $post, $adjacent ) {
  *
  * @return void
  * @since 1.0.0
- *
  */
 function ninety_single_post_nav() {
 
@@ -110,9 +109,9 @@ function ninety_single_post_nav() {
 /**
  * Insert Meeting Location into permalink if on Location archive page
  *
- * @param string  $url  permalink.
- * @param WP_Post $post Meeting Post object.
- * @param bool    $leavename    Whether to keep the post name or page name.
+ * @param string  $url       permalink.
+ * @param WP_Post $post      Meeting Post object.
+ * @param bool    $leavename Whether to keep the post name or page name.
  *
  * @return mixed
  * @since 1.0.0

@@ -2,7 +2,7 @@ import Chart from 'chart.js';
 
 const meetingChart = () => {
 	const ctx = document.getElementById( 'ninety-chart' );
-	let chartType = document.getElementById( 'ninety-chart-container').dataset.chartType;
+	let chartType = document.getElementById( 'ninety-chart-container' ).dataset.chartType;
 	let meetingCount = geojson.meetingCount;
 	let remaining = 90 - meetingCount;
 	let legendDisplay;
@@ -111,7 +111,6 @@ const meetingChart = () => {
 	}
 
 };
-
 
 
 export default meetingChart;

@@ -8,7 +8,7 @@ window.onload = function () {
 	let showChart;
 
 	// Grab chart container if it's available and set showChart
-	let chartContainer = document.getElementById( 'ninety-chart-container');
+	let chartContainer = document.getElementById( 'ninety-chart-container' );
 	if ( null === chartContainer ) {
 		showChart = false;
 	} else {
