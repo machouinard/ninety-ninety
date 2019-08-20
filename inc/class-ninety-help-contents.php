@@ -50,16 +50,11 @@ class ninetyHelpContents {
 		$contents .= '<ul>';
 		$contents .= '<li>' . __( 'Prevent non-logged-in users from seeing individual Meetings, Meeting archive pages and the Meeting Map.', 'ninety-ninety' ) . '</li>';
 		$contents .= '</ul>';
-		// Use exclude
-		$contents .= '<p><strong>' . __( 'Use Exclude option...', 'ninety-ninety' ) . "</strong></p>\n";
-		$contents .= '<ul>';
-		$contents .= '<li>' . __( 'Each Meeting has an "Exclude" checkbox.', 'ninety-ninety' ) . '</li>';
-		$contents .= '<li>' . __( 'If this box is checked, any Meetings whose Exclude checkboxes have been checked will be excluded from the PDF, count and Map.', 'ninety-ninety' ) . '</li>';
-		$contents .= '</ul>';
 		// Chart options
 		$contents .= '<p><strong>' . __( 'Chart Options', 'ninety-ninety' ) . "</strong></p>\n";
 		$contents .= '<ul>';
-		$contents .= '<li>' . __( 'Whether or not to display the chart ( below the Map ) and which chart type to use.', 'ninety-ninety' ) . '</li>';
+		$contents .= '<li>' . __( 'Whether or not to display the chart ( below the Map ) and which chart type to use.  This can be overridden in the shortcode.', 'ninety-ninety' ) . '</li>';
+		$contents .= '<li>' . __( 'Choose which chart type to use.  This can be overridden in the shortcode.', 'ninety-ninety' ) . '</li>';
 		$contents .= '<li>' . __( 'Both charts use colors to differentiate between completed and remaining Meetings.  You can choose those colors here.', 'ninety-ninety' ) . '</li>';
 		$contents .= '</ul>';
 
@@ -71,6 +66,7 @@ class ninetyHelpContents {
 		$contents = '<ul>';
 		$contents .= '<li>' . __( 'Use PDF Title to customize, well, the title of the PDF.', 'ninety-ninety' ) . '</li>';
 		$contents .= '<li>' . __( 'Choose whether or not to include the number of days between your first and last Meetings on the PDF.', 'ninety-ninety' ) . '</li>';
+		$contents .= '<li>' . __( 'Optional start and end dates to limit the range of the PDF.', 'ninety-ninety' ) . '</li>';
 		$contents .= '</ul>';
 
 		return $contents;
@@ -82,7 +78,7 @@ class ninetyHelpContents {
 		$contents .= __( 'Add meeting details - where, when, what, etc...', 'ninety-ninety' );
 		$contents .= '</p>';
 		$contents .= '<p>';
-		$contents .= __( 'Do we really need a help tab here?', 'ninety-ninety' );
+		$contents .= __( 'Private notes are not displayed on the front end.', 'ninety-ninety' );
 		$contents .= '</p>';
 
 		return $contents;
