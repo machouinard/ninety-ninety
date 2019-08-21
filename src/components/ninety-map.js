@@ -1,13 +1,13 @@
 /**
  * Meeting map component
  */
-const meetingMap = () => {
+const meetingMap = ( zoom ) => {
 	// center: { lat: 38.5816, lng: -121.4944 } // Sacramento.
 	const features = geojson.features,
 		markers = [];
 	const lMapOptions = {
 		center: L.latLng( mapOptions.mapCenter ),
-		zoom: mapOptions.zoom,
+		zoom: zoom,
 		maxZoom: 18,
 		tapTolerance: 45,
 	};

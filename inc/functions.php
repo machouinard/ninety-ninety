@@ -87,7 +87,6 @@ function ninety_correct_post_link( $output, $format, $link, $post, $adjacent ) {
  *
  * @return void
  * @since 1.0.0
- *
  */
 function ninety_single_post_nav() {
 
@@ -110,9 +109,9 @@ function ninety_single_post_nav() {
 /**
  * Insert Meeting Location into permalink if on Location archive page
  *
- * @param string  $url  permalink.
- * @param WP_Post $post Meeting Post object.
- * @param bool    $leavename    Whether to keep the post name or page name.
+ * @param string  $url       permalink.
+ * @param WP_Post $post      Meeting Post object.
+ * @param bool    $leavename Whether to keep the post name or page name.
  *
  * @return mixed
  * @since 1.0.0
@@ -134,16 +133,46 @@ function ninety_maybe_tax_specific_permalink( $url, $post ) {
 	return $url;
 }
 
-function ninety_add_chart_markup() {
+function ninety_add_chart_markup( $return = false, $chart_type = 'pie', $show_chart = null, $zoom = null ) {
 
-	$show_chart = ninety_ninety()->get_option( 'ninety_show_chart' );
+	if ( null === $show_chart ) {
+		$show_chart = ninety_ninety()->get_option( 'ninety_show_chart' );
+	}
 
-	if ( $show_chart ) {
+	if ( ! $show_chart ) {
+		return;
+	}
 
-		echo '<div class="ninety-chart-container">';
+	if ( null === $zoom ) {
+		$zoom = ninety_ninety()->get_option( 'ninety_map_zoom' );
+	}
+	if ( ! $zoom ) {
+		$zoom = 1;
+	}
+
+	if ( $return ) {
+		$output = '<div 
+			class="ninety-chart-container" 
+			id="ninety-chart-container" 
+			data-chart-type="' . $chart_type . '"
+			data-show-chart="' . $show_chart . '"
+			data-zoom="' . $zoom . '"
+			>';
+		$output .= '<canvas id="ninety-chart"></canvas>';
+		$output .= '</div>';
+
+		return $output;
+
+	} else {
+		echo '<div 
+			class="ninety-chart-container" 
+			id="ninety-chart-container" 
+			data-chart-type="' . $chart_type . '"
+			data-show-chart="' . $show_chart . '"
+			data-zoom="' . $zoom . '"
+			>';
 		echo '<canvas id="ninety-chart"></canvas>';
 		echo '</div>';
-
 	}
 
 }

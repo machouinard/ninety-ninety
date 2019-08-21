@@ -8,9 +8,9 @@
  */
 
 /**
- * Plugin Name: 90 in 90
+ * Plugin Name: 90 in 90+
  * Plugin URI:
- * Description: Track 90 meetings in 90 days.  Built for AA but customizable to any program.
+ * Description: Track 90 meetings in 90 days, for starters.  Built for AA but customizable to any program.
  * Version: 1.0.0
  * Author: Mark Chouinard
  * Author URI: https://chouinard.me
@@ -80,7 +80,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			$this->define( 'NINETY_COUNT_OPTION_KEY', 'ninety_meeting_count' );
 
 			$meeting_count = get_option( NINETY_COUNT_OPTION_KEY, 0 );
-			$last_updated = get_option( 'ninety_last_updated', current_time( 'timestamp' ) + 60 );// make sure default is ahead of who's asking to trigger update
+			$last_updated  = get_option( 'ninety_last_updated', current_time( 'timestamp' ) + 60 );// make sure default is ahead of who's asking to trigger update
 
 			$this->default_tile_server = 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png';
 
@@ -98,34 +98,26 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				'last_updated'  => $last_updated,
 			];
 
-			// Set filterable page templates used by this plugin.
-			$this->settings['page_templates'] = apply_filters(
-				'ninety_page_templates',
-				[
-					'template-genesis-90-map.php',
-					'template-90-map.php',
-				]
-			);
-
 			// Get stored options set on plugin options page.
 			$this->options = get_option( 'ninety_settings' );
 
 			// Meeting CPT and taxonomies.
 			require_once NINETY_NINETY_PATH . 'inc/class-cpt-tax.php';
-			// Instantiate CPT class.
+			// Instantiate CPT class to create meeting post type and taxonomies.
 			new NinetyNinety_CPT();
 
 			// Add default Meeting Locations on plugin activation.
 			register_activation_hook( __FILE__, [ 'NinetyNinety_CPT', 'activate' ] );
 			register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
+			// Do stuff when plugin is deleted.
+			register_uninstall_hook( __FILE__, [ 'NinetyNinety_CPT', 'uninstall' ] );
+
 			// Add options page for plugin settings.
 			require_once NINETY_NINETY_PATH . 'inc/class-options-page.php';
 			// Require included ACF ( free version ) if ACF is not already active.
 			if ( ! class_exists( 'ACF' ) ) {
 				require_once NINETY_ACF_PATH . 'acf.php';
 			}
-			// Add custom page templates from this plugin.
-			require_once $path . 'inc/class-page-templater.php';
 
 			require_once $path . 'inc/mapbox/Mapbox.php';
 
@@ -154,25 +146,25 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function add_actions_and_filters() {
 
+			// Actions.
+			add_action( 'admin_notices', [ $this, 'admin_notices' ] );
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_stuff' ] );
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_stuff' ] );
-
 			add_action( 'acf/init', 'ninety_init_acf_import' );
-			add_action( 'acf/save_post', [ $this, 'set_meeting_title_time' ], PHP_INT_MAX );
+			add_action( 'create_ninety_meeting_location', [ $this, 'geocode_meeting_location' ], PHP_INT_MAX );
+			add_action( 'edited_ninety_meeting_location', [ $this, 'geocode_meeting_location' ], PHP_INT_MAX );
+			add_action( 'acf/save_post', [ $this, 'set_meeting_title_time' ], PHP_INT_MAX );// Run as late as possible.
 			add_action( 'template_redirect', [ $this, 'redirect_single_result' ] );
-			// Run as late as possible.
-			if ( ! class_exists( 'ACF' ) ) {
-				add_filter( 'acf/settings/dir', [ $this, 'acf_settings_dir' ] );
-			}
 			add_action( 'widgets_init', [ $this, 'register_widgets' ] );
 			add_action( 'load-post.php', 'NinetyHelpTabs::add_meeting_help_tab' );
 			add_action( 'load-post-new.php', 'NinetyHelptabs::add_meeting_help_tab' );
 			add_action( 'init', [ $this, 'load_text_domain' ] );
+			add_action( 'init', [ $this, 'setup_shortcodes' ] );
 			add_action( 'save_post_ninety_meeting', [ $this, 'update_timestamp' ] );
-			add_action( 'edited_ninety_meeting_location', [ $this, 'update_timestamp' ] );
 			add_action( 'edited_ninety_meeting_type', [ $this, 'update_timestamp' ] );
+			// Filters.
 			add_filter( 'acf/settings/show_admin', [ $this, 'acf_show_admin' ] );
-			add_filter( 'template_include', [ $this, 'ninety_archive_template' ] );
+			add_filter( 'template_include', [ $this, 'archive_template' ] );
 			add_filter( 'acf/load_field/key=field_5d182c40c6e57', [ $this, 'set_default_meeting_time' ] );
 			add_filter( 'acf/load_field/key=field_5d18480b686a6', [ $this, 'set_default_meeting_location' ] );
 			add_filter( 'acf/load_field/key=field_5d18255d071c8', [ $this, 'set_default_meeting_type' ] );
@@ -180,9 +172,46 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_filter( 'acf/load_field/key=field_5d197bc132ced', [ $this, 'ninety_coords_readonly' ] );
 			add_action( 'update_option_ninety_settings', [ $this, 'update_meeting_count' ], 10, 2 );
 			add_filter( 'wp_setup_nav_menu_item', [ $this, 'hide_meeting_nav_menu_objects' ] );
-
 			add_filter( 'posts_search', 'Ninety_Meeting_Search::advanced_custom_search', 500, 2 );
-//			add_filter( 'pre_get_posts', [ $this, 'search_it_all' ] );
+			if ( ! class_exists( 'ACF' ) ) {
+				add_filter( 'acf/settings/dir', [ $this, 'acf_settings_dir' ] );
+			}
+		}
+
+		/**
+		 * Display admin notice if MapBox API key is not set
+		 *
+		 * @return void
+		 * @since 1.0.0
+		 */
+		public function admin_notices() {
+
+			if ( ! $this->get_option( 'ninety_mapbox_api_key' ) ) {
+				$this->missing_api_key_error();
+			}
+
+		}
+
+		/**
+		 * Output admin notice for missing MapBox API key
+		 *
+		 * @return void
+		 * @since 1.0.0
+		 */
+		public function missing_api_key_error() {
+
+			$class = 'notice notice-warning is-dismissible';
+
+			$message = __(
+				'Missing MapBox API key.',
+				'ninety-ninety'
+			);
+
+			printf(
+				'<div class="%1$s"><p>%2$s</p></div>',
+				esc_attr( $class ),
+				esc_html( $message )
+			);
 		}
 
 		/**
@@ -193,7 +222,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function enqueue_admin_stuff() {
 			wp_enqueue_style( 'wp-color-picker' );
-			wp_enqueue_style( 'jquery-ui-datepicker-style', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css' );
+			wp_enqueue_style( 'jquery-ui-datepicker-style', '//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css', [], $this->get_setting( 'version' ) );
 			$admin_script     = NINETY_NINETY_URL . 'assets/js/ninety-admin.js';
 			$admin_script_ver = filemtime( NINETY_NINETY_PATH . 'assets/js/ninety-admin.js' );
 			wp_enqueue_script(
@@ -218,13 +247,20 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function enqueue_stuff() {
 
-			$map_page             = is_page_template( $this->settings['page_templates'] );
+			global $post;
+
+			$map_page             = ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'ninety_map' ) );
 			$meeting_archive_page = is_post_type_archive( 'ninety_meeting' );
 			$singular_meeting     = is_singular( 'ninety_meeting' );
 
 			if ( ! ( $map_page || $meeting_archive_page || $singular_meeting ) ) {
 				return;
 			}
+
+			$leaflet_css_url = NINETY_NINETY_URL . 'assets/js/leaflet/leaflet.css';
+
+			$version = ninety_ninety()->version;
+			wp_enqueue_style( 'map-style', $leaflet_css_url, [], $version );
 
 			$style_file                    = NINETY_NINETY_URL . 'assets/css/ninety-style.css';
 			$style_ver                     = filemtime( NINETY_NINETY_PATH . 'assets/css/ninety-style.css' );
@@ -247,35 +283,59 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				$data              = $this->get_meeting_data();
 				$data['showChart'] = false;
 
-				global $template;
-
-				$template_name = basename( $template );
-				$templates     = [
-					'template-90-map.php',
-					'template-genesis-90-map.php',
-				];
-
-				$show_chart      = ninety_ninety()->get_option( 'ninety_show_chart' );
 				$remaining_color = ninety_ninety()->get_option( 'ninety_remaining_color', '#dd3333' );
 				$done_color      = ninety_ninety()->get_option( 'ninety_done_color', '#81d742' );
-
-				if ( in_array( $template_name, $templates ) && $show_chart ) {
-					$data['showChart'] = true;
-				}
 
 				$data['colors'] = [
 					'remaining' => $remaining_color,
 					'done'      => $done_color,
 				];
 
-				$chart_type = ninety_ninety()->get_option( 'ninety_chart_type', 'pie' );
-
-				$data['chartType'] = esc_attr( $chart_type );
-
 				$data['meetingCount'] = $this->get_setting( 'meeting_count' );
 
 				// localize script with geoJSON data for leafletjs.
 				wp_localize_script( 'ninety-ninety-script', 'geojson', $data );
+
+				/******** Leaflet JS ************* */
+				$leaflet_js_url = NINETY_NINETY_URL . 'assets/js/leaflet/leaflet.js';
+
+				wp_enqueue_script( 'map-js', $leaflet_js_url, array( 'jquery' ), $this->get_setting( 'version' ) );
+
+				// Get default latitude from options page.
+				$lat = ninety_ninety()->get_option( 'ninety_map_center_lat' );
+
+				// If Lat hasn't been set, set it to Sacramento because, well, that's where I live.
+				if ( ! $lat ) {
+//					$lat = 54.525963;
+					$lat = 38.581573;
+				}
+
+				// Get default longitude from options page.
+				$lng = ninety_ninety()->get_option( 'ninety_map_center_lng' );
+
+				// If Lng hasn't been set, set it to Sacramento.
+				if ( ! $lng ) {
+//					$lng = - 105.255119;
+					$lng = -121.494400;
+				}
+
+				$center      = [ $lat, $lng ];
+				$tile_server = ninety_ninety()->get_option( 'ninety_tile_server' );
+				if ( ! $tile_server ) {
+					$tile_server = ninety_ninety()->default_tile_server;
+				}
+
+				$api_key = ( false !== strpos( $tile_server, 'thunderforest' ) ) ? ninety_ninety()->get_option( 'ninety_thunderforest_api_key' ) : ninety_ninety()->get_option( 'ninety_mapbox_api_key' );
+
+				wp_localize_script(
+					'map-js',
+					'mapOptions',
+					[
+						'apiKey'     => $api_key,
+						'tileServer' => $tile_server,
+						'mapCenter'  => $center,
+					]
+				);
 			}
 
 		}
@@ -314,16 +374,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			}
 
-			// save_post hook for terms provides 'term_###' instead of ###.
-			if ( false !== strpos( $post_id, 'term_' ) ) {
-
-				$term_id = str_replace( 'term_', '', $post_id );
-				$address = get_term_meta( $term_id, 'ninety_location_address', true );
-
-				if ( $address ) {
-					$this->geocode_meeting_location( $term_id, $address );
-				}
-			}
 		}
 
 		/**
@@ -338,6 +388,11 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				if ( 1 == $wp_query->post_count ) {
 					// Get Location using term ID from post meta
 					$location = get_term_by( 'id', $wp_query->post->ninety_meeting_location, 'ninety_meeting_location' );
+
+					if ( ! $location ) {
+						return;
+					}
+
 					// Redirect to single Meeting page with location to hide next/prev links
 					wp_redirect( site_url( 'meetings/' . $location->slug . '/' ) . $wp_query->posts[0]->post_name );
 					exit;
@@ -394,6 +449,72 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		}
 
 		/**
+		 * Add shortcode
+		 *
+		 * @return void
+		 * @since 1.0.0
+		 */
+		public function setup_shortcodes() {
+			add_shortcode( 'ninety_map', [ $this, 'handle_map_shortcode' ] );
+		}
+
+		/**
+		 * Map shortcode handler
+		 *
+		 * @param array  $atts    Shortcode attributes.
+		 * @param string $content Shortcode content.
+		 * @param string $tag     Tag for use in shared callbacks.
+		 *
+		 * @return string|void
+		 * @since 1.0.0
+		 */
+		public function handle_map_shortcode( $atts, $content, $tag ) {
+
+			if ( ninety_ninety()->get_option( 'ninety_keep_private' ) && ! is_user_logged_in() ) {
+				return;
+			}
+
+			if ( ! is_singular() ) {
+				return;
+			}
+
+			$defaults = [
+				'show_count' => false,
+				'chart_type' => false,
+				'show_chart' => false,
+				'title'      => false,
+				'zoom'       => false,
+			];
+
+			$map_options = wp_parse_args( $atts, $defaults );
+
+			$chart_type = false !== $map_options['chart_type'] ? $map_options['chart_type'] : ninety_ninety()->get_option( 'ninety_chart_type', 'pie' );
+
+			$show_chart = false !== $map_options['show_chart'] ? true : ninety_ninety()->get_option( 'ninety_show_chart', false );
+
+			$zoom = false !== $map_options['zoom'] ? intval( $map_options['zoom'] ) : ninety_ninety()->get_option( 'ninety_map_zoom', 1 );
+
+			$count = ninety_ninety()->get_setting( 'meeting_count' );
+
+			$output = '';
+
+			if ( $map_options['title'] ) {
+				$output .= sprintf( '<h4>%s</h4>', esc_html( $map_options['title'] ) );
+			}
+
+			if ( $map_options['show_count'] ) {
+				$output .= sprintf( '<h4>%d %s</h4>', $count, __( 'Meetings', 'ninety-ninety' ) );
+			}
+
+			$output .= '<div id="ninety-map" style="height: 400px"></div>';
+
+			$output .= ninety_add_chart_markup( true, $chart_type, $show_chart, $zoom );
+
+			return $output;
+
+		}
+
+		/**
 		 * Whether or not to show ACF admin
 		 * This depends on the WP_DEBUG setting.  If WP_DEBUG is true, ACF admin is shown.
 		 *
@@ -417,21 +538,21 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @return string
 		 * @since 1.0.0
 		 */
-		public function ninety_archive_template( $template ) {
+		public function archive_template( $template ) {
 
 			// Check for archive template.
 			if ( is_post_type_archive( 'ninety_meeting' ) ) {
 
-				$plugin_archive_template = plugin_dir_path( __FILE__ ) . 'templates/archive-ninety_meeting.php';
-				$theme_files             = [ 'archive-ninety_meeting.php' ];
-				$exists                  = locate_template( $theme_files, false );
+				$archive_template = plugin_dir_path( __FILE__ ) . 'templates/archive-ninety_meeting.php';
+				$theme_files      = [ 'archive-ninety_meeting.php' ];
+				$exists           = locate_template( $theme_files, false );
 
 				if ( $exists ) {
 					return $exists;
 				} else {
 					// Make sure template hasn't been deleted.
-					if ( file_exists( $plugin_archive_template ) ) {
-						return $plugin_archive_template;
+					if ( file_exists( $archive_template ) ) {
+						return $archive_template;
 					}
 				}
 			}
@@ -439,16 +560,16 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			// Check for single template.
 			if ( is_singular( 'ninety_meeting' ) ) {
 
-				$plugin_single_template = plugin_dir_path( __FILE__ ) . 'templates/single-ninety_meeting.php';
-				$theme_files            = [ 'single-ninety_meeting.php' ];
-				$exists                 = locate_template( $theme_files, false );
+				$single_template = plugin_dir_path( __FILE__ ) . 'templates/single-ninety_meeting.php';
+				$theme_files     = [ 'single-ninety_meeting.php' ];
+				$exists          = locate_template( $theme_files, false );
 
 				if ( $exists ) {
 					return $exists;
 				} else {
 					// Make sure template hasn't been deleted.
-					if ( file_exists( $plugin_single_template ) ) {
-						return $plugin_single_template;
+					if ( file_exists( $single_template ) ) {
+						return $single_template;
 					}
 				}
 			}
@@ -470,7 +591,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			$default_time = $this->get_option( 'ninety_default_mtg_time' );
 
-			if ( empty( $default_time ) ) {
+			if ( ! $default_time ) {
 				return $field;
 			}
 
@@ -485,7 +606,11 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			// Create new DateTime object based on current hour, default meeting hour and WP timezone
 			// example strings: today 19:00, yesterday 09:30.
-			$default = new DateTime( $day . $default_time, $timezone );
+			try {
+				$default = new DateTime( $day . $default_time, $timezone );
+			} catch ( Exception $e ) {
+				error_log( $e->getMessage() );
+			}
 
 			$field['default_value'] = $default->format( 'd-m-Y G:i:s' );
 
@@ -504,6 +629,10 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		public function set_default_meeting_location( $field ) {
 
 			$location = $this->get_option( 'ninety_default_mtg_location' );
+
+			if ( ! $location ) {
+				return $field;
+			}
 
 			$field['default_value'] = $location;
 
@@ -524,6 +653,10 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			// get default type option.
 			$type = $this->get_option( 'ninety_default_mtg_type' );
+
+			if ( ! $type ) {
+				return $field;
+			}
 
 			$field['default_value'] = $type;
 
@@ -572,13 +705,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function update_meeting_count( $old_value = null, $new_value = null ) {
 
-			// If called from options page save, make sure we update option as needed.
-			if ( isset( $new_value['ninety_use_exclude'] ) && '1' === $new_value['ninety_use_exclude'] ) {
-				$this->update_option( 'ninety_use_exclude', '1' );
-			} elseif ( null !== $new_value ) {
-				$this->update_option( 'ninety_use_exclude' );
-			}
-
 			$count = $this->get_meetings( [], true );
 
 			// Update option if new count differs from existing count.
@@ -614,12 +740,11 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 				if ( 'page' === $item->object && $logged_out ) {
 
-					$slug = get_page_template_slug( $item->object_id );
-
-					// If page_template_slug is for either map page template, set _invalid to true to skip menu item.
-					if ( in_array( $slug, $this->settings['page_templates'] ) ) {
+					$page = get_post( $item->object_id );
+					if ( is_a( $page, 'WP_POST' ) && has_shortcode( $page->post_content, 'ninety_map' ) ) {
 						$item->_invalid = true;
 					}
+
 				}
 			}
 
@@ -651,7 +776,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @return bool
 		 * @since 1.0.0
 		 */
-		public function has_setting( $name ) {
+		private function has_setting( $name ) {
 
 			return isset( $this->settings[ $name ] );
 		}
@@ -666,7 +791,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function get_setting( $name ) {
 
-			return isset( $this->settings[ $name ] ) ? $this->settings[ $name ] : null;
+			return $this->has_setting( $name ) ? $this->settings[ $name ] : null;
 		}
 
 		/**
@@ -680,9 +805,27 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function update_setting( $name, $value ) {
 
+			// Can't update something that doesn't exist.
+			if ( ! $this->has_setting( $name ) ) {
+				return false;
+			}
+
 			$this->settings[ $name ] = $value;
 
 			return true;
+		}
+
+		/**
+		 * Check if option exists
+		 *
+		 * @param string $name Option name.
+		 *
+		 * @return bool
+		 * @since 1.0.0
+		 */
+		private function has_option( $name ) {
+
+			return isset( $this->options[ $name ] );
 		}
 
 		/**
@@ -696,7 +839,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function get_option( $name, $default = false ) {
 
-			if ( isset( $this->options[ $name ] ) ) {
+			if ( $this->has_option( $name ) ) {
 				return $this->options[ $name ];
 			}
 
@@ -710,16 +853,23 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param mixed  $value Value to assign option.
 		 *                      if false, remove option.
 		 *
-		 * @return void
+		 * @return bool
 		 * @since 1.0.0
 		 */
 		public function update_option( $name, $value = false ) {
+
+			// Can't update something that doesn't exist.
+			if ( ! $this->has_option( $name ) ) {
+				return false;
+			}
 
 			if ( $value ) {
 				$this->options[ $name ] = $value;
 			} else {
 				unset( $this->options[ $name ] );
 			}
+
+			return true;
 
 		}
 
@@ -732,7 +882,18 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @return void
 		 * @since 1.0.0
 		 */
-		public function geocode_meeting_location( $term_id, $address ) {
+		public function geocode_meeting_location( $term_id ) {
+
+			// If we don't have an API key, bail.
+			if ( ! $this->get_option( 'ninety_mapbox_api_key' ) ) {
+				return;
+			}
+
+			$address = get_term_meta( $term_id, 'ninety_location_address', true );
+
+			if ( ! $address ) {
+				return;
+			}
 
 			$cache_key = md5( '90-address-' . $address );
 
@@ -750,6 +911,9 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			if ( isset( $geo['address'] ) ) {
 				update_term_meta( $term_id, 'ninety_location_address', $geo['address'] );
 			}
+
+			// Update last_updated timestamp - future use.
+			$this->update_timestamp();
 
 			// This needs to be done when adding Locations TODO: better way?
 			flush_rewrite_rules();
@@ -786,39 +950,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		}
 
 		/**
-		 * Conditionally add meta query excluding Meetings
-		 * Uses the 'ninety_use_exclude' option value
-		 *
-		 * @param array $args Args to be used for WP_Query.
-		 *
-		 * @return void
-		 * @since 1.0.0
-		 */
-		public function maybe_add_exclude_meta_query( &$args ) {
-
-			/**
-			 * If "Use Exclude Option" is checked on the options page, add meta query to
-			 * query all Meetings that are set to not exclude or are missing that meta ( posts created
-			 * after that ACF field was created )
-			 */
-			if ( $this->get_option( 'ninety_use_exclude' ) ) {
-				$args['meta_query'] = [
-					'relation' => 'OR',
-					[
-						'key'     => 'ninety_exclude_meeting',
-						'value'   => 0,
-						'compare' => '=',
-					],
-					[
-						'key'     => 'ninety_exclude_meeting',
-						'compare' => 'NOT EXISTS',
-					],
-				];
-			}
-
-		}
-
-		/**
 		 * Get Meetings/Meeting count
 		 *
 		 * @param array $args  Args for WP_Query.
@@ -829,8 +960,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function get_meetings( $args = [], $count = false ) {
 
-			// TODO: add option for number of Meetings to include?
-			// Query all Meetings that haven't been excluded.
+			// Query Meetings
 			$default = [
 				'post_type'      => 'ninety_meeting',
 				'post_status'    => 'publish',
@@ -839,9 +969,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			];
 
 			$new_args = wp_parse_args( $args, $default );
-
-			// Possibly add meta query to exclude Meetings based on checkbox.
-			$this->maybe_add_exclude_meta_query( $new_args );
 
 			$q = get_posts( $new_args );
 
@@ -884,14 +1011,19 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 				foreach ( $meetings as $meeting ) {
 
-					// Check ACF fields for excluding meeting from PDF, Map and Count ( ninety_exclude_meeting = field_5d223c6a1e849 ).
-					if ( $this->get_option( 'ninety_use_exclude' ) && get_field( 'ninety_exclude_meeting', $meeting->ID ) ) {
+					// Reduce meetings into array of locations with counts.
+					$location = get_field( 'ninety_meeting_location', $meeting->ID );
+
+					if ( ! $location ) {
 						continue;
 					}
 
-					// Reduce meetings into array of locations with counts.
-					$location = get_field( 'ninety_meeting_location', $meeting->ID );
-					$address  = get_term_meta( $location->term_id, 'ninety_location_address', true );
+					$address = get_term_meta( $location->term_id, 'ninety_location_address', true );
+
+					if ( ! $address ) {
+						continue;
+					}
+
 					if ( isset( $coords[ $location->slug ] ) ) {
 						$coords[ $location->slug ]['count'] ++;
 					} else {
@@ -929,7 +1061,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			}
 
 			// https://color.adobe.com/ninety-color-theme-12942667.
-			$default_marker_colors = [
+			$default_colors = [
 				'default' => '#FF9912',
 				'fifteen' => '#B32410',
 				'thirty'  => '#52C7FF',
@@ -938,21 +1070,21 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			];
 
 			// Allow customizing colors.
-			$custom_marker_colors = apply_filters( 'ninety_meeting_colors', $default_marker_colors );
+			$custom_colors = apply_filters( 'ninety_meeting_colors', $default_colors );
 
 			// Ensure no keys were left out when filtered.
-			$marker_colors = wp_parse_args( $custom_marker_colors, $default_marker_colors );
+			$marker_colors = wp_parse_args( $custom_colors, $default_colors );
 
 			$geojson['markerColors'] = $marker_colors;
 
 			// For testing geojson file.
-			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				$file    = NINETY_NINETY_PATH . 'test.geojson';
-				$fh      = fopen( $file, 'w' );
-				$encoded = json_encode( $geojson );
-				fwrite( $fh, $encoded );
-				fclose( $fh );
-			}
+//			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+//				$file    = NINETY_NINETY_PATH . 'test.geojson';
+//				$fh      = fopen( $file, 'w' );
+//				$encoded = json_encode( $geojson );
+//				fwrite( $fh, $encoded );
+//				fclose( $fh );
+//			}
 
 			return $geojson;
 		}
@@ -983,14 +1115,12 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 		/**
 		 * Update option when Meetings/Taxonomies change
-		 *
 		 * This is for future plans
 		 *
 		 * @return void
 		 * @since 1.0.0
-		 *
 		 */
-		public function update_timestamp( ) {
+		public function update_timestamp() {
 
 			$time = current_time( 'timestamp' );
 			update_option( 'ninety_last_updated', $time );

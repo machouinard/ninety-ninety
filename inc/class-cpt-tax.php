@@ -32,7 +32,6 @@ class NinetyNinety_CPT {
 	 *
 	 * @return void
 	 * @since 1.0.0
-	 *
 	 */
 	function register_post_type() {
 
@@ -91,7 +90,6 @@ class NinetyNinety_CPT {
 	 *
 	 * @return void
 	 * @since 1.0.0
-	 *
 	 */
 	function register_taxonomies() {
 
@@ -178,21 +176,20 @@ class NinetyNinety_CPT {
 	 *
 	 * @return void
 	 * @since 1.0.0
-	 *
 	 */
 	function generate_rewrite_rules( $wp_rewrite ) {
 
 		$rules      = [];
 		$post_types = get_post_types( [
-			'name'     => 'ninety_meeting',
-			'public'   => true,
-			'_builtin' => false,
-		], 'objects' );
+			                              'name'     => 'ninety_meeting',
+			                              'public'   => true,
+			                              '_builtin' => false,
+		                              ], 'objects' );
 		$taxonomies = get_taxonomies( [
-			'name'     => 'ninety_meeting_location',
-			'public'   => true,
-			'_builtin' => false,
-		], 'objects' );
+			                              'name'     => 'ninety_meeting_location',
+			                              'public'   => true,
+			                              '_builtin' => false,
+		                              ], 'objects' );
 
 		foreach ( $post_types as $post_type ) {
 			$post_type_name = $post_type->name;
@@ -201,10 +198,10 @@ class NinetyNinety_CPT {
 			foreach ( $taxonomies as $taxonomy ) {
 				if ( $taxonomy->object_type[0] == $post_type_name ) {
 					$terms = get_categories( [
-						'type'       => $post_type_name,
-						'taxonomy'   => $taxonomy->name,
-						'hide_empty' => 0,
-					] );
+						                         'type'       => $post_type_name,
+						                         'taxonomy'   => $taxonomy->name,
+						                         'hide_empty' => 0,
+					                         ] );
 					foreach ( $terms as $term ) {
 						$rules[ $post_type_slug . '/' . $term->slug . '/page/([0-9]{1,})/?' ] = 'index.php?post_type=' . $post_type_name . '&' . $term->taxonomy . '=' . $term->slug . '&paged=$matches[1]';
 						$rules[ $post_type_slug . '/' . $term->slug . '/([^/]+)/?$' ]         = 'index.php?post_type=' . $post_type_name . '&' . $post_type_name . '=$matches[1]&' . $term->taxonomy . '=' . $term->slug;
@@ -231,30 +228,28 @@ class NinetyNinety_CPT {
 	 *
 	 * @return mixed
 	 * @since 1.0.0
-	 *
 	 */
 	public function redirect_anon_users( $wp ) {
 
 		if ( is_admin() ) {
-			return $wp;
+			return;
 		}
 
 		global $post;
 
 		//* No $post object on 404 page...
 		if ( ! $post ) {
-			return $wp;
+			return;
 		}
 
-		//* Get array of page templates used for Meetings
-		$templates = ninety_ninety()->get_setting( 'page_templates' );
+		$has_shortcode = is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'ninety_map' );
 
-		if ( ( 'ninety_meeting' == $post->post_type || is_post_type_archive( 'ninety_meeting' ) || is_tax( 'ninety_meeting_location' ) || is_page_template( $templates ) ) && ! is_user_logged_in() ) {
+		if ( ( 'ninety_meeting' == $post->post_type || is_post_type_archive( 'ninety_meeting' ) || is_tax( 'ninety_meeting_location' ) ) && ! is_user_logged_in() ) {
 			wp_redirect( get_home_url() );
 			exit;
 		}
 
-		return $wp;
+		return;
 
 	}
 
@@ -263,7 +258,6 @@ class NinetyNinety_CPT {
 	 *
 	 * @return void
 	 * @since 1.0.0
-	 *
 	 */
 	public static function activate() {
 
@@ -289,6 +283,72 @@ class NinetyNinety_CPT {
 		}
 
 		flush_rewrite_rules();
+
+	}
+
+	/**
+	 * Conditionally delete options when plugin is deleted
+	 *
+	 * @return void
+	 * @since 1.0.0
+	 */
+	public static function uninstall() {
+
+		// Get option to remove data on post deletion.
+		$delete_data = ninety_ninety()->get_option( 'delete_data', 0 );
+
+		if ( ! $delete_data ) {
+			return;
+		}
+
+		delete_option( NINETY_COUNT_OPTION_KEY );
+		delete_option( 'ninety_last_updated' );
+		delete_option( 'ninety_settings' );
+
+		// Add action to remove any attachments when deleting meetings.
+		add_action( 'before_delete_post', 'NinetyNinety_CPT::delete_attachments' );
+
+		$meetings = get_posts(
+			[
+				'post_type'   => 'ninety_meeting',
+				'post_status' => 'any',
+				'numberposts' => - 1,
+			]
+		);
+
+		foreach ( $meetings as $meeting ) {
+			self::delete_attachments( $meeting->ID );
+			wp_delete_post( $meeting->ID );
+		}
+
+		// Remove attachment deletion action.
+		remove_action( 'before_delete_post', 'NinetyNinety_CPT::delete_attachments' );
+
+		flush_rewrite_rules();
+	}
+
+	/**
+	 * Delete any meeting attachments
+	 *
+	 * @param Int $post_id Meeting ID.
+	 *
+	 * @return void
+	 * @since 1.0.0
+	 */
+	public static function delete_attachments( $post_id ) {
+
+		$attachments = get_posts(
+			[
+				'post_type'      => 'attachment',
+				'posts_per_page' => - 1,
+				'post_status'    => 'any',
+				'post_parent'    => $post_id,
+			]
+		);
+
+		foreach ( $attachments as $attachment ) {
+			wp_delete_attachment( $attachment->ID );
+		}
 
 	}
 

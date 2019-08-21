@@ -250,23 +250,9 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			);
 
 			add_settings_field(
-				'ninety_use_exclude',
-				__(
-					'Use Exclude option (PDF, Maps, Count, etc...',
-					'ninety-ninety'
-				),
-				[
-					$this,
-					'ninety_use_exclude_render',
-				],
-				'pluginMisc',
-				'ninety_pluginPage_misc_section'
-			);
-
-			add_settings_field(
 				'ninety_show_chart',
 				__(
-					'Display chart',
+					'Display chart (default)',
 					'ninety-ninety'
 				),
 				[
@@ -280,7 +266,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			add_settings_field(
 				'ninety_chart_type',
 				__(
-					'Chart Type',
+					'Chart Type (default)',
 					'ninety-ninety'
 				),
 				[
@@ -314,6 +300,20 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 				[
 					$this,
 					'ninety_chart_remaining_color_render',
+				],
+				'pluginMisc',
+				'ninety_pluginPage_misc_section'
+			);
+
+			add_settings_field(
+				'ninety_delete_data',
+				__(
+					'Remove data when deleting plugin',
+					'ninety-ninety'
+				),
+				[
+					$this,
+					'ninety_delete_data_render',
 				],
 				'pluginMisc',
 				'ninety_pluginPage_misc_section'
@@ -696,7 +696,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * @since 1.0.0
 		 */
 		public function ninety_map_zoom_render() {
-			$zoom = ninety_ninety()->get_option( 'ninety_map_zoom' );
+			$zoom = ninety_ninety()->get_option( 'ninety_map_zoom', 2 );
 			?>
 			<input type='number' name='ninety_settings[ninety_map_zoom]'
 				   value='<?php echo (int) $zoom; ?>' min="1" max="18" step="1">
@@ -715,22 +715,6 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			?>
 			<input type='checkbox'
 				   name='ninety_settings[ninety_keep_private]' <?php checked( $private, 1 ); ?>
-				   value='1'>
-			<?php
-
-		}
-
-		/**
-		 * Output Exclude checkbox
-		 *
-		 * @return void
-		 * @since 1.0.0
-		 */
-		public function ninety_use_exclude_render() {
-			$exclude = ninety_ninety()->get_option( 'ninety_use_exclude' );
-			?>
-			<input type='checkbox'
-				   name='ninety_settings[ninety_use_exclude]' <?php checked( $exclude, 1 ); ?>
 				   value='1'>
 			<?php
 
@@ -759,7 +743,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * @since 1.2.0
 		 */
 		public function ninety_chart_type_render() {
-			$type = ninety_ninety()->get_option( 'ninety_chart_type' );
+			$type = ninety_ninety()->get_option( 'ninety_chart_type', 'pie' );
 			?>
 			<label for="pie">Pie</label>
 			<input type='radio'
@@ -819,6 +803,18 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 
 
 			<?php
+		}
+
+		public function ninety_delete_data_render() {
+			$exclude = ninety_ninety()->get_option( 'ninety_delete_data' );
+			?>
+			<input type='checkbox'
+				   class='ninety-danger'
+				   name='ninety_settings[ninety_delete_data]' <?php checked( $exclude, 1 ); ?>
+				   value='1'>
+			<span>This only removes plugin settings on this page, not Meetings or their associated taxonomies.</span>
+			<?php
+
 		}
 
 		/**
@@ -966,6 +962,8 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			if ( ! ninety_ninety()->get_option( 'ninety_create_pdf' ) ) {
 				return;
 			}
+
+			$args = [];
 
 			$start_date = ninety_ninety()->get_option( 'ninety_pdf_start_date' );
 			$end_date   = ninety_ninety()->get_option( 'ninety_pdf_end_date' );
