@@ -257,15 +257,15 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				$term = get_term( $term_id, 'ninety_meeting_location' );
 
 				if ( ! $term || is_wp_error( $term ) ) {
-					return '&#x2718;';
+					return '<span style="color: #ff0000;">&#x2718;</span>'; // X mark
 				}
 
 				$coords = get_field( 'ninety_location_coords', $term );
 
 				if ( empty( $coords ) ) {
-					$content = '&#x2718;'; // X mark
+					$content = '<span style="color: #ff0000;">&#x2718;</span>'; // X mark
 				} else {
-					$content = '&#10004;'; // Check mark.
+					$content = '<span style="color: #49b74e;">&#10004;</span>'; // Check mark.
 				}
 			}
 
