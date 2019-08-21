@@ -306,7 +306,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 				// If Lat hasn't been set, set it to Sacramento because, well, that's where I live.
 				if ( ! $lat ) {
-					$lat = 54.525963;
+//					$lat = 54.525963;
+					$lat = 38.581573;
 				}
 
 				// Get default longitude from options page.
@@ -314,7 +315,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 				// If Lng hasn't been set, set it to Sacramento.
 				if ( ! $lng ) {
-					$lng = - 105.255119;
+//					$lng = - 105.255119;
+					$lng = -121.494400;
 				}
 
 				$center      = [ $lat, $lng ];
