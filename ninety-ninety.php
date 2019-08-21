@@ -163,6 +163,11 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_action( 'save_post_ninety_meeting', [ $this, 'update_timestamp' ] );
 			add_action( 'edited_ninety_meeting_type', [ $this, 'update_timestamp' ] );
 			// Filters.
+			add_filter( 'manage_edit-ninety_meeting_location_columns', [ $this, 'manage_location_columns' ] );
+			add_filter( 'manage_ninety_meeting_location_custom_column', [
+				$this,
+				'manage_location_custom_column',
+			], 10, 3 );
 			add_filter( 'acf/settings/show_admin', [ $this, 'acf_show_admin' ] );
 			add_filter( 'template_include', [ $this, 'archive_template' ] );
 			add_filter( 'acf/load_field/key=field_5d182c40c6e57', [ $this, 'set_default_meeting_time' ] );
@@ -173,6 +178,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_action( 'update_option_ninety_settings', [ $this, 'update_meeting_count' ], 10, 2 );
 			add_filter( 'wp_setup_nav_menu_item', [ $this, 'hide_meeting_nav_menu_objects' ] );
 			add_filter( 'posts_search', 'Ninety_Meeting_Search::advanced_custom_search', 500, 2 );
+
 			if ( ! class_exists( 'ACF' ) ) {
 				add_filter( 'acf/settings/dir', [ $this, 'acf_settings_dir' ] );
 			}
@@ -212,6 +218,56 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				esc_attr( $class ),
 				esc_html( $message )
 			);
+		}
+
+		/**
+		 * Add custom column to Meeting Locations admin screen
+		 *
+		 * @param array $cols Array of admin columns.
+		 *
+		 * @return array
+		 * @since 1.0.0
+		 */
+		public function manage_location_columns( $cols ) {
+
+			$valid_col['valid'] = 'Status';
+
+			// Add column between 'Slug' and 'Count'.
+			$new_cols = array_slice( $cols, 0, 4, true ) + $valid_col + array_slice( $cols, 4, null, true );
+
+			return $new_cols;
+		}
+
+		/**
+		 * Add check mark to custom admin column if it has geo coords.
+		 *
+		 * @param string $content     Column content.
+		 * @param string $column_name Column name.
+		 * @param int    $term_id     Term ID.
+		 *
+		 * @return string
+		 * @since 1.0.0
+		 */
+		public function manage_location_custom_column( $content, $column_name, $term_id ) {
+
+			// Check column name in case more columns are added.
+			if ( 'valid' === $column_name ) {
+				$term = get_term( $term_id, 'ninety_meeting_location' );
+
+				if ( ! $term || is_wp_error( $term ) ) {
+					return '&#x2718;';
+				}
+
+				$coords = get_field( 'ninety_location_coords', $term );
+
+				if ( empty( $coords ) ) {
+					$content = '&#x2718;'; // X mark
+				} else {
+					$content = '&#10004;'; // Check mark.
+				}
+			}
+
+			return $content;
 		}
 
 		/**
@@ -316,7 +372,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				// If Lng hasn't been set, set it to Sacramento.
 				if ( ! $lng ) {
 //					$lng = - 105.255119;
-					$lng = -121.494400;
+					$lng = - 121.494400;
 				}
 
 				$center      = [ $lat, $lng ];
