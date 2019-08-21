@@ -386,6 +386,11 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				if ( 1 == $wp_query->post_count ) {
 					// Get Location using term ID from post meta
 					$location = get_term_by( 'id', $wp_query->post->ninety_meeting_location, 'ninety_meeting_location' );
+
+					if ( ! $location ) {
+						return;
+					}
+
 					// Redirect to single Meeting page with location to hide next/prev links
 					wp_redirect( site_url( 'meetings/' . $location->slug . '/' ) . $wp_query->posts[0]->post_name );
 					exit;
