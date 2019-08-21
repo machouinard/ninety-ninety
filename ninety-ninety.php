@@ -882,6 +882,11 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function geocode_meeting_location( $term_id ) {
 
+			// If we don't have an API key, bail.
+			if ( ! $this->get_option( 'ninety_mapbox_api_key' ) ) {
+				return;
+			}
+
 			$address = get_term_meta( $term_id, 'ninety_location_address', true );
 
 			if ( ! $address ) {
