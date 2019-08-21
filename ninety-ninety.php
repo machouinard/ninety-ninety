@@ -756,7 +756,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @return bool
 		 * @since 1.0.0
 		 */
-		public function has_setting( $name ) {
+		private function has_setting( $name ) {
 
 			return isset( $this->settings[ $name ] );
 		}
@@ -771,7 +771,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function get_setting( $name ) {
 
-			return isset( $this->settings[ $name ] ) ? $this->settings[ $name ] : null;
+			return $this->has_setting( $name ) ? $this->settings[ $name ] : null;
 		}
 
 		/**
@@ -785,9 +785,27 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function update_setting( $name, $value ) {
 
+			// Can't update something that doesn't exist.
+			if ( ! $this->has_setting( $name ) ) {
+				return false;
+			}
+
 			$this->settings[ $name ] = $value;
 
 			return true;
+		}
+
+		/**
+		 * Check if option exists
+		 *
+		 * @param string $name Option name.
+		 *
+		 * @return bool
+		 * @since 1.0.0
+		 */
+		private function has_option( $name ) {
+
+			return isset( $this->options[ $name ] );
 		}
 
 		/**
@@ -801,7 +819,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function get_option( $name, $default = false ) {
 
-			if ( isset( $this->options[ $name ] ) ) {
+			if ( $this->has_option( $name ) ) {
 				return $this->options[ $name ];
 			}
 
@@ -815,16 +833,23 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param mixed  $value Value to assign option.
 		 *                      if false, remove option.
 		 *
-		 * @return void
+		 * @return bool
 		 * @since 1.0.0
 		 */
 		public function update_option( $name, $value = false ) {
+
+			// Can't update something that doesn't exist.
+			if ( ! $this->has_option( $name ) ) {
+				return false;
+			}
 
 			if ( $value ) {
 				$this->options[ $name ] = $value;
 			} else {
 				unset( $this->options[ $name ] );
 			}
+
+			return true;
 
 		}
 
