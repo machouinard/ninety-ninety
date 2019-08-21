@@ -979,7 +979,17 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 					// Reduce meetings into array of locations with counts.
 					$location = get_field( 'ninety_meeting_location', $meeting->ID );
-					$address  = get_term_meta( $location->term_id, 'ninety_location_address', true );
+
+					if ( ! $location ) {
+						continue;
+					}
+
+					$address = get_term_meta( $location->term_id, 'ninety_location_address', true );
+
+					if ( ! $address ) {
+						continue;
+					}
+
 					if ( isset( $coords[ $location->slug ] ) ) {
 						$coords[ $location->slug ]['count'] ++;
 					} else {
