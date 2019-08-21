@@ -98,15 +98,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				'last_updated'  => $last_updated,
 			];
 
-			// Set filterable page templates used by this plugin.
-			$this->settings['page_templates'] = apply_filters(
-				'ninety_page_templates',
-				[
-					'template-genesis-90-map.php',
-					'template-90-map.php',
-				]
-			);
-
 			// Get stored options set on plugin options page.
 			$this->options = get_option( 'ninety_settings' );
 
@@ -719,12 +710,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 						$item->_invalid = true;
 					}
 
-//					$slug = get_page_template_slug( $item->object_id );
-//
-//					// If page_template_slug is for either map page template, set _invalid to true to skip menu item.
-//					if ( in_array( $slug, $this->settings['page_templates'] ) ) {
-//						$item->_invalid = true;
-//					}
 				}
 			}
 
