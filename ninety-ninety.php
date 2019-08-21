@@ -150,6 +150,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_stuff' ] );
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_stuff' ] );
 			add_action( 'acf/init', 'ninety_init_acf_import' );
+			add_action( 'create_ninety_meeting_location', [ $this, 'geocode_meeting_location' ], PHP_INT_MAX );
+			add_action( 'edited_ninety_meeting_location', [ $this, 'geocode_meeting_location' ], PHP_INT_MAX );
 			add_action( 'acf/save_post', [ $this, 'set_meeting_title_time' ], PHP_INT_MAX );// Run as late as possible.
 			add_action( 'template_redirect', [ $this, 'redirect_single_result' ] );
 			add_action( 'widgets_init', [ $this, 'register_widgets' ] );
@@ -158,7 +160,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_action( 'init', [ $this, 'load_text_domain' ] );
 			add_action( 'init', [ $this, 'setup_shortcodes' ] );
 			add_action( 'save_post_ninety_meeting', [ $this, 'update_timestamp' ] );
-			add_action( 'edited_ninety_meeting_location', [ $this, 'update_timestamp' ] );
 			add_action( 'edited_ninety_meeting_type', [ $this, 'update_timestamp' ] );
 			// Filters.
 			add_filter( 'acf/settings/show_admin', [ $this, 'acf_show_admin' ] );
@@ -334,16 +335,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			}
 
-			// save_post hook for terms provides 'term_###' instead of ###.
-			if ( false !== strpos( $post_id, 'term_' ) ) {
-
-				$term_id = str_replace( 'term_', '', $post_id );
-				$address = get_term_meta( $term_id, 'ninety_location_address', true );
-
-				if ( $address ) {
-					$this->geocode_meeting_location( $term_id, $address );
-				}
-			}
 		}
 
 		/**
@@ -847,7 +838,13 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @return void
 		 * @since 1.0.0
 		 */
-		public function geocode_meeting_location( $term_id, $address ) {
+		public function geocode_meeting_location( $term_id ) {
+
+			$address = get_term_meta( $term_id, 'ninety_location_address', true );
+
+			if ( ! $address ) {
+				return;
+			}
 
 			$cache_key = md5( '90-address-' . $address );
 
@@ -865,6 +862,9 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			if ( isset( $geo['address'] ) ) {
 				update_term_meta( $term_id, 'ninety_location_address', $geo['address'] );
 			}
+
+			// Update last_updated timestamp - future use.
+			$this->update_timestamp();
 
 			// This needs to be done when adding Locations TODO: better way?
 			flush_rewrite_rules();
