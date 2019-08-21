@@ -182,6 +182,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			if ( ! class_exists( 'ACF' ) ) {
 				add_filter( 'acf/settings/dir', [ $this, 'acf_settings_dir' ] );
 			}
+			// Disable emoji detection on admin screens.
+			remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
 		}
 
 		/**
