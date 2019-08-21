@@ -147,6 +147,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		public function add_actions_and_filters() {
 
 			// Actions.
+			add_action( 'admin_notices', [ $this, 'admin_notices' ] );
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_stuff' ] );
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_stuff' ] );
 			add_action( 'acf/init', 'ninety_init_acf_import' );
@@ -175,6 +176,42 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			if ( ! class_exists( 'ACF' ) ) {
 				add_filter( 'acf/settings/dir', [ $this, 'acf_settings_dir' ] );
 			}
+		}
+
+		/**
+		 * Display admin notice if MapBox API key is not set
+		 *
+		 * @return void
+		 * @since 1.0.0
+		 */
+		public function admin_notices() {
+
+			if ( ! $this->get_option( 'ninety_mapbox_api_key' ) ) {
+				$this->missing_api_key_error();
+			}
+
+		}
+
+		/**
+		 * Output admin notice for missing MapBox API key
+		 *
+		 * @return void
+		 * @since 1.0.0
+		 */
+		public function missing_api_key_error() {
+
+			$class = 'notice notice-warning is-dismissible';
+
+			$message = __(
+				'Missing MapBox API key.',
+				'ninety-ninety'
+			);
+
+			printf(
+				'<div class="%1$s"><p>%2$s</p></div>',
+				esc_attr( $class ),
+				esc_html( $message )
+			);
 		}
 
 		/**
