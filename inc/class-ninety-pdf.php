@@ -11,7 +11,7 @@ class NinetyPDF extends FPDF {
 	 * PDF Header
 	 *
 	 * @return void
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	public function Header() {
 
@@ -33,7 +33,7 @@ class NinetyPDF extends FPDF {
 	 * PDF Footer
 	 *
 	 * @return void
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	public function Footer() {
 
@@ -51,7 +51,7 @@ class NinetyPDF extends FPDF {
 	 * @param array $lines array of lines for fPDF.
 	 *
 	 * @return array
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	public function LoadData( $lines = array() ) {
 
@@ -70,7 +70,7 @@ class NinetyPDF extends FPDF {
 	 * @param array $data   PDF Data.
 	 *
 	 * @return void
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	public function BasicTable( $header, $data ) {
 
@@ -95,7 +95,7 @@ class NinetyPDF extends FPDF {
 	 * @param array $data   PDF Data.
 	 *
 	 * @return void
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	public function ImprovedTable( $header, $data ) {
 
@@ -126,7 +126,7 @@ class NinetyPDF extends FPDF {
 	 * @param array $data   PDF Data.
 	 *
 	 * @return void
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	public function FancyTable( $header, $data ) {
 
