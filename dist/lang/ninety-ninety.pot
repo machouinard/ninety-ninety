@@ -1,0 +1,474 @@
+# 90 in 90 Pot
+# Copyright 2014 ...
+# This file is distributed under the GNU General Public License v3 or later.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 90 "
+"in 90 v1.0.0\n"
+"POT-Creation-Date: "
+"2019-07-17 00:26-0700\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Your "
+"Name <you@example.com>\n"
+"Language-Team: Mark "
+"Chouinard<wp@chouinard."
+"me>\n"
+"Report-Msgid-Bugs-To: "
+"Translator Name "
+"<translations@example."
+"com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/"
+"plain; charset=UTF-8\n"
+"Content-Transfer-"
+"Encoding: 8bit\n"
+"Plural-Forms: "
+"nplurals=2; plural=n != "
+"1;\n"
+"X-Textdomain-Support: "
+"yesX-Generator: Poedit "
+"1.6.4\n"
+"X-Poedit-SourceCharset: "
+"UTF-8\n"
+"X-Poedit-KeywordsList: "
+"__;_e;esc_html_e;"
+"esc_html_x:1,2c;"
+"esc_html__;esc_attr_e;"
+"esc_attr_x:1,2c;"
+"esc_attr__;_ex:1,2c;"
+"_nx:4c,1,2;"
+"_nx_noop:4c,1,2;_x:1,2c;"
+"_n:1,2;_n_noop:1,2;"
+"__ngettext:1,2;"
+"__ngettext_noop:1,2;_c,"
+"_nc:4c,1,2\n"
+"X-Poedit-Basepath: ..\n"
+"Language: en_US\n"
+"X-Generator: Poedit "
+"2.2.3\n"
+"X-Poedit-"
+"SearchPath-0: .\n"
+"X-Poedit-"
+"SearchPathExcluded-0: "
+"inc/acf\n"
+"X-Poedit-"
+"SearchPathExcluded-1: "
+"inc/fpdf\n"
+"X-Poedit-"
+"SearchPathExcluded-2: "
+"inc/mapbox\n"
+"X-Poedit-"
+"SearchPathExcluded-3: "
+"node_modules\n"
+"X-Poedit-"
+"SearchPathExcluded-4: "
+"lang\n"
+"X-Poedit-"
+"SearchPathExcluded-5: "
+"README.txt\n"
+"X-Poedit-"
+"SearchPathExcluded-6: "
+"acf-export-2019-07-14."
+"json\n"
+"X-Poedit-"
+"SearchPathExcluded-7: "
+"package-lock.json\n"
+"X-Poedit-"
+"SearchPathExcluded-8: "
+"package.json\n"
+"X-Poedit-"
+"SearchPathExcluded-9: "
+"test.geojson\n"
+"X-Poedit-"
+"SearchPathExcluded-10: "
+"webpack-config.js\n"
+"X-Poedit-"
+"SearchPathExcluded-11: "
+"inc/acf-fields.php\n"
+"X-Poedit-"
+"SearchPathExcluded-12: "
+"inc/Mapbox.php\n"
+
+#: inc/class-ninety-help-contents.php:27
+msgid ""
+"Default Location, Time "
+"and Type are used when "
+"creating a new Meeting."
+msgstr ""
+
+#: inc/class-ninety-help-contents.php:28
+msgid ""
+"For the Default Time "
+"option to work as "
+"expected you'll need to "
+"make sure the Timezone "
+"is set correctly on the "
+"General Settings page."
+msgstr ""
+
+#: inc/class-ninety-help-contents.php:37
+msgid ""
+"API Keys are required "
+"for mapping your "
+"Meetings."
+msgstr ""
+
+#: inc/class-ninety-help-contents.php:38
+msgid ""
+"The MapBox API key is "
+"required for "
+"automatically geocoding "
+"Location addresses."
+msgstr ""
+
+#: inc/class-ninety-help-contents.php:39
+msgid ""
+"MapBox and Thunderforest "
+"API keys are required to "
+"display their respective "
+"Tile Sets."
+msgstr ""
+
+#: inc/class-ninety-help-contents.php:40
+msgid ""
+"The chosen Tile Set is "
+"what determines the "
+"appearance of the "
+"Meeting Map."
+msgstr ""
+
+#: inc/class-ninety-help-contents.php:41
+msgid ""
+"Default Map Center Lat & "
+"Lng determine the "
+"initial position of the "
+"map.  You use the "
+"provided link to obtain "
+"coordinates of any "
+"location."
+msgstr ""
+
+#: inc/class-ninety-help-contents.php:42
+msgid ""
+"Default Map Zoom Level "
+"can be adjusted to make "
+"sure all of your "
+"Meetings appear when the "
+"map first loads."
+msgstr ""
+
+#: inc/class-ninety-help-contents.php:49
+#: inc/class-options-page.php:241
+msgid ""
+"Keep Meetings Private"
+msgstr ""
+
+#: inc/class-ninety-help-contents.php:51
+msgid ""
+"Prevent non-logged-in "
+"users from seeing "
+"individual Meetings, "
+"Meeting archive pages "
+"and the Meeting Map."
+msgstr ""
+
+#: inc/class-ninety-help-contents.php:54
+msgid ""
+"Use Exclude option..."
+msgstr ""
+
+#: inc/class-ninety-help-contents.php:56
+msgid ""
+"Each Meeting has an "
+"\"Exclude\" checkbox."
+msgstr ""
+
+#: inc/class-ninety-help-contents.php:57
+msgid ""
+"If this box is checked, "
+"any Meetings whose "
+"Exclude checkboxes have "
+"been checked will be "
+"excluded from the PDF, "
+"count and Map."
+msgstr ""
+
+#: inc/class-ninety-help-contents.php:60
+msgid "Chart Options"
+msgstr ""
+
+#: inc/class-ninety-help-contents.php:62
+msgid ""
+"Whether or not to "
+"display the chart "
+"( below the Map ) and "
+"which chart type to use."
+msgstr ""
+
+#: inc/class-ninety-help-contents.php:63
+msgid ""
+"Both charts use colors "
+"to differentiate between "
+"completed and remaining "
+"Meetings.  You can "
+"choose those colors here."
+msgstr ""
+
+#: inc/class-ninety-help-contents.php:72
+msgid ""
+"Use PDF Title to "
+"customize, well, the "
+"title of the PDF."
+msgstr ""
+
+#: inc/class-ninety-help-contents.php:73
+msgid ""
+"Choose whether or not to "
+"include the number of "
+"days between your first "
+"and last Meetings on the "
+"PDF."
+msgstr ""
+
+#: inc/class-ninety-help-contents.php:82
+msgid ""
+"This should all be "
+"pretty self-explanatory."
+msgstr ""
+
+#: inc/class-ninety-help-contents.php:85
+msgid ""
+"Do we really need a help "
+"tab here?"
+msgstr ""
+
+#: inc/class-ninety-help-tabs.php:35
+#: inc/class-options-page.php:72
+msgid "Meeting Options"
+msgstr ""
+
+#: inc/class-ninety-help-tabs.php:43
+#: inc/class-options-page.php:85
+msgid "Map Options"
+msgstr ""
+
+#: inc/class-ninety-help-tabs.php:51
+msgid "Misc Options"
+msgstr ""
+
+#: inc/class-ninety-help-tabs.php:59
+#: inc/class-options-page.php:111
+msgid "PDF Options"
+msgstr ""
+
+#: inc/class-ninety-help-tabs.php:78
+msgid "Meeting Help"
+msgstr ""
+
+#: inc/class-options-page.php:98
+msgid ""
+"Miscellaneous Options"
+msgstr ""
+
+#: inc/class-options-page.php:124
+msgid ""
+"Default Meeting Location"
+msgstr ""
+
+#: inc/class-options-page.php:138
+msgid ""
+"Default Meeting Time"
+msgstr ""
+
+#: inc/class-options-page.php:152
+msgid ""
+"Default Meeting Type"
+msgstr ""
+
+#: inc/class-options-page.php:166
+msgid "MapBox API Key"
+msgstr ""
+
+#: inc/class-options-page.php:180
+msgid ""
+"Thunderforest API Key"
+msgstr ""
+
+#: inc/class-options-page.php:194
+msgid "Tile Set"
+msgstr ""
+
+#: inc/class-options-page.php:207
+msgid ""
+"Default Map Center Lat"
+msgstr ""
+
+#: inc/class-options-page.php:218
+msgid ""
+"Default Map Center Lng"
+msgstr ""
+
+#: inc/class-options-page.php:229
+msgid ""
+"Default Map Zoom Level"
+msgstr ""
+
+#: inc/class-options-page.php:255
+msgid ""
+"Use Exclude option (PDF, "
+"Maps, Count, etc..."
+msgstr ""
+
+#: inc/class-options-page.php:269
+msgid "Display chart"
+msgstr ""
+
+#: inc/class-options-page.php:283
+msgid "Chart Type"
+msgstr ""
+
+#: inc/class-options-page.php:297
+msgid ""
+"Completed Meetings Color"
+msgstr ""
+
+#: inc/class-options-page.php:311
+msgid ""
+"Remaining Meetings Color"
+msgstr ""
+
+#: inc/class-options-page.php:325
+msgid "Create PDF?"
+msgstr ""
+
+#: inc/class-options-page.php:339
+msgid "PDF Title"
+msgstr ""
+
+#: inc/class-options-page.php:353
+msgid ""
+"Show number of days on "
+"PDF?"
+msgstr ""
+
+#: inc/class-options-page.php:367
+msgid ""
+"Start Date for PDF? "
+"(optional)"
+msgstr ""
+
+#: inc/class-options-page.php:381
+msgid ""
+"End Date for PDF? "
+"(optional)"
+msgstr ""
+
+#: inc/class-options-page.php:395
+msgid "PDF Printout"
+msgstr ""
+
+#: inc/class-options-page.php:921
+msgid ""
+"Set Meeting defaults"
+msgstr ""
+
+#: inc/class-options-page.php:931
+msgid "Set Map defaults"
+msgstr ""
+
+#: inc/class-options-page.php:941
+msgid "Set Other options"
+msgstr ""
+
+#: inc/class-options-page.php:951
+msgid "Set PDF Options"
+msgstr ""
+
+#: inc/class-options-page.php:1060
+#, php-format
+msgid "%s meeting"
+msgid_plural "%s meetings"
+msgstr[0] ""
+msgstr[1] ""
+
+#: inc/widget-meeting-calendar.php:26
+msgid ""
+"A calendar of your "
+"Meetings."
+msgstr ""
+
+#: inc/widget-meeting-calendar.php:28
+msgid ""
+"Calendar ( Meetings )"
+msgstr ""
+
+#: inc/widget-meeting-calendar.php:32
+msgid "Calendar"
+msgstr ""
+
+#: inc/widget-meeting-calendar.php:75
+#: inc/widget-meeting-search.php:96
+msgid "Title:"
+msgstr ""
+
+#: inc/widget-meeting-calendar.php:152
+#, php-format
+msgctxt "calendar caption"
+msgid "%1$s %2$s"
+msgstr ""
+
+#: inc/widget-meeting-calendar.php:244
+msgctxt ""
+"daily archives date "
+"format"
+msgid "F j, Y"
+msgstr ""
+
+#: inc/widget-meeting-calendar.php:246
+#, php-format
+msgid ""
+"Meetings took place on %s"
+msgstr ""
+
+#: inc/widget-meeting-search.php:19
+msgid ""
+"A search form for your "
+"site."
+msgstr ""
+
+#: inc/widget-meeting-search.php:21
+msgid "Search ( Meetings )"
+msgstr ""
+
+#: inc/widget-meeting-search.php:54
+msgid "Search"
+msgstr ""
+
+#: ninety-ninety.php:87
+msgid "90 in 90"
+msgstr ""
+
+#: ninety-ninety.php:879
+#, php-format
+msgid "%d meeting"
+msgid_plural "%d meetings"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/single-genesis.php:43
+msgid "Speaker:&nbsp;"
+msgstr ""
+
+#: templates/single-genesis.php:49
+msgid "Topic:&nbsp;"
+msgstr ""
+
+#: templates/template-90-map.php:10
+#: templates/template-genesis-90-map.php:14
+msgid "Meetings Map"
+msgstr ""
+
+#: templates/template-genesis-90-map.php:26
+msgid "Meetings"
+msgstr ""

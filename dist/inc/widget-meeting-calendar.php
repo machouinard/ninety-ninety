@@ -281,7 +281,7 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 					$this->maybe_bold_day( $day, $daywithpost[ $day ] )
 				);
 			} else {
-				$calendar_output .= $this->maybe_bold_day( $day, $daywithpost[ $day ] );
+				$calendar_output .= $day;
 			}
 			$calendar_output .= '</td>';
 
