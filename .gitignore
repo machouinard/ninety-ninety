@@ -1,6 +1,7 @@
 meeting-files
 test.geojson
 inc/meetings.txt
+assets/js/
 dist/
 # Created by https://www.gitignore.io/api/node,phpstorm,osx
 # Edit at https://www.gitignore.io/?templates=node,phpstorm,osx
