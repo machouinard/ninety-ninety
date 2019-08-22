@@ -306,6 +306,9 @@ class NinetyNinety_CPT {
 		delete_option( 'ninety_last_updated' );
 		delete_option( 'ninety_settings' );
 
+		self::delete_custom_terms( 'ninety_meeting_location' );
+		self::delete_custom_terms( 'ninety_meeting_type' );
+
 		$meetings = get_posts(
 			[
 				'post_type'   => 'ninety_meeting',
@@ -315,11 +318,34 @@ class NinetyNinety_CPT {
 		);
 
 		foreach ( $meetings as $meeting ) {
-			self::delete_attachments( $meeting->ID );
 			wp_delete_post( $meeting->ID );
 		}
 
 		flush_rewrite_rules();
+	}
+
+	/**
+	 * Delete custom taxonomy terms
+	 *
+	 * @param string $taxonomy Taxonomy to delete terms from.
+	 *
+	 * @return void
+	 * @since 1.0.0
+	 */
+	public static function delete_custom_terms( $taxonomy ) {
+		global $wpdb;
+
+		$query = 'SELECT t.name, t.term_id
+            FROM ' . $wpdb->terms . ' AS t
+            INNER JOIN ' . $wpdb->term_taxonomy . ' AS tt
+            ON t.term_id = tt.term_id
+            WHERE tt.taxonomy = "' . $taxonomy . '"';
+
+		$terms = $wpdb->get_results( $query );
+
+		foreach ( $terms as $term ) {
+			wp_delete_term( $term->term_id, $taxonomy );
+		}
 	}
 
 }
