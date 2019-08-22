@@ -1,0 +1,40 @@
+body {
+	margin: 0;
+	padding: 0;
+}
+
+#ninety-map {
+	height: 400px;
+}
+
+div.ninety-chart-container {
+	width: 300px;
+	height: 300px;
+	margin: 2em auto 0;
+}
+
+div.ninety-notes-container {
+	margin-bottom: 2em;
+}
+
+div.single-details {
+	border: 1px solid navy;
+	position: relative;
+	padding: 1em;
+	margin: 1em 0;
+	background-color: lightgrey;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+}
+
+span.locked-bottom {
+	position: absolute;
+	bottom: .5em;
+	right: 1em;
+}
+
+span.locked-bottom a {
+	color: #fff;
+	font-weight: bold;
+}
