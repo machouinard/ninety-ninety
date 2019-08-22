@@ -383,6 +383,12 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 					$tile_server = ninety_ninety()->default_tile_server;
 				}
 
+				$zoom = ninety_ninety()->get_option( 'ninety_map_zoom' );
+
+				if ( ! is_numeric( $zoom ) ) {
+					$zoom = 3;
+				}
+
 				$api_key = ( false !== strpos( $tile_server, 'thunderforest' ) ) ? ninety_ninety()->get_option( 'ninety_thunderforest_api_key' ) : ninety_ninety()->get_option( 'ninety_mapbox_api_key' );
 
 				wp_localize_script(
@@ -392,6 +398,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 						'apiKey'     => $api_key,
 						'tileServer' => $tile_server,
 						'mapCenter'  => $center,
+						'zoom'       => $zoom,
 					]
 				);
 			}
@@ -537,6 +544,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			}
 
 			$defaults = [
+				'show_map'   => true,
 				'show_count' => false,
 				'chart_type' => false,
 				'show_chart' => false,
@@ -552,21 +560,29 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			$zoom = false !== $map_options['zoom'] ? intval( $map_options['zoom'] ) : ninety_ninety()->get_option( 'ninety_map_zoom', 1 );
 
+			if ( ! is_numeric( $zoom ) ) {
+				$zoom = 3;
+			}
+
 			$count = ninety_ninety()->get_setting( 'meeting_count' );
 
 			$output = '';
 
-			if ( $map_options['title'] ) {
-				$output .= sprintf( '<h4>%s</h4>', esc_html( $map_options['title'] ) );
+			if ( $map_options['show_map'] ) {
+
+				if ( $map_options['title'] ) {
+					$output .= sprintf( '<h4>%s</h4>', esc_html( $map_options['title'] ) );
+				}
+
+				if ( $map_options['show_count'] ) {
+					$output .= sprintf( '<h4>%d %s</h4>', $count, __( 'Meetings', 'ninety-ninety' ) );
+				}
+
+				$output .= '<div id="ninety-map" style="height: 400px" data-zoom="' . $zoom . '"></div>';
+
 			}
 
-			if ( $map_options['show_count'] ) {
-				$output .= sprintf( '<h4>%d %s</h4>', $count, __( 'Meetings', 'ninety-ninety' ) );
-			}
-
-			$output .= '<div id="ninety-map" style="height: 400px"></div>';
-
-			$output .= ninety_add_chart_markup( true, $chart_type, $show_chart, $zoom );
+			$output .= ninety_add_chart_markup( true, $chart_type, $show_chart );
 
 			return $output;
 
