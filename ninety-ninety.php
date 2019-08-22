@@ -1162,6 +1162,11 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			$type     = get_field( 'ninety_meeting_type', get_the_ID() );
 			$location = get_field( 'ninety_meeting_location', get_the_ID() );
 
+			// If any of these items are missing, return $post_info, unchanged.
+			if ( ! $program || ! $type || ! $location ) {
+				return $post_info;
+			}
+
 			$program = empty( $program ) ? '' : $program;
 			$link    = get_site_url( null, 'meetings/' . $location->slug );
 
