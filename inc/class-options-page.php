@@ -812,7 +812,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 				   class='ninety-danger'
 				   name='ninety_settings[ninety_delete_data]' <?php checked( $exclude, 1 ); ?>
 				   value='1'>
-			<span>This only removes plugin settings on this page, not Meetings or their associated taxonomies.</span>
+			<span>This removes all meetings, meeting locations, meeting types and all settings on this page.  If you think you might reinstall this plugin you might want to leave this unchecked to preserve your existing data.</span>
 			<?php
 
 		}
