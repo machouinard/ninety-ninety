@@ -4,8 +4,10 @@
   "description": "* WordPress 5.2 * PHP 5.6.2",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --mode=production --config webpack-config.js",
-    "watch": "webpack --mode=development --watch --config webpack-config.js"
+    "prod": "webpack --mode=production --config webpack-config.js",
+    "watch": "webpack --mode=development --watch --config webpack-config.js",
+    "pack": "./dist.sh",
+    "build": "npm run prod; npm run pack"
   },
   "repository": {
     "type": "git",

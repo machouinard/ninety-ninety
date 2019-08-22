@@ -35,7 +35,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * @since 1.0.0
 		 */
 		public function ninety_add_admin_menu() {
-			add_submenu_page(
+			$options_page = add_submenu_page(
 				'edit.php?post_type=ninety_meeting',
 				'Ninety Ninety',
 				'Options',
@@ -43,6 +43,9 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 				'ninety-settings',
 				[ $this, 'ninety_options_page' ]
 			);
+
+			add_action( 'load-' . $options_page, 'NinetyHelptabs::add_options_help_tabs' );
+
 		}
 
 		/**
@@ -199,7 +202,6 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 				'ninety_pluginPage_map_section'
 			);
 
-			// TODO: If we use marker bounds we don't need lat/lng/zoom.
 			add_settings_field(
 				'ninety_map_center_lat',
 				__( 'Default Map Center Lat', 'ninety-ninety' ),
@@ -248,23 +250,9 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			);
 
 			add_settings_field(
-				'ninety_use_exclude',
-				__(
-					'Use Exclude option (PDF, Maps, Count, etc...',
-					'ninety-ninety'
-				),
-				[
-					$this,
-					'ninety_use_exclude_render',
-				],
-				'pluginMisc',
-				'ninety_pluginPage_misc_section'
-			);
-
-			add_settings_field(
 				'ninety_show_chart',
 				__(
-					'Display chart',
+					'Display chart (default)',
 					'ninety-ninety'
 				),
 				[
@@ -278,7 +266,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			add_settings_field(
 				'ninety_chart_type',
 				__(
-					'Chart Type',
+					'Chart Type (default)',
 					'ninety-ninety'
 				),
 				[
@@ -287,6 +275,62 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 				],
 				'pluginMisc',
 				'ninety_pluginPage_misc_section'
+			);
+
+			add_settings_field(
+				'ninety_chart_done_color',
+				__(
+					'Completed Meetings Color',
+					'ninety-ninety'
+				),
+				[
+					$this,
+					'ninety_chart_done_color_render',
+				],
+				'pluginMisc',
+				'ninety_pluginPage_misc_section'
+			);
+
+			add_settings_field(
+				'ninety_chart_remaining_color',
+				__(
+					'Remaining Meetings Color',
+					'ninety-ninety'
+				),
+				[
+					$this,
+					'ninety_chart_remaining_color_render',
+				],
+				'pluginMisc',
+				'ninety_pluginPage_misc_section'
+			);
+
+			add_settings_field(
+				'ninety_delete_data',
+				__(
+					'Remove data when deleting plugin',
+					'ninety-ninety'
+				),
+				[
+					$this,
+					'ninety_delete_data_render',
+				],
+				'pluginMisc',
+				'ninety_pluginPage_misc_section'
+			);
+
+			add_settings_field(
+				'ninety_create_pdf',
+				__(
+					'Create PDF?',
+					'ninety-ninety'
+				),
+				[
+					$this,
+					'ninety_create_pdf_render',
+				],
+				'pluginPdf',
+				'ninety_pluginPage_pdf_section'
 			);
 
 			add_settings_field(
@@ -318,6 +362,34 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			);
 
 			add_settings_field(
+				'ninety_pdf_start_date',
+				__(
+					'Start Date for PDF? (optional)',
+					'ninety-ninety'
+				),
+				[
+					$this,
+					'ninety_pdf_start_date_render',
+				],
+				'pluginPdf',
+				'ninety_pluginPage_pdf_section'
+			);
+
+			add_settings_field(
+				'ninety_pdf_end_date',
+				__(
+					'End Date for PDF? (optional)',
+					'ninety-ninety'
+				),
+				[
+					$this,
+					'ninety_pdf_end_date_render',
+				],
+				'pluginPdf',
+				'ninety_pluginPage_pdf_section'
+			);
+
+			add_settings_field(
 				'ninety_pdf_printout',
 				__(
 					'PDF Printout',
@@ -338,30 +410,38 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * @since 1.2.0
 		 */
 		public function sanitize_callback( $input = [] ) {
-			static $count = 0;
+
+			static $count = 0; // Ensure errors are only added once.
 
 			if ( $count < 1 ) {
+				// If no MapBox API key is entered, display an error message - this is needed for geolocation
+				// as well as some of the tile sets.
 				if ( '' === $input['ninety_mapbox_api_key'] ) {
 					add_settings_error(
 						'ninety_mapbox_key',
 						esc_attr( 'settings_updated' ),
 						'MapBox API key is needed for geocoding Locations and displaying some of the tile sets.',
-						'error'
+						'notice-error'
 					);
 				}
-				if ( '' === $input['ninety_thunderforest_api_key'] ) {
+
+				$thunderforest_tile_set = false !== strpos( $input['ninety_tile_server'], 'thunder' ) ? true : false;
+				// If a Thunderforest tile set is selected and no API key is entered, display an error message.
+				if ( '' === $input['ninety_thunderforest_api_key'] && $thunderforest_tile_set ) {
 					add_settings_error(
 						'ninety_thunderforest_key',
 						esc_attr( 'settings_updated' ),
-						'Thunderforest API key is needed for displaying some of the tile sets.',
-						'error'
+						'Thunderforest API key is needed to display the selected tile set.',
+						'notice-error'
 					);
 				}
 			}
 
 			$count ++;
 
-			return $input;
+			$sanitized_input = array_map( 'sanitize_text_field', $input );
+
+			return $sanitized_input;
 		}
 
 		/**
@@ -389,7 +469,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 				<?php
 
 				foreach ( $terms as $term ) {
-					$option = '<option 
+					$option = '<option
 							value="' . $term->term_id . '" ' .
 					          selected( $options['ninety_default_mtg_location'], $term->term_id ) .
 					          '>' .
@@ -616,7 +696,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * @since 1.0.0
 		 */
 		public function ninety_map_zoom_render() {
-			$zoom = ninety_ninety()->get_option( 'ninety_map_zoom' );
+			$zoom = ninety_ninety()->get_option( 'ninety_map_zoom', 2 );
 			?>
 			<input type='number' name='ninety_settings[ninety_map_zoom]'
 				   value='<?php echo (int) $zoom; ?>' min="1" max="18" step="1">
@@ -635,22 +715,6 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			?>
 			<input type='checkbox'
 				   name='ninety_settings[ninety_keep_private]' <?php checked( $private, 1 ); ?>
-				   value='1'>
-			<?php
-
-		}
-
-		/**
-		 * Output Exclude checkbox
-		 *
-		 * @return void
-		 * @since 1.0.0
-		 */
-		public function ninety_use_exclude_render() {
-			$exclude = ninety_ninety()->get_option( 'ninety_use_exclude' );
-			?>
-			<input type='checkbox'
-				   name='ninety_settings[ninety_use_exclude]' <?php checked( $exclude, 1 ); ?>
 				   value='1'>
 			<?php
 
@@ -679,7 +743,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * @since 1.2.0
 		 */
 		public function ninety_chart_type_render() {
-			$type = ninety_ninety()->get_option( 'ninety_chart_type' );
+			$type = ninety_ninety()->get_option( 'ninety_chart_type', 'pie' );
 			?>
 			<label for="pie">Pie</label>
 			<input type='radio'
@@ -689,6 +753,81 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			<input type='radio'
 				   name='ninety_settings[ninety_chart_type]' <?php checked( $type, 'doughnut' ); ?>
 				   value='doughnut'>
+			<label for="bar">Bar</label>
+			<input type='radio'
+				   name='ninety_settings[ninety_chart_type]' <?php checked( $type, 'bar' ); ?>
+				   value='bar'>
+			<?php
+
+		}
+
+		/**
+		 * Output color picker for completed Meetings color
+		 *
+		 * @return void
+		 * @since 1.3.0
+		 */
+		public function ninety_chart_done_color_render() {
+			$done_color = ninety_ninety()->get_option( 'ninety_done_color', '#00ff00' );
+			?>
+
+			<input
+					name='ninety_settings[ninety_done_color]'
+					type="text"
+					value="<?php echo esc_attr( $done_color ); ?>"
+					class="ninety-color-field"
+					data-default-color="#00ff00"
+			/>
+
+
+			<?php
+		}
+
+		/**
+		 * Output color picker field for remaining Meetings color
+		 *
+		 * @return void
+		 * @since 1.3.0
+		 */
+		public function ninety_chart_remaining_color_render() {
+			$remaining_color = ninety_ninety()->get_option( 'ninety_remaining_color', '#ff0000' );
+			?>
+
+			<input
+					name='ninety_settings[ninety_remaining_color]'
+					type="text"
+					value="<?php echo esc_attr( $remaining_color ); ?>"
+					class="ninety-color-field"
+					data-default-color="#ff0000"
+			/>
+
+
+			<?php
+		}
+
+		public function ninety_delete_data_render() {
+			$exclude = ninety_ninety()->get_option( 'ninety_delete_data' );
+			?>
+			<input type='checkbox'
+				   class='ninety-danger'
+				   name='ninety_settings[ninety_delete_data]' <?php checked( $exclude, 1 ); ?>
+				   value='1'>
+			<span>This removes all meetings, meeting locations, meeting types and all settings on this page.  If you think you might reinstall this plugin you might want to leave this unchecked to preserve your existing data.</span>
+			<?php
+
+		}
+
+		/**
+		 * Output Create PDF checkbox
+		 *
+		 * @return void
+		 * @since 1.0.0
+		 */
+		public function ninety_create_pdf_render() {
+			$create = ninety_ninety()->get_option( 'ninety_create_pdf' );
+			?>
+			<input type='checkbox'
+				   name='ninety_settings[ninety_create_pdf]' <?php checked( $create, 1 ); ?> value='1'>
 			<?php
 
 		}
@@ -702,7 +841,8 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		public function ninety_pdf_title_render() {
 			$title = ninety_ninety()->get_option( 'ninety_pdf_title' );
 			?>
-			<input type='text' name='ninety_settings[ninety_pdf_title]' value='<?php echo esc_html( $title ); ?>'
+			<input class='pdf-display' type='text' name='ninety_settings[ninety_pdf_title]'
+				   value='<?php echo esc_html( $title ); ?>'
 				   size="125">
 			<?php
 
@@ -717,10 +857,48 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		public function ninety_pdf_show_days_render() {
 			$show_days = ninety_ninety()->get_option( 'ninety_pdf_show_days' );
 			?>
-			<input type='checkbox'
+			<input class='pdf-display' type='checkbox'
 				   name='ninety_settings[ninety_pdf_show_days]' <?php checked( $show_days, 1 ); ?> value='1'>
 			<?php
 
+		}
+
+		/**
+		 * Output PDF Start Date field
+		 *
+		 * @return void
+		 * @since 1.0.0
+		 */
+		public function ninety_pdf_start_date_render() {
+			$start_date = ninety_ninety()->get_option( 'ninety_pdf_start_date' );
+			?>
+			<style>
+				span.pdf-clear {
+					color: #8c0000;
+					margin-left: 1rem;
+					cursor: pointer;
+				}
+			</style>
+			<input class='ninety-datepicker' readonly name='ninety_settings[ninety_pdf_start_date]'
+				   value='<?php echo esc_attr( $start_date ); ?>' placeholder='Select Date'><span
+					class="pdf-clear">x</span>
+			<?php
+		}
+
+		/**
+		 * Output PDF End Date field
+		 *
+		 * @return void
+		 * @since 1.0.0
+		 */
+		public function ninety_pdf_end_date_render() {
+			$end_date = ninety_ninety()->get_option( 'ninety_pdf_end_date' );
+			?>
+			<input class='ninety-datepicker' readonly name='ninety_settings[ninety_pdf_end_date]'
+				   value='<?php echo esc_attr( $end_date ); ?>' placeholder='Select Date'><span
+					class="pdf-clear">x</span>
+
+			<?php
 		}
 
 		/**
@@ -780,7 +958,32 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * @since 1.1.0
 		 */
 		public function ninety_create_pdf() {
-			$meetings = ninety_ninety()->get_meetings();
+
+			if ( ! ninety_ninety()->get_option( 'ninety_create_pdf' ) ) {
+				return;
+			}
+
+			$args = [];
+
+			$start_date = ninety_ninety()->get_option( 'ninety_pdf_start_date' );
+			$end_date   = ninety_ninety()->get_option( 'ninety_pdf_end_date' );
+
+			if ( $start_date || $end_date ) {
+				$args['date_query'] = [
+					[
+						'inclusive' => true,
+					],
+				];
+
+				if ( $start_date ) {
+					$args['date_query'][0]['after'] = $start_date;
+				}
+				if ( $end_date ) {
+					$args['date_query'][0]['before'] = $end_date . ' + 1 day - 1 second';
+				}
+			}
+
+			$meetings = ninety_ninety()->get_meetings( $args );
 
 			// Bail if no Meetings found.
 			if ( empty( $meetings ) ) {
@@ -894,7 +1097,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			// Output file path and filename.
 			$meetings_pdf_file = NINETY_NINETY_PATH . 'meeting-files/' . $title;
 
-			// Create PDF.
+			// Create PDF. 'F' - save to file
 			$pdf->Output(
 				'F',
 				$meetings_pdf_file

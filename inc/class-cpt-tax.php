@@ -4,38 +4,37 @@
  * Class NinetyNinety_CPT
  */
 class NinetyNinety_CPT {
-	
+
 	/**
 	 * NinetyNinety_CPT constructor.
 	 */
 	function __construct() {
-		
+
 		//* Register Meeting post type
 		add_action( 'init', [ $this, 'register_post_type' ], 0 );
-		
+
 		//* Register custom taxonomies
 		add_action( 'init', [ $this, 'register_taxonomies' ], 1 );
-		
+
 		//* Add rewrite rules
 		add_action( 'generate_rewrite_rules', [ $this, 'generate_rewrite_rules' ] );
-		
+
 		//* If option is set to keep Meetings private, run the redirect function
 		$private = ninety_ninety()->get_option( 'ninety_keep_private' );
 		if ( $private ) {
 			add_action( 'wp', [ $this, 'redirect_anon_users' ] );
 		}
-		
+
 	}
-	
+
 	/**
 	 * Add Meeting CPT
 	 *
 	 * @return void
 	 * @since 1.0.0
-	 *
 	 */
 	function register_post_type() {
-		
+
 		$plan_labels = [
 			'name'                  => 'Meetings',
 			'singular_name'         => 'Meeting',
@@ -57,7 +56,7 @@ class NinetyNinety_CPT {
 			'items_list_navigation' => 'Meetings list navigation',
 			'filter_items_list'     => 'Filter meetings list',
 		];
-		
+
 		$plan_args = [
 			'labels'              => $plan_labels,
 			'description'         => 'AA Meetings',
@@ -77,24 +76,23 @@ class NinetyNinety_CPT {
 			'has_archive'         => true,
 			'hierarchical'        => false,
 			'menu_position'       => 25,
-			'supports'            => [ 'permalink', 'genesis-cpt-archives-settings' ],
+			'supports'            => [ 'editor', 'permalink', 'genesis-cpt-archives-settings' ],
 			'exclude_from_search' => true,
 			'taxonomies'          => [ 'ninety_meeting_location', 'ninety_meeting_type' ],
 		];
-		
+
 		register_post_type( 'ninety_meeting', $plan_args );
-		
+
 	}
-	
+
 	/**
 	 * Add Meeting Type & Location taxonomies
 	 *
 	 * @return void
 	 * @since 1.0.0
-	 *
 	 */
 	function register_taxonomies() {
-		
+
 		// Meeting Locations
 		$labels = [
 			'name'                       => 'Meeting Locations',
@@ -116,7 +114,7 @@ class NinetyNinety_CPT {
 			'add_or_remove_items'        => 'Add or remove meeting locations',
 			'choose_from_most_used'      => 'Choose from the most used meeting locations',
 		];
-		
+
 		$args = [
 			'labels'             => $labels,
 			'hierarchical'       => false,
@@ -128,9 +126,9 @@ class NinetyNinety_CPT {
 			'show_in_nav_menus'  => true,
 			'show_tagcloud'      => true,
 		];
-		
+
 		register_taxonomy( 'ninety_meeting_location', 'ninety_meeting', $args );
-		
+
 		// Meeting Types
 		$labels = [
 			'name'                       => 'Meeting Types',
@@ -152,7 +150,7 @@ class NinetyNinety_CPT {
 			'add_or_remove_items'        => 'Add or remove meeting types',
 			'choose_from_most_used'      => 'Choose from the most used meeting types',
 		];
-		
+
 		$args = [
 			'labels'             => $labels,
 			'hierarchical'       => false,
@@ -166,11 +164,11 @@ class NinetyNinety_CPT {
 			'show_in_nav_menus'  => true,
 			'show_tagcloud'      => true,
 		];
-		
+
 		register_taxonomy( 'ninety_meeting_type', 'ninety_meeting', $args );
-		
+
 	}
-	
+
 	/**
 	 * Add rewrite rules for Locations
 	 *
@@ -178,33 +176,32 @@ class NinetyNinety_CPT {
 	 *
 	 * @return void
 	 * @since 1.0.0
-	 *
 	 */
 	function generate_rewrite_rules( $wp_rewrite ) {
-		
+
 		$rules      = [];
 		$post_types = get_post_types( [
-			'name'     => 'ninety_meeting',
-			'public'   => true,
-			'_builtin' => false,
-		], 'objects' );
+			                              'name'     => 'ninety_meeting',
+			                              'public'   => true,
+			                              '_builtin' => false,
+		                              ], 'objects' );
 		$taxonomies = get_taxonomies( [
-			'name'     => 'ninety_meeting_location',
-			'public'   => true,
-			'_builtin' => false,
-		], 'objects' );
-		
+			                              'name'     => 'ninety_meeting_location',
+			                              'public'   => true,
+			                              '_builtin' => false,
+		                              ], 'objects' );
+
 		foreach ( $post_types as $post_type ) {
 			$post_type_name = $post_type->name;
 			$post_type_slug = $post_type->rewrite['slug'];
-			
+
 			foreach ( $taxonomies as $taxonomy ) {
 				if ( $taxonomy->object_type[0] == $post_type_name ) {
 					$terms = get_categories( [
-						'type'       => $post_type_name,
-						'taxonomy'   => $taxonomy->name,
-						'hide_empty' => 0,
-					] );
+						                         'type'       => $post_type_name,
+						                         'taxonomy'   => $taxonomy->name,
+						                         'hide_empty' => 0,
+					                         ] );
 					foreach ( $terms as $term ) {
 						$rules[ $post_type_slug . '/' . $term->slug . '/page/([0-9]{1,})/?' ] = 'index.php?post_type=' . $post_type_name . '&' . $term->taxonomy . '=' . $term->slug . '&paged=$matches[1]';
 						$rules[ $post_type_slug . '/' . $term->slug . '/([^/]+)/?$' ]         = 'index.php?post_type=' . $post_type_name . '&' . $post_type_name . '=$matches[1]&' . $term->taxonomy . '=' . $term->slug;
@@ -212,12 +209,18 @@ class NinetyNinety_CPT {
 					}
 				}
 			}
+			$rules[ $post_type_slug . '/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/page/?([0-9]{1,})/?$' ] = 'index.php?post_type=' . $post_type_name . '&year=$matches[1]&monthnum=$matches[2]&day=$matches[3]&paged=$matches[4]';
+			$rules[ $post_type_slug . '/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/?$' ]                   = 'index.php?post_type=' . $post_type_name . '&year=$matches[1]&monthnum=$matches[2]&day=$matches[3]';
+			$rules[ $post_type_slug . '/([0-9]{4})/([0-9]{1,2})/page/?([0-9]{1,})/?$' ]              = 'index.php?post_type=' . $post_type_name . '&year=$matches[1]&monthnum=$matches[2]&paged=$matches[3]';
+			$rules[ $post_type_slug . '/([0-9]{4})/([0-9]{1,2})/?$' ]                                = 'index.php?post_type=' . $post_type_name . '&year=$matches[1]&monthnum=$matches[2]';
+			$rules[ $post_type_slug . '/([0-9]{4})/page/?([0-9]{1,})/?$' ]                           = 'index.php?post_type=' . $post_type_name . '&year=$matches[1]&paged=$matches[2]';
+			$rules[ $post_type_slug . '/([0-9]{4})/?$' ]                                             = 'index.php?post_type=' . $post_type_name . '&year=$matches[1]';
 		}
-		
+
 		$wp_rewrite->rules = $rules + $wp_rewrite->rules;
-		
+
 	}
-	
+
 	/**
 	 * Redirect not-logged-in users to home page from Meetings pages
 	 *
@@ -225,44 +228,41 @@ class NinetyNinety_CPT {
 	 *
 	 * @return mixed
 	 * @since 1.0.0
-	 *
 	 */
 	public function redirect_anon_users( $wp ) {
-		
+
 		if ( is_admin() ) {
-			return $wp;
+			return;
 		}
-		
+
 		global $post;
-		
+
 		//* No $post object on 404 page...
 		if ( ! $post ) {
-			return $wp;
+			return;
 		}
-		
-		//* Get array of page templates used for Meetings
-		$templates = ninety_ninety()->get_setting( 'page_templates' );
-		
-		if ( ( 'ninety_meeting' == $post->post_type || is_post_type_archive( 'ninety_meeting' ) || is_tax( 'ninety_meeting_location' ) || is_page_template( $templates ) ) && ! is_user_logged_in() ) {
+
+		$has_shortcode = is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'ninety_map' );
+
+		if ( ( 'ninety_meeting' == $post->post_type || is_post_type_archive( 'ninety_meeting' ) || is_tax( 'ninety_meeting_location' ) ) && ! is_user_logged_in() ) {
 			wp_redirect( get_home_url() );
 			exit;
 		}
-		
-		return $wp;
-		
+
+		return;
+
 	}
-	
+
 	/**
 	 * Create some default Meeting Types on activation
 	 *
 	 * @return void
 	 * @since 1.0.0
-	 *
 	 */
 	public static function activate() {
-		
+
 		$self = new NinetyNinety_CPT();
-		
+
 		$meeting_types = [
 			'Regular',
 			'Speaker',
@@ -271,19 +271,81 @@ class NinetyNinety_CPT {
 			'Big Book',
 			'Fireball',
 		];
-		
+
 		$self->register_taxonomies();
-		
+
 		$self->register_post_type();
-		
+
 		foreach ( apply_filters( 'ninety_meeting_types', $meeting_types ) as $type ) {
-			
+
 			wp_insert_term( $type, 'ninety_meeting_type' );
-			
+
 		}
-		
+
 		flush_rewrite_rules();
-		
+
 	}
-	
+
+	/**
+	 * Conditionally delete options when plugin is deleted
+	 *
+	 * @return void
+	 * @since 1.0.0
+	 */
+	public static function uninstall() {
+
+		// Get option to remove data on post deletion.
+		$settings    = get_option( 'ninety_settings' );
+		$delete_data = isset( $settings['ninety_delete_data'] ) ? $settings['ninety_delete_data'] : false;
+
+		if ( ! $delete_data ) {
+			return;
+		}
+
+		delete_option( NINETY_COUNT_OPTION_KEY );
+		delete_option( 'ninety_last_updated' );
+		delete_option( 'ninety_settings' );
+
+		self::delete_custom_terms( 'ninety_meeting_location' );
+		self::delete_custom_terms( 'ninety_meeting_type' );
+
+		$meetings = get_posts(
+			[
+				'post_type'   => 'ninety_meeting',
+				'post_status' => 'any',
+				'numberposts' => - 1,
+			]
+		);
+
+		foreach ( $meetings as $meeting ) {
+			wp_delete_post( $meeting->ID );
+		}
+
+		flush_rewrite_rules();
+	}
+
+	/**
+	 * Delete custom taxonomy terms
+	 *
+	 * @param string $taxonomy Taxonomy to delete terms from.
+	 *
+	 * @return void
+	 * @since 1.0.0
+	 */
+	public static function delete_custom_terms( $taxonomy ) {
+		global $wpdb;
+
+		$query = 'SELECT t.name, t.term_id
+            FROM ' . $wpdb->terms . ' AS t
+            INNER JOIN ' . $wpdb->term_taxonomy . ' AS tt
+            ON t.term_id = tt.term_id
+            WHERE tt.taxonomy = "' . $taxonomy . '"';
+
+		$terms = $wpdb->get_results( $query );
+
+		foreach ( $terms as $term ) {
+			wp_delete_term( $term->term_id, $taxonomy );
+		}
+	}
+
 }
