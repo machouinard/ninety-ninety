@@ -11,15 +11,14 @@ jQuery( document ).ready( function ( $ ) {
 		}
 	);
 
+	// Style option for deleting all data on plugin deletion.
 	let danger = document.querySelectorAll( 'input.ninety-danger' );
 
-	console.log( 'danger', danger );
-	console.log( typeof danger );
 
 	Object.keys( danger ).forEach( item => {
-		let tr = danger[item].closest( 'tr' );
+		let tr = danger[ item ].closest( 'tr' );
 		tr.style.backgroundColor = 'pink';
-		let th = tr.querySelector('th');
+		let th = tr.querySelector( 'th' );
 		th.style.backgroundColor = 'rgb(204, 0, 0)';
 		th.style.color = 'rgb( 255, 255, 255 )';
 		th.style.padding = '5px';
