@@ -3,7 +3,7 @@
  * WordPress plugin used to track AA Meetings
  *
  * @package     Ninety-Ninety
- * @since       1.0.0
+ * @since       0.1.0
  * @author      machouinard
  */
 
@@ -11,7 +11,7 @@
  * Plugin Name: 90 in 90+
  * Plugin URI:
  * Description: Track 90 meetings in 90 days, for starters.  Built for AA but customizable to any program.
- * Version: 1.0.0
+ * Version: 0.1.0
  * Author: Mark Chouinard
  * Author URI: https://chouinard.me
  * Text Domain: ninety-ninety
@@ -34,7 +34,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		/**
 		 * @var string Plugin version
 		 */
-		public $version = '1.0.0';
+		public $version = '0.1.0';
 		/**
 		 * @var array Settings array
 		 */
@@ -59,7 +59,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * Set up plugin
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function initialize() {
 
@@ -142,7 +142,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * Add any actions and filters we need
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function add_actions_and_filters() {
 
@@ -161,7 +161,12 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_action( 'init', [ $this, 'load_text_domain' ] );
 			add_action( 'init', [ $this, 'setup_shortcodes' ] );
 			add_action( 'save_post_ninety_meeting', [ $this, 'update_timestamp' ] );
+			add_action( 'edit_post_ninety_meeting', [ $this, 'update_timestamp' ] );
+			add_action( 'before_delete_post', [ $this, 'update_timestamp' ] );
+			add_action( 'trashed_post', [ $this, 'update_timestamp' ] );
+			add_action( 'untrashed_post', [ $this, 'update_timestamp' ] );
 			add_action( 'edited_ninety_meeting_type', [ $this, 'update_timestamp' ] );
+			add_action( 'update_option_ninety_settings', [ $this, 'update_timestamp' ], 10, 2 );
 			// Filters.
 			add_filter( 'manage_edit-ninety_meeting_location_columns', [ $this, 'manage_location_columns' ] );
 			add_filter( 'manage_ninety_meeting_location_custom_column', [
@@ -169,13 +174,13 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				'manage_location_custom_column',
 			], 10, 3 );
 			add_filter( 'acf/settings/show_admin', [ $this, 'acf_show_admin' ] );
-			add_filter( 'template_include', [ $this, 'archive_template' ] );
+			add_filter( 'archive_template', [ $this, 'archive_template' ] );
+			add_filter( 'single_template', [ $this, 'single_template' ] );
 			add_filter( 'acf/load_field/key=field_5d182c40c6e57', [ $this, 'set_default_meeting_time' ] );
 			add_filter( 'acf/load_field/key=field_5d18480b686a6', [ $this, 'set_default_meeting_location' ] );
 			add_filter( 'acf/load_field/key=field_5d18255d071c8', [ $this, 'set_default_meeting_type' ] );
 			add_filter( 'acf/load_field/key=field_5d184b55fa43e', [ $this, 'filter_meeting_programs' ] );
 			add_filter( 'acf/load_field/key=field_5d197bc132ced', [ $this, 'ninety_coords_readonly' ] );
-			add_action( 'update_option_ninety_settings', [ $this, 'update_meeting_count' ], 10, 2 );
 			add_filter( 'wp_setup_nav_menu_item', [ $this, 'hide_meeting_nav_menu_objects' ] );
 			add_filter( 'posts_search', 'Ninety_Meeting_Search::advanced_custom_search', 500, 2 );
 
@@ -190,7 +195,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * Display admin notice if MapBox API key is not set
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function admin_notices() {
 
@@ -204,7 +209,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * Output admin notice for missing MapBox API key
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function missing_api_key_error() {
 
@@ -228,7 +233,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param array $cols Array of admin columns.
 		 *
 		 * @return array
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function manage_location_columns( $cols ) {
 
@@ -248,7 +253,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param int    $term_id     Term ID.
 		 *
 		 * @return string
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function manage_location_custom_column( $content, $column_name, $term_id ) {
 
@@ -276,7 +281,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * Enqueue admin scripts and styles
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function enqueue_admin_stuff() {
 			wp_enqueue_style( 'wp-color-picker' );
@@ -301,7 +306,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * Localize data for use on Map page.
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function enqueue_stuff() {
 
@@ -412,7 +417,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param int $post_id Post ID.
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function set_meeting_title_time( $post_id ) {
 
@@ -435,7 +440,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 				wp_update_post( $post );
 
-				$this->update_meeting_count();
+//				$this->update_meeting_count();
 
 			}
 
@@ -445,7 +450,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * Redirect to single template if only 1 Meeting archive
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function redirect_single_result() {
 			if ( is_post_type_archive( 'ninety_meeting' ) ) {
@@ -479,7 +484,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param string $url ACF settings URL.
 		 *
 		 * @return string URL to ACF
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function acf_settings_dir( $url ) {
 
@@ -490,7 +495,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * Register our widgets
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function register_widgets() {
 
@@ -507,7 +512,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * Load text domain
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public static function load_text_domain() {
 			load_plugin_textdomain( 'ninety-ninety', false, 'ninety-ninety/lang' );
@@ -517,7 +522,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * Add shortcode
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function setup_shortcodes() {
 			add_shortcode( 'ninety_map', [ $this, 'handle_map_shortcode' ] );
@@ -531,7 +536,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param string $tag     Tag for use in shared callbacks.
 		 *
 		 * @return string|void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function handle_map_shortcode( $atts, $content, $tag ) {
 
@@ -595,7 +600,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param bool $show_admin .
 		 *
 		 * @return bool
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function acf_show_admin( $show_admin ) {
 
@@ -605,12 +610,12 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		}
 
 		/**
-		 * Provide single and archive templates unless overridden by theme
+		 * Provide archive template unless overridden by theme
 		 *
 		 * @param string $template Page template.
 		 *
 		 * @return string
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function archive_template( $template ) {
 
@@ -631,6 +636,20 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				}
 			}
 
+			return $template;
+
+		}
+
+		/**
+		 * Provide single template unless overridden by theme
+		 *
+		 * @param string $template Page template.
+		 *
+		 * @return string
+		 * @since 0.1.0
+		 */
+		public function single_template( $template ) {
+
 			// Check for single template.
 			if ( is_singular( 'ninety_meeting' ) ) {
 
@@ -649,7 +668,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			}
 
 			return $template;
-
 		}
 
 		/**
@@ -659,7 +677,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param array $field ACF field for Meeting date/time.
 		 *
 		 * @return mixed
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function set_default_meeting_time( $field ) {
 
@@ -698,7 +716,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param array $field ACF Meeting Location field.
 		 *
 		 * @return array    ACF Meeting Location taxonomy field settings
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function set_default_meeting_location( $field ) {
 
@@ -721,7 +739,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param array $field ACF Meeting Type field.
 		 *
 		 * @return array    ACF Meeting Type taxonomy field settings
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function set_default_meeting_type( $field ) {
 
@@ -744,7 +762,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param array $field ACF button group field settings.
 		 *
 		 * @return mixed
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function filter_meeting_programs( $field ) {
 
@@ -759,7 +777,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param array $field ACF field for Location coords.
 		 *
 		 * @return mixed
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_coords_readonly( $field ) {
 
@@ -775,17 +793,18 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param mixed $new_value New Options.
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function update_meeting_count( $old_value = null, $new_value = null ) {
+// TODO: fix
+			global $wpdb;
 
-			$count = $this->get_meetings( [], true );
+			$sql = "SELECT count( * ) as count FROM {$wpdb->posts} WHERE post_type = 'ninety_meeting' AND post_status = 'publish';";
 
-			// Update option if new count differs from existing count.
-			if ( $count !== (int) $this->get_setting( 'meeting_count' ) ) {
-				$this->update_setting( 'meeting_count', $count );
-				update_option( NINETY_COUNT_OPTION_KEY, $count );
-			}
+			$count = $wpdb->get_var( $sql );
+
+			$this->update_setting( 'meeting_count', $count );
+			update_option( NINETY_COUNT_OPTION_KEY, $count );
 		}
 
 		/**
@@ -794,7 +813,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param WP_POST $item Nav menu item.
 		 *
 		 * @return mixed
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function hide_meeting_nav_menu_objects( $item ) {
 
@@ -818,7 +837,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 					if ( is_a( $page, 'WP_POST' ) && has_shortcode( $page->post_content, 'ninety_map' ) ) {
 						$item->_invalid = true;
 					}
-
 				}
 			}
 
@@ -832,7 +850,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param bool   $value Value for definition.
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function define( $name, $value = true ) {
 
@@ -848,7 +866,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param string $name Setting name.
 		 *
 		 * @return bool
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		private function has_setting( $name ) {
 
@@ -858,14 +876,15 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		/**
 		 * Get setting
 		 *
-		 * @param string $name Name of setting.
+		 * @param string $name    Name of setting.
+		 * @param mixed  $default Default value to return if setting not found.
 		 *
 		 * @return mixed|null
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
-		public function get_setting( $name ) {
+		public function get_setting( $name, $default = null ) {
 
-			return $this->has_setting( $name ) ? $this->settings[ $name ] : null;
+			return $this->has_setting( $name ) ? $this->settings[ $name ] : $default;
 		}
 
 		/**
@@ -875,7 +894,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param mixed  $value Value to assign.
 		 *
 		 * @return bool
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function update_setting( $name, $value ) {
 
@@ -895,7 +914,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param string $name Option name.
 		 *
 		 * @return bool
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		private function has_option( $name ) {
 
@@ -909,7 +928,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param mixed  $default Default value to return.
 		 *
 		 * @return mixed|null
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function get_option( $name, $default = false ) {
 
@@ -928,7 +947,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 *                      if false, remove option.
 		 *
 		 * @return bool
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function update_option( $name, $value = false ) {
 
@@ -954,7 +973,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param string $address Location address.
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function geocode_meeting_location( $term_id ) {
 
@@ -1000,7 +1019,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param string $address Address to geocode.
 		 *
 		 * @return array $ret
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		protected function geo_lookup( $address ) {
 
@@ -1030,9 +1049,9 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param bool  $count Used to only return count.
 		 *
 		 * @return int|int[]|WP_Post[]
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
-		public function get_meetings( $args = [], $count = false ) {
+		public function get_meetings( $args = [] ) {
 
 			// Query Meetings
 			$default = [
@@ -1046,11 +1065,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			$q = get_posts( $new_args );
 
-			// If $count arg is set to true, return just the count.
-			if ( $count ) {
-				return count( $q );
-			}
-
 			// Return all Meetings returned.
 			return $q;
 
@@ -1061,7 +1075,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * We need #meetings per location and location details
 		 *
 		 * @return int[]|WP_Post[]
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		protected function get_meeting_data() {
 
@@ -1170,7 +1184,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @param string $post_info Genesis meta header.
 		 *
 		 * @return string
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public static function ninety_meeting_genesis_entry_meta_header( $post_info ) {
 
@@ -1197,13 +1211,15 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * This is for future plans
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function update_timestamp() {
 
 			$time = current_time( 'timestamp' );
 			update_option( 'ninety_last_updated', $time );
 			$this->update_setting( 'last_updated', $time );
+
+			$this->update_meeting_count();
 
 		}
 
@@ -1213,7 +1229,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 	 * Return a single instance of this class providing all its public methods
 	 *
 	 * @return NinetyNinety
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	function ninety_ninety() {
 

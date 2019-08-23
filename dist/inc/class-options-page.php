@@ -3,7 +3,7 @@
  * Description
  *
  * @package     Ninety-Ninety
- * @since       1.0.0
+ * @since       0.1.0
  * @author      machouinard
  */
 
@@ -32,7 +32,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Description
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_add_admin_menu() {
 			$options_page = add_submenu_page(
@@ -52,7 +52,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Description
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_settings_init() {
 			register_setting(
@@ -448,7 +448,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output Default Location field
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_default_mtg_location_render() {
 			$options = ninety_ninety()->options;
@@ -489,7 +489,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output Default Meeting Time field
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_default_mtg_time_render() {
 			$options = ninety_ninety()->options;
@@ -523,7 +523,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output Default Meeting Type dropdown
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_default_mtg_type_render() {
 			$options = ninety_ninety()->options;
@@ -571,7 +571,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output Mapbox API Key field
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_mapbox_api_key_render() {
 			$key = ninety_ninety()->get_option( 'ninety_mapbox_api_key' );
@@ -589,7 +589,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output Thunderforest API Key field
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_thunderforest_api_key_render() {
 			$key = ninety_ninety()->get_option( 'ninety_thunderforest_api_key' );
@@ -609,7 +609,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output Tile Server dropdown
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_tile_server_render() {
 
@@ -659,7 +659,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output Default Map Center latitude input field
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_map_center_lat_render() {
 			$center_lat = ninety_ninety()->get_option( 'ninety_map_center_lat' );
@@ -676,7 +676,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output Default Map Center longitude input field
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_map_center_lng_render() {
 			$center_lng = ninety_ninety()->get_option( 'ninety_map_center_lng' );
@@ -693,7 +693,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output Default Map Zoom Level input field
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_map_zoom_render() {
 			$zoom = ninety_ninety()->get_option( 'ninety_map_zoom', 2 );
@@ -708,7 +708,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output Keep Private checkbox
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_keep_private_render() {
 			$private = ninety_ninety()->get_option( 'ninety_keep_private' );
@@ -821,7 +821,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output Create PDF checkbox
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_create_pdf_render() {
 			$create = ninety_ninety()->get_option( 'ninety_create_pdf' );
@@ -836,7 +836,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output PDF Title field
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_pdf_title_render() {
 			$title = ninety_ninety()->get_option( 'ninety_pdf_title' );
@@ -852,7 +852,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output Show Days checkbox
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_pdf_show_days_render() {
 			$show_days = ninety_ninety()->get_option( 'ninety_pdf_show_days' );
@@ -867,7 +867,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output PDF Start Date field
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_pdf_start_date_render() {
 			$start_date = ninety_ninety()->get_option( 'ninety_pdf_start_date' );
@@ -889,7 +889,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output PDF End Date field
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_pdf_end_date_render() {
 			$end_date = ninety_ninety()->get_option( 'ninety_pdf_end_date' );
@@ -905,7 +905,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Call function to output PDF
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_pdf_printout_render() {
 			$this->ninety_create_pdf();
@@ -915,7 +915,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output Meeting defaults section title
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_settings_section_callback() {
 			echo esc_attr__( 'Set Meeting defaults', 'ninety-ninety' );
@@ -925,7 +925,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output Map defaults section title
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_settings_map_section_callback() {
 			echo esc_attr__( 'Set Map defaults', 'ninety-ninety' );
@@ -935,7 +935,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output Other options section title
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_settings_misc_section_callback() {
 			echo esc_attr__( 'Set Other options', 'ninety-ninety' );
@@ -945,7 +945,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output PDF options section title
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_settings_pdf_section_callback() {
 			echo esc_attr__( 'Set PDF Options', 'ninety-ninety' );
@@ -1127,7 +1127,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		 * Output Options Page
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 0.1.0
 		 */
 		public function ninety_options_page() {
 			?>
