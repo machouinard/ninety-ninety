@@ -970,6 +970,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		/**
 		 * Update Location term meta with geo coords
 		 *
+		 * Runs when location is added/edited
+		 *
 		 * @param int    $term_id Location ID.
 		 * @param string $address Location address.
 		 *
@@ -977,6 +979,9 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @since 0.1.0
 		 */
 		public function geocode_meeting_location( $term_id ) {
+
+			// This needs to be done when adding Locations TODO: better way?
+			flush_rewrite_rules();
 
 			// If we don't have an API key, bail.
 			if ( ! $this->get_option( 'ninety_mapbox_api_key' ) ) {
@@ -1009,9 +1014,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			// Update last_updated timestamp - future use.
 			// Runs only after we get a good address TODO: revisit
 			$this->update_timestamp();
-
-			// This needs to be done when adding Locations TODO: better way?
-			flush_rewrite_rules();
 
 		}
 
