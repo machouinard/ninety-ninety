@@ -151,8 +151,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_stuff' ] );
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_stuff' ] );
 			add_action( 'acf/init', 'ninety_init_acf_import' );
-			add_action( 'create_ninety_meeting_location', [ $this, 'geocode_meeting_location' ], PHP_INT_MAX );
-			add_action( 'edited_ninety_meeting_location', [ $this, 'geocode_meeting_location' ], PHP_INT_MAX );
 			add_action( 'acf/save_post', [ $this, 'set_meeting_title_time' ], PHP_INT_MAX );// Run as late as possible.
 			add_action( 'template_redirect', [ $this, 'redirect_single_result' ] );
 			add_action( 'widgets_init', [ $this, 'register_widgets' ] );
@@ -162,20 +160,26 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_action( 'init', [ $this, 'setup_shortcodes' ] );
 			add_action( 'save_post_ninety_meeting', [ $this, 'update_timestamp' ] );
 			add_action( 'edited_ninety_meeting_type', [ $this, 'update_timestamp' ] );
+			add_action( 'created_ninety_meeting_type', [ $this, 'update_timestamp' ] );
+			add_action( 'delete_ninety_meeting_type', [ $this, 'update_timestamp' ] );
+			add_action( 'create_ninety_meeting_location', [ $this, 'geocode_meeting_location' ] );
+			add_action( 'edited_ninety_meeting_location', [ $this, 'geocode_meeting_location' ] );
+			add_action( 'delete_ninety_meeting_location', [ $this, 'update_timestamp' ] );
+			add_action( 'update_option_ninety_settings', [ $this, 'update_timestamp' ], 10, 2 );
 			// Filters.
 			add_filter( 'manage_edit-ninety_meeting_location_columns', [ $this, 'manage_location_columns' ] );
 			add_filter( 'manage_ninety_meeting_location_custom_column', [
 				$this,
 				'manage_location_custom_column',
-			], 10, 3 );
+			], 1, 3 );
 			add_filter( 'acf/settings/show_admin', [ $this, 'acf_show_admin' ] );
-			add_filter( 'template_include', [ $this, 'archive_template' ] );
+			add_filter( 'archive_template', [ $this, 'archive_template' ] );
+			add_filter( 'single_template', [ $this, 'single_template' ] );
 			add_filter( 'acf/load_field/key=field_5d182c40c6e57', [ $this, 'set_default_meeting_time' ] );
 			add_filter( 'acf/load_field/key=field_5d18480b686a6', [ $this, 'set_default_meeting_location' ] );
 			add_filter( 'acf/load_field/key=field_5d18255d071c8', [ $this, 'set_default_meeting_type' ] );
 			add_filter( 'acf/load_field/key=field_5d184b55fa43e', [ $this, 'filter_meeting_programs' ] );
 			add_filter( 'acf/load_field/key=field_5d197bc132ced', [ $this, 'ninety_coords_readonly' ] );
-			add_action( 'update_option_ninety_settings', [ $this, 'update_meeting_count' ], 10, 2 );
 			add_filter( 'wp_setup_nav_menu_item', [ $this, 'hide_meeting_nav_menu_objects' ] );
 			add_filter( 'posts_search', 'Ninety_Meeting_Search::advanced_custom_search', 500, 2 );
 
@@ -435,8 +439,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 				wp_update_post( $post );
 
-				$this->update_meeting_count();
-
 			}
 
 		}
@@ -605,7 +607,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		}
 
 		/**
-		 * Provide single and archive templates unless overridden by theme
+		 * Provide archive template unless overridden by theme
 		 *
 		 * @param string $template Page template.
 		 *
@@ -613,7 +615,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @since 0.1.0
 		 */
 		public function archive_template( $template ) {
-return $template;
+
 			// Check for archive template.
 			if ( is_post_type_archive( 'ninety_meeting' ) ) {
 
@@ -630,6 +632,20 @@ return $template;
 					}
 				}
 			}
+
+			return $template;
+
+		}
+
+		/**
+		 * Provide single template unless overridden by theme
+		 *
+		 * @param string $template Page template.
+		 *
+		 * @return string
+		 * @since 0.1.0
+		 */
+		public function single_template( $template ) {
 
 			// Check for single template.
 			if ( is_singular( 'ninety_meeting' ) ) {
@@ -649,7 +665,6 @@ return $template;
 			}
 
 			return $template;
-
 		}
 
 		/**
@@ -769,7 +784,9 @@ return $template;
 		}
 
 		/**
-		 * Update Meeting count based on Options
+		 * Update Meeting count
+		 *
+		 * Called from update_timestamp() and geocode_meeting_location()
 		 *
 		 * @param mixed $old_value Old Options.
 		 * @param mixed $new_value New Options.
@@ -779,13 +796,15 @@ return $template;
 		 */
 		public function update_meeting_count( $old_value = null, $new_value = null ) {
 
-			$count = $this->get_meetings( [], true );
+			global $wpdb;
 
-			// Update option if new count differs from existing count.
-			if ( $count !== (int) $this->get_setting( 'meeting_count' ) ) {
-				$this->update_setting( 'meeting_count', $count );
-				update_option( NINETY_COUNT_OPTION_KEY, $count );
-			}
+			// Count all published meetings
+			$sql = "SELECT count( * ) FROM {$wpdb->posts} WHERE post_type = 'ninety_meeting' AND post_status = 'publish';";
+
+			$count = $wpdb->get_var( $sql );
+
+			$this->update_setting( 'meeting_count', $count );
+			update_option( NINETY_COUNT_OPTION_KEY, $count );
 		}
 
 		/**
@@ -818,7 +837,6 @@ return $template;
 					if ( is_a( $page, 'WP_POST' ) && has_shortcode( $page->post_content, 'ninety_map' ) ) {
 						$item->_invalid = true;
 					}
-
 				}
 			}
 
@@ -858,14 +876,15 @@ return $template;
 		/**
 		 * Get setting
 		 *
-		 * @param string $name Name of setting.
+		 * @param string $name    Name of setting.
+		 * @param mixed  $default Default value to return if setting not found.
 		 *
 		 * @return mixed|null
 		 * @since 0.1.0
 		 */
-		public function get_setting( $name ) {
+		public function get_setting( $name, $default = null ) {
 
-			return $this->has_setting( $name ) ? $this->settings[ $name ] : null;
+			return $this->has_setting( $name ) ? $this->settings[ $name ] : $default;
 		}
 
 		/**
@@ -987,6 +1006,7 @@ return $template;
 			}
 
 			// Update last_updated timestamp - future use.
+			// Runs only after we get a good address TODO: revisit
 			$this->update_timestamp();
 
 			// This needs to be done when adding Locations TODO: better way?
@@ -1032,7 +1052,7 @@ return $template;
 		 * @return int|int[]|WP_Post[]
 		 * @since 0.1.0
 		 */
-		public function get_meetings( $args = [], $count = false ) {
+		public function get_meetings( $args = [] ) {
 
 			// Query Meetings
 			$default = [
@@ -1045,11 +1065,6 @@ return $template;
 			$new_args = wp_parse_args( $args, $default );
 
 			$q = get_posts( $new_args );
-
-			// If $count arg is set to true, return just the count.
-			if ( $count ) {
-				return count( $q );
-			}
 
 			// Return all Meetings returned.
 			return $q;
@@ -1204,6 +1219,8 @@ return $template;
 			$time = current_time( 'timestamp' );
 			update_option( 'ninety_last_updated', $time );
 			$this->update_setting( 'last_updated', $time );
+
+			$this->update_meeting_count();
 
 		}
 
