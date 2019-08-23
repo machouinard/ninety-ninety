@@ -159,13 +159,13 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_action( 'init', [ $this, 'load_text_domain' ] );
 			add_action( 'init', [ $this, 'setup_shortcodes' ] );
 			add_action( 'save_post_ninety_meeting', [ $this, 'update_timestamp' ] );
-			add_action( 'edited_ninety_meeting_type', [ $this, 'update_timestamp' ] );
 			add_action( 'created_ninety_meeting_type', [ $this, 'update_timestamp' ] );
+			add_action( 'edited_ninety_meeting_type', [ $this, 'update_timestamp' ] );
 			add_action( 'delete_ninety_meeting_type', [ $this, 'update_timestamp' ] );
-			add_action( 'create_ninety_meeting_location', [ $this, 'geocode_meeting_location' ] );
+			add_action( 'created_ninety_meeting_location', [ $this, 'geocode_meeting_location' ] );
 			add_action( 'edited_ninety_meeting_location', [ $this, 'geocode_meeting_location' ] );
 			add_action( 'delete_ninety_meeting_location', [ $this, 'update_timestamp' ] );
-			add_action( 'update_option_ninety_settings', [ $this, 'update_timestamp' ], 10, 2 );
+			add_action( 'update_option_ninety_settings', [ $this, 'update_timestamp' ], 10, 3 );
 			// Filters.
 			add_filter( 'manage_edit-ninety_meeting_location_columns', [ $this, 'manage_location_columns' ] );
 			add_filter( 'manage_ninety_meeting_location_custom_column', [
@@ -785,7 +785,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 		/**
 		 * Update Meeting count
-		 *
 		 * Called from update_timestamp() and geocode_meeting_location()
 		 *
 		 * @param mixed $old_value Old Options.
