@@ -169,6 +169,11 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_action( 'delete_ninety_meeting_location', [ $this, 'update_timestamp' ] );
 			add_action( 'update_option_ninety_settings', [ $this, 'update_timestamp' ], 10, 3 );
 			// Filters.
+			add_filter( 'manage_ninety_meeting_posts_columns', [ $this, 'manage_meeting_columns' ] );
+			add_filter( 'manage_ninety_meeting_posts_custom_column', [
+				$this,
+				'manage_meeting_custom_column',
+			], 1, 3 );
 			add_filter( 'manage_edit-ninety_meeting_location_columns', [ $this, 'manage_location_columns' ] );
 			add_filter( 'manage_ninety_meeting_location_custom_column', [
 				$this,
@@ -226,6 +231,34 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				esc_attr( $class ),
 				esc_html( $message )
 			);
+		}
+
+		public function manage_meeting_columns( $cols ) {
+
+			$valid_loc['valid_location'] = 'Map Status';
+
+			$new_cols = array_slice( $cols, 0, 3, true ) + $valid_loc + array_slice( $cols, 3, null, true );
+
+			return $new_cols;
+		}
+
+		public function manage_meeting_custom_column( $column, $post_id ) {
+			if ( 'valid_location' === $column ) {
+				$term = wp_get_post_terms( $post_id, 'ninety_meeting_location' );
+
+				if ( ! is_array( $term ) || is_wp_error( $term ) ) {
+					$content = '<span style="color: #ff0000;">&#x2718; no term</span>'; // X mark
+				}
+
+				$coords = get_field( 'ninety_location_coords', $term[0] );
+
+				if ( empty( $coords ) ) {
+					$content = '<span style="color: #ff0000;">&#x2718; missing location</span>'; // X mark
+				} else {
+					$content = '<span style="color: #49b74e;">&#10004;</span>'; // Check mark.
+				}
+				echo $content;
+			}
 		}
 
 		/**
@@ -969,7 +1002,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 		/**
 		 * Update Location term meta with geo coords
-		 *
 		 * Runs when location is added/edited
 		 *
 		 * @param int    $term_id Location ID.
