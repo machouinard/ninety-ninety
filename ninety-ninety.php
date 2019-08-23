@@ -134,6 +134,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			require_once $path . 'inc/functions.php';
 
+			require_once $path . 'inc/template-tags.php';
+
 			$this->add_actions_and_filters();
 
 		}
