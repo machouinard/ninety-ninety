@@ -76,5 +76,66 @@ if ( ! function_exists( 'ninety_single_post_nav' ) ) {
 		echo '</div>';
 
 	}
+}
+
+if ( ! function_exists( 'ninety_map' ) ) {
+
+	/**
+	 * Display meeting map
+	 *
+	 * @param int|string $title      Whether or not to show title, string for title.
+	 * @param int        $show_count Whether or not to show meeting count.
+	 * @param bool       $return     Whether to return or echo.
+	 *
+	 * @return mixed
+	 * @since 1.0.0
+	 */
+	function ninety_map( $title = 0, $show_count = 0, $return = false ) {
+		if ( $return ) {
+			return "[ninety_map show_chart=0 title={$title} show_count={$show_count}]";
+		} else {
+			echo esc_html( "[ninety_map show_chart=0 title={$title} show_count={$show_count}]" );
+		}
+	}
+}
+
+if ( ! function_exists( 'ninety_chart' ) ) {
+
+	/**
+	 * Display meeting chart
+	 *
+	 * @param string $type   Chart type ( pie | doughnut | bar ).
+	 * @param bool   $return Whether to return or echo.
+	 *
+	 * @return mixed
+	 * @since 1.0.0
+	 */
+	function ninety_chart( $type = 'pie', $return = false ) {
+		if ( $return ) {
+			return "[ninety_map show_map=0 show_chart=1 chart_type={$type}]";
+		} else {
+			echo esc_html( "[ninety_map show_map=0 show_chart=1 chart_type={$type}]" );
+		}
+	}
+}
+if ( ! function_exists( 'ninety_map_and_chart' ) ) {
+
+	/**
+	 * Display meeting map and chart
+	 *
+	 * @param int|string $title      String for title, 0 for nothing.
+	 * @param int        $show_count Whether or not to show meeting count.
+	 * @param bool       $return     Whether to return or echo.
+	 *
+	 * @return mixed
+	 * @since 1.0.0
+	 */
+	function ninety_map_and_chart( $title = 0, $show_count = 0, $return = false ) {
+		if ( $return ) {
+			return "[ninety_map show_chart=1 title={$title} show_count={$show_count}]";
+		} else {
+			echo esc_html( "[ninety_map show_chart=1 title={$title} show_count={$show_count}]" );
+		}
+	}
 
 }
