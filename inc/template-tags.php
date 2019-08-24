@@ -88,7 +88,7 @@ if ( ! function_exists( 'ninety_map' ) ) {
 	 * @param bool       $return     Whether to return or echo.
 	 *
 	 * @return mixed
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	function ninety_map( $title = 0, $show_count = 0, $return = false ) {
 		if ( $return ) {
@@ -108,7 +108,7 @@ if ( ! function_exists( 'ninety_chart' ) ) {
 	 * @param bool   $return Whether to return or echo.
 	 *
 	 * @return mixed
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	function ninety_chart( $type = 'pie', $return = false ) {
 		if ( $return ) {
@@ -127,7 +127,7 @@ if ( ! function_exists( 'ninety_map_and_chart' ) ) {
 	 * @param int        $show_count Whether or not to show meeting count.
 	 * @param bool       $return     Whether to return or echo.
 	 *
-	 * @return mixed
+	 * @return string|void
 	 * @since 1.0.0
 	 */
 	function ninety_map_and_chart( $title = 0, $show_count = 0, $return = false ) {
@@ -138,4 +138,17 @@ if ( ! function_exists( 'ninety_map_and_chart' ) ) {
 		}
 	}
 
+	/**
+	 * Returns `in_same_term` argument for next/previous post link functions
+	 * Needed when viewing meetings from single location
+	 *
+	 * @return bool
+	 * @since 0.1.0
+	 */
+	function ninety_in_same_term() {
+		$location     = get_query_var( 'ninety_meeting_location' );
+		$in_same_term = ! empty( $location ) ? true : false;
+
+		return $in_same_term;
+	}
 }
