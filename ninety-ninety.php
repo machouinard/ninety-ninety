@@ -642,8 +642,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		}
 
 		/**
-		 * Provide archive template unless overridden by theme
-		 *
 		 * @param string $template Page template.
 		 *
 		 * @return string
@@ -651,25 +649,29 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function archive_template( $template ) {
 
-			// Check for archive template.
-			if ( is_post_type_archive( 'ninety_meeting' ) ) {
-
-				$archive_template = plugin_dir_path( __FILE__ ) . 'templates/archive-ninety_meeting.php';
-				$theme_files      = [ 'archive-ninety_meeting.php' ];
-				$exists           = locate_template( $theme_files, false );
-
-				if ( $exists ) {
-					return $exists;
-				} else {
-					// Make sure template hasn't been deleted.
-					if ( file_exists( $archive_template ) ) {
-						return $archive_template;
-					}
-				}
+			// If not meeting archive, bail.
+			if ( ! is_post_type_archive( 'ninety_meeting' ) ) {
+				return $template;
 			}
 
-			return $template;
+			// Same tax permalink if necessary.
+			add_filter( 'post_type_link', 'ninety_maybe_tax_specific_permalink', 10, 2 );
 
+			$theme_file = locate_template( 'archive-ninety_meeting.php', false );
+
+			if ( $theme_file ) {
+				return $theme_file;
+			} else {
+				$theme = wp_get_theme();
+				if ( 'genesis' === $theme->get_template() ) {
+					// Modify Genesis post info.
+					add_filter( 'genesis_post_info', [ 'NinetyNinety', 'ninety_meeting_genesis_entry_meta_header' ] );
+					// Prepend Entry content with our own.
+					add_action( 'genesis_entry_content', 'ninety_meeting_entry_content', 5 );
+				}
+
+				return $template;
+			}
 		}
 
 		/**
@@ -682,24 +684,30 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function single_template( $template ) {
 
-			// Check for single template.
-			if ( is_singular( 'ninety_meeting' ) ) {
-
-				$single_template = plugin_dir_path( __FILE__ ) . 'templates/single-ninety_meeting.php';
-				$theme_files     = [ 'single-ninety_meeting.php' ];
-				$exists          = locate_template( $theme_files, false );
-
-				if ( $exists ) {
-					return $exists;
-				} else {
-					// Make sure template hasn't been deleted.
-					if ( file_exists( $single_template ) ) {
-						return $single_template;
-					}
-				}
+			// If not single meeting, bail.
+			if ( ! is_singular( 'ninety_meeting' ) ) {
+				return $template;
 			}
 
-			return $template;
+			// Same tax permalink if necessary.
+			add_filter( 'post_type_link', 'ninety_maybe_tax_specific_permalink', 10, 2 );
+
+			// Same tax permalink if necessary.
+			$theme_file = locate_template( 'single-ninety_meeting.php', false );
+
+			if ( $theme_file ) {
+				return $theme_file;
+			} else {
+				$theme = wp_get_theme();
+				if ( 'genesis' === $theme->get_template() ) {
+					// Modify Genesis post info.
+					add_filter( 'genesis_post_info', [ 'NinetyNinety', 'ninety_meeting_genesis_entry_meta_header' ] );
+					// Prepend Entry content with our own.
+					add_action( 'genesis_entry_content', 'ninety_meeting_entry_content', 5 );
+				}
+
+				return $template;
+			}
 		}
 
 		/**
