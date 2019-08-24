@@ -246,7 +246,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			if ( 'valid_location' === $column ) {
 				$term = wp_get_post_terms( $post_id, 'ninety_meeting_location' );
 
-				if ( ! is_array( $term ) || is_wp_error( $term ) ) {
+				if ( empty( $term[0] ) || is_wp_error( $term ) ) {
 					$content = '<span style="color: #ff0000;">&#x2718; no term</span>'; // X mark
 				}
 
