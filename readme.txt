@@ -70,6 +70,7 @@ Also:
 == Development ==
 * Development is on [GitHub].(https://github.com/machouinard/ninety-ninety)
 * Support issues will be addressed on [GitHub](https://github.com/machouinard/ninety-ninety/issues)
+* Sample Child theme changes are available in the `child-themes` folder of this plugin to demonstrate necessary changes to properly work with the included rewrite rules.
 
 == Frequently Asked Questions ==
 
