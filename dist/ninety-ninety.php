@@ -134,6 +134,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			require_once $path . 'inc/functions.php';
 
+			require_once $path . 'inc/template-tags.php';
+
 			$this->add_actions_and_filters();
 
 		}
@@ -159,14 +161,19 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_action( 'init', [ $this, 'load_text_domain' ] );
 			add_action( 'init', [ $this, 'setup_shortcodes' ] );
 			add_action( 'save_post_ninety_meeting', [ $this, 'update_timestamp' ] );
-			add_action( 'edited_ninety_meeting_type', [ $this, 'update_timestamp' ] );
 			add_action( 'created_ninety_meeting_type', [ $this, 'update_timestamp' ] );
+			add_action( 'edited_ninety_meeting_type', [ $this, 'update_timestamp' ] );
 			add_action( 'delete_ninety_meeting_type', [ $this, 'update_timestamp' ] );
-			add_action( 'create_ninety_meeting_location', [ $this, 'geocode_meeting_location' ] );
+			add_action( 'created_ninety_meeting_location', [ $this, 'geocode_meeting_location' ] );
 			add_action( 'edited_ninety_meeting_location', [ $this, 'geocode_meeting_location' ] );
 			add_action( 'delete_ninety_meeting_location', [ $this, 'update_timestamp' ] );
-			add_action( 'update_option_ninety_settings', [ $this, 'update_timestamp' ], 10, 2 );
+			add_action( 'update_option_ninety_settings', [ $this, 'update_timestamp' ], 10, 3 );
 			// Filters.
+			add_filter( 'manage_ninety_meeting_posts_columns', [ $this, 'manage_meeting_columns' ] );
+			add_filter( 'manage_ninety_meeting_posts_custom_column', [
+				$this,
+				'manage_meeting_custom_column',
+			], 1, 3 );
 			add_filter( 'manage_edit-ninety_meeting_location_columns', [ $this, 'manage_location_columns' ] );
 			add_filter( 'manage_ninety_meeting_location_custom_column', [
 				$this,
@@ -224,6 +231,34 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				esc_attr( $class ),
 				esc_html( $message )
 			);
+		}
+
+		public function manage_meeting_columns( $cols ) {
+
+			$valid_loc['valid_location'] = 'Map Status';
+
+			$new_cols = array_slice( $cols, 0, 3, true ) + $valid_loc + array_slice( $cols, 3, null, true );
+
+			return $new_cols;
+		}
+
+		public function manage_meeting_custom_column( $column, $post_id ) {
+			if ( 'valid_location' === $column ) {
+				$term = wp_get_post_terms( $post_id, 'ninety_meeting_location' );
+
+				if ( empty( $term[0] ) || is_wp_error( $term ) ) {
+					$content = '<span style="color: #ff0000;">&#x2718; no term</span>'; // X mark
+				}
+
+				$coords = get_field( 'ninety_location_coords', $term[0] );
+
+				if ( empty( $coords ) ) {
+					$content = '<span style="color: #ff0000;">&#x2718; missing location</span>'; // X mark
+				} else {
+					$content = '<span style="color: #49b74e;">&#10004;</span>'; // Check mark.
+				}
+				echo $content;
+			}
 		}
 
 		/**
@@ -607,8 +642,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		}
 
 		/**
-		 * Provide archive template unless overridden by theme
-		 *
 		 * @param string $template Page template.
 		 *
 		 * @return string
@@ -616,25 +649,29 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function archive_template( $template ) {
 
-			// Check for archive template.
-			if ( is_post_type_archive( 'ninety_meeting' ) ) {
-
-				$archive_template = plugin_dir_path( __FILE__ ) . 'templates/archive-ninety_meeting.php';
-				$theme_files      = [ 'archive-ninety_meeting.php' ];
-				$exists           = locate_template( $theme_files, false );
-
-				if ( $exists ) {
-					return $exists;
-				} else {
-					// Make sure template hasn't been deleted.
-					if ( file_exists( $archive_template ) ) {
-						return $archive_template;
-					}
-				}
+			// If not meeting archive, bail.
+			if ( ! is_post_type_archive( 'ninety_meeting' ) ) {
+				return $template;
 			}
 
-			return $template;
+			// Same tax permalink if necessary.
+			add_filter( 'post_type_link', 'ninety_maybe_tax_specific_permalink', 10, 2 );
 
+			$theme_file = locate_template( 'archive-ninety_meeting.php', false );
+
+			if ( $theme_file ) {
+				return $theme_file;
+			} else {
+				$theme = wp_get_theme();
+				if ( 'genesis' === $theme->get_template() ) {
+					// Modify Genesis post info.
+					add_filter( 'genesis_post_info', [ 'NinetyNinety', 'ninety_meeting_genesis_entry_meta_header' ] );
+					// Prepend Entry content with our own.
+					add_action( 'genesis_entry_content', 'ninety_meeting_entry_content', 5 );
+				}
+
+				return $template;
+			}
 		}
 
 		/**
@@ -647,24 +684,30 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function single_template( $template ) {
 
-			// Check for single template.
-			if ( is_singular( 'ninety_meeting' ) ) {
-
-				$single_template = plugin_dir_path( __FILE__ ) . 'templates/single-ninety_meeting.php';
-				$theme_files     = [ 'single-ninety_meeting.php' ];
-				$exists          = locate_template( $theme_files, false );
-
-				if ( $exists ) {
-					return $exists;
-				} else {
-					// Make sure template hasn't been deleted.
-					if ( file_exists( $single_template ) ) {
-						return $single_template;
-					}
-				}
+			// If not single meeting, bail.
+			if ( ! is_singular( 'ninety_meeting' ) ) {
+				return $template;
 			}
 
-			return $template;
+			// Same tax permalink if necessary.
+			add_filter( 'post_type_link', 'ninety_maybe_tax_specific_permalink', 10, 2 );
+
+			// Same tax permalink if necessary.
+			$theme_file = locate_template( 'single-ninety_meeting.php', false );
+
+			if ( $theme_file ) {
+				return $theme_file;
+			} else {
+				$theme = wp_get_theme();
+				if ( 'genesis' === $theme->get_template() ) {
+					// Modify Genesis post info.
+					add_filter( 'genesis_post_info', [ 'NinetyNinety', 'ninety_meeting_genesis_entry_meta_header' ] );
+					// Prepend Entry content with our own.
+					add_action( 'genesis_entry_content', 'ninety_meeting_entry_content', 5 );
+				}
+
+				return $template;
+			}
 		}
 
 		/**
@@ -785,7 +828,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 		/**
 		 * Update Meeting count
-		 *
 		 * Called from update_timestamp() and geocode_meeting_location()
 		 *
 		 * @param mixed $old_value Old Options.
@@ -968,6 +1010,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 		/**
 		 * Update Location term meta with geo coords
+		 * Runs when location is added/edited
 		 *
 		 * @param int    $term_id Location ID.
 		 * @param string $address Location address.
@@ -976,6 +1019,9 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @since 0.1.0
 		 */
 		public function geocode_meeting_location( $term_id ) {
+
+			// This needs to be done when adding Locations TODO: better way?
+			flush_rewrite_rules();
 
 			// If we don't have an API key, bail.
 			if ( ! $this->get_option( 'ninety_mapbox_api_key' ) ) {
@@ -1008,9 +1054,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			// Update last_updated timestamp - future use.
 			// Runs only after we get a good address TODO: revisit
 			$this->update_timestamp();
-
-			// This needs to be done when adding Locations TODO: better way?
-			flush_rewrite_rules();
 
 		}
 

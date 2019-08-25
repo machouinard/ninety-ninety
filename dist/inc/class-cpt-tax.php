@@ -205,6 +205,7 @@ class NinetyNinety_CPT {
 					foreach ( $terms as $term ) {
 						$rules[ $post_type_slug . '/' . $term->slug . '/page/([0-9]{1,})/?' ] = 'index.php?post_type=' . $post_type_name . '&' . $term->taxonomy . '=' . $term->slug . '&paged=$matches[1]';
 						$rules[ $post_type_slug . '/' . $term->slug . '/([^/]+)/?$' ]         = 'index.php?post_type=' . $post_type_name . '&' . $post_type_name . '=$matches[1]&' . $term->taxonomy . '=' . $term->slug;
+//						$rules[ $post_type_slug . '/' . $term->slug . '/([^/]+)/?$' ]         = 'index.php?post_type=' . $post_type_name . '&' . $term->taxonomy . '=' . $term->slug . '&' . $post_type_name . '=$matches[1]';
 						$rules[ $post_type_slug . '/' . $term->slug . '/?$' ]                 = 'index.php?post_type=' . $post_type_name . '&' . $term->taxonomy . '=' . $term->slug;
 					}
 				}

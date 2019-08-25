@@ -23,9 +23,12 @@ get_header();
 						while ( have_posts() ) :
 							the_post();
 
-							printf( '<a href="%s"><h2>%s</h2></a>', get_the_permalink(), get_the_title() );
+							printf( '<a href="%s"><h3>%s</h3></a>', get_the_permalink(), get_the_title() );
 
 							$loc = get_field( 'ninety_meeting_location', get_the_ID() );
+							if ( ! $loc ) {
+								continue;
+							}
 							echo esc_attr( $loc->name );
 
 							// End the loop.
