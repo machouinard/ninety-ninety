@@ -72,7 +72,7 @@ function ninety_maybe_tax_specific_permalink( $url, $post ) {
  * @param null   $show_chart Whether or not to display chart.
  *
  * @return string|void
- * @since 1.0.0
+ * @since 0.1.0
  */
 function ninety_add_chart_markup( $return = false, $chart_type = 'pie', $show_chart = null ) {
 
@@ -113,7 +113,7 @@ function ninety_add_chart_markup( $return = false, $chart_type = 'pie', $show_ch
  * Output meeting location link
  *
  * @return void
- * @since 1.0.0
+ * @since 0.1.0
  */
 function ninety_print_location_link() {
 	$post_id  = get_the_ID();
