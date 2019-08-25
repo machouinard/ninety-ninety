@@ -168,6 +168,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_action( 'edited_ninety_meeting_location', [ $this, 'geocode_meeting_location' ] );
 			add_action( 'delete_ninety_meeting_location', [ $this, 'update_timestamp' ] );
 			add_action( 'update_option_ninety_settings', [ $this, 'update_timestamp' ], 10, 3 );
+			add_action( 'wp_dashboard_setup', [ $this, 'dashboard_setup' ] );
 			// Filters.
 			add_filter( 'manage_ninety_meeting_posts_columns', [ $this, 'manage_meeting_columns' ] );
 			add_filter( 'manage_ninety_meeting_posts_custom_column', [
@@ -1267,28 +1268,51 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 		}
 
-	}
-
-	/**
-	 * Return a single instance of this class providing all its public methods
-	 *
-	 * @return NinetyNinety
-	 * @since 0.1.0
-	 */
-	function ninety_ninety() {
-
-		global $ninety;
-
-		if ( ! isset( $ninety ) ) {
-			$ninety = new NinetyNinety();
-			$ninety->initialize();
+		/**
+		 * Set up dashboard meeting count widget
+		 *
+		 * @return void
+		 * @since 0.1.0
+		 */
+		public function dashboard_setup() {
+			wp_add_dashboard_widget( 'ninety_dash_count', 'Ninety in Ninety', [ $this, 'dashboard_widget' ] );
 		}
 
-		return $ninety;
+		/**
+		 * Output dashboard meeting count widget
+		 *
+		 * @param string|array $post
+		 * @param string|array $args    Callback args.
+		 *
+		 * @return void
+		 * @since 0.1.0
+		 */
+		public function dashboard_widget( $post, $args ) {
+			printf( "Meeting Count: <strong>%d</strong>", $this->get_setting( 'meeting_count' ) );
+		}
 
 	}
 
-	// Kick it off.
-	ninety_ninety();
-
 endif;  // End class exists check.
+
+/**
+ * Return a single instance of this class providing all its public methods
+ *
+ * @return NinetyNinety
+ * @since 0.1.0
+ */
+function ninety_ninety() {
+
+	global $ninety;
+
+	if ( ! isset( $ninety ) ) {
+		$ninety = new NinetyNinety();
+		$ninety->initialize();
+	}
+
+	return $ninety;
+
+}
+
+// Kick it off.
+ninety_ninety();
