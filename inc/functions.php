@@ -64,6 +64,16 @@ function ninety_maybe_tax_specific_permalink( $url, $post ) {
 	return $url;
 }
 
+/**
+ * Output chart markup
+ *
+ * @param bool   $return     Whether to echo or return.
+ * @param string $chart_type Chart type to display.
+ * @param null   $show_chart Whether or not to display chart.
+ *
+ * @return string|void
+ * @since 0.1.0
+ */
 function ninety_add_chart_markup( $return = false, $chart_type = 'pie', $show_chart = null ) {
 
 	if ( null === $show_chart ) {
@@ -97,4 +107,21 @@ function ninety_add_chart_markup( $return = false, $chart_type = 'pie', $show_ch
 		echo '</div>';
 	}
 
+}
+
+/**
+ * Output meeting location link
+ *
+ * @return void
+ * @since 0.1.0
+ */
+function ninety_print_location_link() {
+	$post_id  = get_the_ID();
+	$location = get_field( 'ninety_meeting_location', $post_id );
+
+	if ( $location ) {
+		$url  = get_site_url( null, 'meetings/' ) . $location->slug . '/';
+		$link = "<a href='{$url}' alt='Link to {$location->name} meetings'>{$location->name}</a>";
+		echo esc_url_raw( $link );
+	}
 }

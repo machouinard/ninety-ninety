@@ -151,8 +151,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_stuff' ] );
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_stuff' ] );
 			add_action( 'acf/init', 'ninety_init_acf_import' );
-			add_action( 'create_ninety_meeting_location', [ $this, 'geocode_meeting_location' ], PHP_INT_MAX );
-			add_action( 'edited_ninety_meeting_location', [ $this, 'geocode_meeting_location' ], PHP_INT_MAX );
 			add_action( 'acf/save_post', [ $this, 'set_meeting_title_time' ], PHP_INT_MAX );// Run as late as possible.
 			add_action( 'template_redirect', [ $this, 'redirect_single_result' ] );
 			add_action( 'widgets_init', [ $this, 'register_widgets' ] );
@@ -161,18 +159,19 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			add_action( 'init', [ $this, 'load_text_domain' ] );
 			add_action( 'init', [ $this, 'setup_shortcodes' ] );
 			add_action( 'save_post_ninety_meeting', [ $this, 'update_timestamp' ] );
-			add_action( 'edit_post_ninety_meeting', [ $this, 'update_timestamp' ] );
-			add_action( 'before_delete_post', [ $this, 'update_timestamp' ] );
-			add_action( 'trashed_post', [ $this, 'update_timestamp' ] );
-			add_action( 'untrashed_post', [ $this, 'update_timestamp' ] );
 			add_action( 'edited_ninety_meeting_type', [ $this, 'update_timestamp' ] );
+			add_action( 'created_ninety_meeting_type', [ $this, 'update_timestamp' ] );
+			add_action( 'delete_ninety_meeting_type', [ $this, 'update_timestamp' ] );
+			add_action( 'create_ninety_meeting_location', [ $this, 'geocode_meeting_location' ] );
+			add_action( 'edited_ninety_meeting_location', [ $this, 'geocode_meeting_location' ] );
+			add_action( 'delete_ninety_meeting_location', [ $this, 'update_timestamp' ] );
 			add_action( 'update_option_ninety_settings', [ $this, 'update_timestamp' ], 10, 2 );
 			// Filters.
 			add_filter( 'manage_edit-ninety_meeting_location_columns', [ $this, 'manage_location_columns' ] );
 			add_filter( 'manage_ninety_meeting_location_custom_column', [
 				$this,
 				'manage_location_custom_column',
-			], 10, 3 );
+			], 1, 3 );
 			add_filter( 'acf/settings/show_admin', [ $this, 'acf_show_admin' ] );
 			add_filter( 'archive_template', [ $this, 'archive_template' ] );
 			add_filter( 'single_template', [ $this, 'single_template' ] );
@@ -439,8 +438,6 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				$post->post_modified_gmt = get_gmt_from_date( $now );
 
 				wp_update_post( $post );
-
-//				$this->update_meeting_count();
 
 			}
 
@@ -787,7 +784,9 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		}
 
 		/**
-		 * Update Meeting count based on Options
+		 * Update Meeting count
+		 *
+		 * Called from update_timestamp() and geocode_meeting_location()
 		 *
 		 * @param mixed $old_value Old Options.
 		 * @param mixed $new_value New Options.
@@ -796,10 +795,11 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 * @since 0.1.0
 		 */
 		public function update_meeting_count( $old_value = null, $new_value = null ) {
-// TODO: fix
+
 			global $wpdb;
 
-			$sql = "SELECT count( * ) as count FROM {$wpdb->posts} WHERE post_type = 'ninety_meeting' AND post_status = 'publish';";
+			// Count all published meetings
+			$sql = "SELECT count( * ) FROM {$wpdb->posts} WHERE post_type = 'ninety_meeting' AND post_status = 'publish';";
 
 			$count = $wpdb->get_var( $sql );
 
@@ -1006,6 +1006,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			}
 
 			// Update last_updated timestamp - future use.
+			// Runs only after we get a good address TODO: revisit
 			$this->update_timestamp();
 
 			// This needs to be done when adding Locations TODO: better way?
