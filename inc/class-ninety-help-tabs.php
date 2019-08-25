@@ -1,10 +1,10 @@
 <?php
-require_once NINETY_NINETY_PATH .'inc/class-ninety-help-contents.php';
+require_once NINETY_NINETY_PATH . 'inc/class-ninety-help-contents.php';
 /**
  * Description
  *
  * @package     NINETY-NINETY
- * @since       1.0.0
+ * @since       0.1.0
  * @author      machouinard
  */
 
@@ -22,7 +22,7 @@ class NinetyHelptabs {
 	 * Ninety_Help_tabs constructor.
 	 */
 	public function __construct() {
-	
+
 	}
 
 	public static function add_options_help_tabs() {
@@ -36,50 +36,50 @@ class NinetyHelptabs {
 				'content' => ninety_help()->meeting_options(),
 			)
 		);
-		
+
 		$cs->add_help_tab(
 			[
-				'id' => 'map_options_tab',
-				'title' => __( 'Map Options', 'ninety-ninety' ),
+				'id'      => 'map_options_tab',
+				'title'   => __( 'Map Options', 'ninety-ninety' ),
 				'content' => ninety_help()->map_options(),
 			]
 		);
-		
+
 		$cs->add_help_tab(
 			[
-				'id' => 'misc_options_tab',
-				'title' => __( 'Misc Options', 'ninety-ninety' ),
+				'id'      => 'misc_options_tab',
+				'title'   => __( 'Misc Options', 'ninety-ninety' ),
 				'content' => ninety_help()->misc_options(),
 			]
 		);
-		
+
 		$cs->add_help_tab(
 			[
-				'id' => 'pdf_options_tab',
-				'title' => __( 'PDF Options', 'ninety-ninety' ),
+				'id'      => 'pdf_options_tab',
+				'title'   => __( 'PDF Options', 'ninety-ninety' ),
 				'content' => ninety_help()->pdf_options(),
 			]
 		);
 	}
 
 	public static function add_meeting_help_tab() {
-		
+
 		global $typenow;
-		
+
 		if ( 'ninety_meeting' !== $typenow ) {
 			return;
 		}
-		
+
 		$cs = get_current_screen();
-		
+
 		$cs->add_help_tab(
 			[
-				'id' => 'ninety_meeting_help_tab',
-				'title' => __( 'Meeting Help', 'ninety-ninety' ),
+				'id'      => 'ninety_meeting_help_tab',
+				'title'   => __( 'Meeting Help', 'ninety-ninety' ),
 				'content' => ninety_help()->meeting_help(),
 			]
 		);
-		
+
 	}
 
 }

@@ -5,7 +5,7 @@
  * Heavily based on
  * https://github.com/thingsym/custom-post-type-widgets/blob/master/inc/widget-custom-post-type-search.php.
  *
- * @since   1.0.0
+ * @since   0.1.0
  * @package Ninety in Ninety
  */
 class Ninety_Meeting_Search extends WP_Widget {
@@ -29,7 +29,7 @@ class Ninety_Meeting_Search extends WP_Widget {
 	 * @param string $form
 	 *
 	 * @return mixed
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	public function add_form_input_post_type( $form ) {
 		$posttype = 'ninety_meeting';
@@ -47,7 +47,7 @@ class Ninety_Meeting_Search extends WP_Widget {
 	 * @param array $instance
 	 *
 	 * @return void
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	public function widget( $args, $instance ) {
 		$title = apply_filters( 'widget_title', empty( $instance['title'] ) ? __( 'Search', 'ninety-ninety' ) : $instance['title'], $instance, $this->id_base );
@@ -72,7 +72,7 @@ class Ninety_Meeting_Search extends WP_Widget {
 	 * @param array $old_instance
 	 *
 	 * @return array|mixed
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	public function update( $new_instance, $old_instance ) {
 		$instance['title'] = sanitize_text_field( $new_instance['title'] );
@@ -86,7 +86,7 @@ class Ninety_Meeting_Search extends WP_Widget {
 	 * @param array $instance
 	 *
 	 * @return string|void
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	public function form( $instance ) {
 		$instance = wp_parse_args( (array) $instance, array( 'title' => '', 'posttype' => 'post' ) );
@@ -104,7 +104,7 @@ class Ninety_Meeting_Search extends WP_Widget {
 	 * Provide array of ACF fields to include in search query
 	 *
 	 * @return array
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	public static function list_searchable_acf() {
 		$list_searchable_acf = array(
@@ -125,7 +125,7 @@ class Ninety_Meeting_Search extends WP_Widget {
 	 * @param object $wp_query
 	 *
 	 * @return string
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	public static function advanced_custom_search( $where, $wp_query ) {
 		global $wpdb;

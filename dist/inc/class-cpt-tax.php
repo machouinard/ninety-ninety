@@ -31,7 +31,7 @@ class NinetyNinety_CPT {
 	 * Add Meeting CPT
 	 *
 	 * @return void
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	function register_post_type() {
 
@@ -89,7 +89,7 @@ class NinetyNinety_CPT {
 	 * Add Meeting Type & Location taxonomies
 	 *
 	 * @return void
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	function register_taxonomies() {
 
@@ -175,7 +175,7 @@ class NinetyNinety_CPT {
 	 * @param $wp_rewrite
 	 *
 	 * @return void
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	function generate_rewrite_rules( $wp_rewrite ) {
 
@@ -205,6 +205,7 @@ class NinetyNinety_CPT {
 					foreach ( $terms as $term ) {
 						$rules[ $post_type_slug . '/' . $term->slug . '/page/([0-9]{1,})/?' ] = 'index.php?post_type=' . $post_type_name . '&' . $term->taxonomy . '=' . $term->slug . '&paged=$matches[1]';
 						$rules[ $post_type_slug . '/' . $term->slug . '/([^/]+)/?$' ]         = 'index.php?post_type=' . $post_type_name . '&' . $post_type_name . '=$matches[1]&' . $term->taxonomy . '=' . $term->slug;
+//						$rules[ $post_type_slug . '/' . $term->slug . '/([^/]+)/?$' ]         = 'index.php?post_type=' . $post_type_name . '&' . $term->taxonomy . '=' . $term->slug . '&' . $post_type_name . '=$matches[1]';
 						$rules[ $post_type_slug . '/' . $term->slug . '/?$' ]                 = 'index.php?post_type=' . $post_type_name . '&' . $term->taxonomy . '=' . $term->slug;
 					}
 				}
@@ -227,7 +228,7 @@ class NinetyNinety_CPT {
 	 * @param $wp  WP instance (passed by reference)
 	 *
 	 * @return mixed
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	public function redirect_anon_users( $wp ) {
 
@@ -257,7 +258,7 @@ class NinetyNinety_CPT {
 	 * Create some default Meeting Types on activation
 	 *
 	 * @return void
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	public static function activate() {
 
@@ -290,7 +291,7 @@ class NinetyNinety_CPT {
 	 * Conditionally delete options when plugin is deleted
 	 *
 	 * @return void
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	public static function uninstall() {
 
@@ -330,7 +331,7 @@ class NinetyNinety_CPT {
 	 * @param string $taxonomy Taxonomy to delete terms from.
 	 *
 	 * @return void
-	 * @since 1.0.0
+	 * @since 0.1.0
 	 */
 	public static function delete_custom_terms( $taxonomy ) {
 		global $wpdb;
