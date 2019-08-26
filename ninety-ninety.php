@@ -658,18 +658,19 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			// Same tax permalink if necessary.
 			add_filter( 'post_type_link', 'ninety_maybe_tax_specific_permalink', 10, 2 );
 
+			$theme = wp_get_theme();
+			if ( 'genesis' === $theme->get_template() ) {
+				// Modify Genesis post info.
+				add_filter( 'genesis_post_info', [ 'NinetyNinety', 'ninety_meeting_genesis_entry_meta_header' ] );
+				// Prepend Entry content with our own.
+				add_action( 'genesis_entry_content', 'ninety_meeting_entry_content', 5 );
+			}
+
 			$theme_file = locate_template( 'archive-ninety_meeting.php', false );
 
 			if ( $theme_file ) {
 				return $theme_file;
 			} else {
-				$theme = wp_get_theme();
-				if ( 'genesis' === $theme->get_template() ) {
-					// Modify Genesis post info.
-					add_filter( 'genesis_post_info', [ 'NinetyNinety', 'ninety_meeting_genesis_entry_meta_header' ] );
-					// Prepend Entry content with our own.
-					add_action( 'genesis_entry_content', 'ninety_meeting_entry_content', 5 );
-				}
 
 				return $template;
 			}
@@ -693,20 +694,21 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			// Same tax permalink if necessary.
 			add_filter( 'post_type_link', 'ninety_maybe_tax_specific_permalink', 10, 2 );
 
+			$theme = wp_get_theme();
+			if ( 'genesis' === $theme->get_template() ) {
+				// Modify Genesis post info.
+				add_filter( 'genesis_post_info', [ 'NinetyNinety', 'ninety_meeting_genesis_entry_meta_header' ] );
+				// Prepend Entry content with our own.
+				add_action( 'genesis_entry_content', 'ninety_meeting_entry_content', 5 );
+				add_action( 'genesis_entry_content', 'ninety_single_post_nav', 20 );
+			}
+
 			// Same tax permalink if necessary.
 			$theme_file = locate_template( 'single-ninety_meeting.php', false );
 
 			if ( $theme_file ) {
 				return $theme_file;
 			} else {
-				$theme = wp_get_theme();
-				if ( 'genesis' === $theme->get_template() ) {
-					// Modify Genesis post info.
-					add_filter( 'genesis_post_info', [ 'NinetyNinety', 'ninety_meeting_genesis_entry_meta_header' ] );
-					// Prepend Entry content with our own.
-					add_action( 'genesis_entry_content', 'ninety_meeting_entry_content', 5 );
-				}
-
 				return $template;
 			}
 		}
