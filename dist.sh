@@ -9,6 +9,7 @@ cp -R ./templates dist
 cp -R ./child-themes dist
 cp ./index.php dist
 cp ./Readme.md dist
+cp ./readme.txt dist
 cp ./ninety-ninety.php dist
 
 mkdir ninety-ninety
