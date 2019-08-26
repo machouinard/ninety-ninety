@@ -594,7 +594,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			$chart_type = false !== $map_options['chart_type'] ? $map_options['chart_type'] : ninety_ninety()->get_option( 'ninety_chart_type', 'pie' );
 
-			$show_chart = false !== $map_options['show_chart'] ? true : ninety_ninety()->get_option( 'ninety_show_chart', false );
+			$show_chart = false !== $map_options['show_chart'] ? $map_options['show_chart'] : ninety_ninety()->get_option( 'ninety_show_chart', false );
 
 			$zoom = false !== $map_options['zoom'] ? intval( $map_options['zoom'] ) : ninety_ninety()->get_option( 'ninety_map_zoom', 1 );
 
