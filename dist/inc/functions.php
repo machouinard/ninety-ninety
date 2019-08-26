@@ -120,8 +120,8 @@ function ninety_print_location_link() {
 	$location = get_field( 'ninety_meeting_location', $post_id );
 
 	if ( $location ) {
-		$url  = get_site_url( null, 'meetings/' ) . $location->slug . '/';
+		$url  = get_site_url( null, 'meetings/' ) . esc_attr( $location->slug ) . '/';
 		$link = "<a href='{$url}' alt='Link to {$location->name} meetings'>{$location->name}</a>";
-		echo esc_url_raw( $link );
+		echo $link;
 	}
 }

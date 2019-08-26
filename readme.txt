@@ -9,11 +9,15 @@ Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Here is a short description of the plugin.  This should be no more than 150 characters.  No markup here.
+Get started tracking your AA meetings.
 
 == Description ==
 
-Often referred to as “90 in 90”, the practice of attending an AA meeting every day for 90 days in a row is a common suggestion for a newcomer.  This is a way to track those meetings.
+Often referred to as “90 in 90”, the practice of attending an AA meeting every day for 90 days in a row is a common suggestion for a newcomer.
+
+This plugin is a simple way to track your progress making it to these meetings.
+
+It's flexible enough to be used for any 12 Step program.
 
 
 
@@ -60,15 +64,26 @@ Also:
 	* **Start Date / End Date for PDF**: Optionally specify a date range of meetings to include
 
 == Installation ==
-
+[Brief setup video](https://youtu.be/f7zZNWh5pig)
 1. Upload "ninety-ninety" folder to the "/wp-content/plugins/" directory.
 1. Activate the plugin ( 90 in 90 ) through the "Plugins" menu in WordPress.
 1. [Sign up for free](https://www.mapbox.com/pricing/) at [MapBox ](https://account.mapbox.com/auth/signup/) to obtain an API key for geolocating meeting addresses.
-1. Use **Meetings -> Options** screen to set up plugin options
+1. Use **Meetings -> Options** screen to set up plugin options.
+1. Add some meeting locations.
 1. Start tracking your meetings.
 
+== ACF Notes ==
+* Requires Advanced Custom Fields plugin, standard or Pro.
+* Loads ACF standard version if no ACF plugin is active.
+* ACF standard version included: 5.8.3
+* ACF fields are used for Meetings.
+* Options page is not built with ACF since that requires Pro version.
+
+## Actions & Filters
+* `ninety_programs` customize the available Meeting Programs to choose from - AA, NA, GA, OA, SA...
+
 == Development ==
-* Development is on [GitHub].(https://github.com/machouinard/ninety-ninety)
+* Development is on [GitHub](https://github.com/machouinard/ninety-ninety).
 * Support issues will be addressed on [GitHub](https://github.com/machouinard/ninety-ninety/issues)
 * Sample Child theme changes are available in the `child-themes` folder of this plugin to demonstrate necessary changes to properly work with the included rewrite rules.
 
@@ -78,7 +93,7 @@ Also:
 Support issues will be addressed on [GitHub](https://github.com/machouinard/ninety-ninety/issues)
 
 = Source Code? =
-Development is on [GitHub].(https://github.com/machouinard/ninety-ninety)
+Development is on [GitHub](https://github.com/machouinard/ninety-ninety).
 
 
 
