@@ -1,76 +1,124 @@
-# 90 Meetings in 90 Days
+# Ninety in Ninety 
+**Contributors:** machouinard  
+**Donate link:** https://example.com  
+**Tags:** AA, NA, Recovery  
+**Requires at least:** 5.2  
+**Tested up to:** 5.2.2  
+**Stable tag:** 1.0.0  
+**Requires PHP:** 5.6  
+**License:** GPLv2 or later  
+**License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
-Please post any issues you encounter [on GitHub](https://github.com/machouinard/ninety-ninety/issues)
+Get started tracking your AA meetings.
 
-## What is this?
-Often referred to as “90 in 90”, the practice of attending a meeting of Alcoholics Anonymous every day for 90 days in a row is a common suggestion for a newcomer to AA.
+
+## Description 
+
+Often referred to as “90 in 90”, the practice of attending an AA meeting every day for 90 days in a row is a common suggestion for a newcomer.
 
 This plugin is a simple way to track your progress making it to these meetings.
 
 It's flexible enough to be used for any 12 Step program.
 
-...
 
 
+Keep track of each meeting:
 
-### Requirements
-* WordPress 5.2
-* PHP 5.6.2
+* Location/Group
+* Meeting Type
+* Date/Time
+* Speaker
+* Topics
 
-# Setup
-### Meetings
-1. Add Meeting Locations ( Meetings > Meeting Locations )
-1. Add additional Meeting Types if desired ( Meetings > Meeting Types )
+Also:
+
+* Display all meetings on a map
+* Display progress as a chart; pie, doughnut, bar.
+* Display meetings by Location/Group
+* Search meetings by your meeting notes or any other detail
+* Meeting calendar widget
+* Meeting archive widget
 
 
+## Plugin Options 
 
-### Options ( Meetings > Options ). 
+1. Meeting Options: defaults used when creating new meeting posts.
+    * **Location** (you'll need to set up at least one location first)
+    * **Time** (save valuable seconds by specifying a default meeting time)
+    * **Type** (save even more time with a default meeting type)
+1. Map Options: used for displaying meetings on a map.
+	* [**MapBox API Key**](https://account.mapbox.com/auth/signup/): For geocoding location addresses to display on map.  Also for dislaying certain map tile sets.
+	* [**Thunderforest API Key**](https://manage.thunderforest.com/): For displaying map using additional tile sets.
+	* **Default Map Center Latitude**
+	* **Default Map Center Longitude**
+	* **Default Map Zoom Level**
+1. Misc. Options
+	* **Keep Meetings Private**: only show meetings/maps/widgets to logged in users
+	* **Display Chart**: Default setting. Customizable in shortcode.
+	* **Chart Type**: Default chart type. Customizable in shortcode.
+	* **Completed Meetings Color**: Chart color used for completed meetings.
+	* **Remaining Meetings Color**: Chart color used for remaining meetings.
+	* **Remove data when deleting plugin**: Option to remove meetings and associated details from the database.
+1. PDF Options
+	* **Create PDF**: Whether or not to create a PDF listing of your meetings.
+	* **PDF Title**
+	* **Show number of days**: Whether or not to show the number of days next to the meeting count.
+	* **Start Date / End Date for PDF**: Optionally specify a date range of meetings to include
 
-#### Map Options
-There are currently 2 available mapping APIs for use.  Both have free usage tiers.
-1. Enter your [MapBox API key](https://account.mapbox.com/auth/signup/). This is __required__ for geocoding
-Location addresses and displaying certain tile sets.
-1. Enter your [Thunderforest API key](https://www.thunderforest.com/pricing/) if you wish to use any of the Thunderforest tile sets. 
-1. Select a Tile Set to display on the map ( there must be a valid API key associated with the selected tile set ).
 
-1. (Optional) Set your preferred timezone in the WordPress admin ( for the Default Meeting Time option to work correctly )
-1. (Optional) Set __Default Map Center Lat__ and __Default Map Center Lng__ - This will center the map on a specific area when first loaded.
-1. (Optional) Set __Default Map Zoom Level__ - This sets the zoom level when the map is initially loaded.
+## Installation 
+[Brief setup video](https://youtu.be/f7zZNWh5pig)
+1. Upload "ninety-ninety" folder to the "/wp-content/plugins/" directory.
+1. Activate the plugin ( 90 in 90 ) through the "Plugins" menu in WordPress.
+1. [Sign up for free](https://www.mapbox.com/pricing/) at [MapBox ](https://account.mapbox.com/auth/signup/) to obtain an API key for geolocating meeting addresses.
+1. Use **Meetings -> Options** screen to set up plugin options.
+1. Add some meeting locations.
+1. Start tracking your meetings.
 
-### Miscellaneous Options
-* `Keep Meetings Private` checkbox - Prevents non-logged-in users from viewing Meetings, archive pages, Maps, etc...  Also prevents
-Meeting related menu items from appearing when not logged in.
-* `Use Exclude option (PDF, Maps, Count, etc...` Each Meeting has an "exclude" checkbox.  If this box is checked, any
-Meetings that have their "exclude" checkboxes checked will not be shown on the PDF or the Map page.
-* `Display Chart` Whether or not to display a chart depicting progress.
-* `Chart Type` Which chart type to use - Pie or Doughnut
-* `Meeting Colors` Change chart colors used for Meetings attended and Meetings remaining.
 
-## ACF Notes
+## ACF Notes 
 * Requires Advanced Custom Fields plugin, standard or Pro.
 * Loads ACF standard version if no ACF plugin is active.
-* ACF standard version included: 5.8.1
+* ACF standard version included: 5.8.3
 * ACF fields are used for Meetings.
 * Options page is not built with ACF since that requires Pro version.
 
-
-
 ## Actions & Filters
-* `ninety_programs` customize the available Meeting Programs to choose from - AA, NA, GA, OA...
-* `ninety_page_templates` not sure if this should be filterable...
-* `ninety_meeting_genesis_meta` customize Genesis entry meta for Genesis child themes.
-* `ninety_map_page_title` filter title on the Meetings Map page.
+* `ninety_programs` customize the available Meeting Programs to choose from - AA, NA, GA, OA, SA...
 
-## Misc.
-* Location addresses are geocoded upon saving.  Lat/Lng is displayed but not editable.  Address is 
-replaced with results from API call.
-* Meeting Location name, description and address are displayed on the map using information entered when 
-creating/updating Locations.  The displayed Meeting count is a dynamic value. 
 
-## Development
-* This plugin can be [forked on GitHub](https://github.com/machouinard/ninety-ninety)
-* After downloading, run `npm install` from within the directory
-* JS development files are in the `src/` directory and are compiled into the `assets/js/` directory by WebPack
-* While developing, run `npm run watch` from the plugin directory.  Changes will be automatically copied to the `assets/js` directory.
-* Running `npm run build` will minify the JavaScript, resulting in a much smaller file.
-* ...
+## Development 
+* Development is on [GitHub](https://github.com/machouinard/ninety-ninety).
+* Support issues will be addressed on [GitHub](https://github.com/machouinard/ninety-ninety/issues)
+* Sample Child theme changes are available in the `child-themes` folder of this plugin to demonstrate necessary changes to properly work with the included rewrite rules.
+
+
+## Frequently Asked Questions 
+
+
+### I found a problem 
+Support issues will be addressed on [GitHub](https://github.com/machouinard/ninety-ninety/issues)
+
+
+### Source Code? 
+Development is on [GitHub](https://github.com/machouinard/ninety-ninety).
+
+
+
+
+## Screenshots 
+
+### 1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif).
+[missing image]
+
+### 2. This is the second screen shot
+[missing image]
+
+
+
+## Changelog 
+
+
+
+## Upgrade Notice 
+
