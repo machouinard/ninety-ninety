@@ -20,6 +20,8 @@ This plugin is a simple way to track your progress making it to these meetings.
 
 It's flexible enough to be used for any 12 Step program.
 
+[Demo site](https://wp.machouinard.com/) using child theme for [Primer](https://wordpress.org/themes/primer/), a randomly chosen theme to demo, on DigitalOcean.
+[Demo site 2](https://ninety.chouinard.me/) using TwentyNineteen child theme, on DreamHost.
 
 
 Keep track of each meeting:
