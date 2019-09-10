@@ -1102,7 +1102,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			$continue = true;
 			$posts = [];
-			$limit = 50;
+			$limit = $this->get_option( 'ninety_query_limit', 50 );
 			$offset = 0;
 
 			// Query Meetings

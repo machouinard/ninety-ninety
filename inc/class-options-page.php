@@ -320,6 +320,17 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 			);
 
 			add_settings_field(
+				'ninety_query_limit',
+				__( 'Meeting query limit', 'ninety-ninety' ),
+				[
+					$this,
+					'ninety_query_limit_render',
+				],
+				'pluginMisc',
+				'ninety_pluginPage_misc_section'
+			);
+
+			add_settings_field(
 				'ninety_create_pdf',
 				__(
 					'Create PDF?',
@@ -813,6 +824,16 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 				   name='ninety_settings[ninety_delete_data]' <?php checked( $exclude, 1 ); ?>
 				   value='1'>
 			<span>This removes all meetings, meeting locations, meeting types and all settings on this page.  If you think you might reinstall this plugin you might want to leave this unchecked to preserve your existing data.</span>
+			<?php
+
+		}
+
+		public function ninety_query_limit_render() {
+			$zoom = ninety_ninety()->get_option( 'ninety_query_limit', 50 );
+			?>
+			<input type='number' name='ninety_settings[ninety_query_limit]'
+				   value='<?php echo (int) $zoom; ?>' min="10" max="100" step="10">
+			<span>(number of meetings per query) Decrease this number if you experience PHP memory errors.</span>
 			<?php
 
 		}
