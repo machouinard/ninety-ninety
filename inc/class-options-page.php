@@ -831,7 +831,7 @@ if ( ! class_exists( 'Ninety_Options' ) ) {
 		public function ninety_query_limit_render() {
 			$zoom = ninety_ninety()->get_option( 'ninety_query_limit', 50 );
 			?>
-			<input type='number' name='ninety_settings[ninety_query_limit]'
+			<input type='number' class='ninety-config' name='ninety_settings[ninety_query_limit]'
 				   value='<?php echo (int) $zoom; ?>' min="10" max="100" step="10">
 			<span>(number of meetings per query) Decrease this number if you experience PHP memory errors.</span>
 			<?php
