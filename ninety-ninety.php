@@ -1174,6 +1174,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 					$coords = [];
 
 					$args['offset'] += $limit;
+					// We currently have meetings but if the query returned less than $limit we need to set $continue to false
+					// since this means the next query would return 0 results.
 					if ( count( $meetings ) < $limit ) {
 						$continue = false;
 					}
@@ -1206,6 +1208,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 						$coords[ $location->slug ]['coords'] = get_field( 'ninety_location_coords', $location );
 
 					}
+				} else {
+					$continue = false;
 				}
 
 				// Create feature for each location, add properties for displaying on map.
