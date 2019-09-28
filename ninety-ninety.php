@@ -9,7 +9,7 @@
 
 /**
  * Plugin Name: 90 in 90
- * Plugin URI:
+ * Plugin URI: https://90in90.xyz/
  * Description: Track 90 meetings in 90 days, for starters.  Built for AA but customizable to any program.
  * Version: 0.1.0
  * Author: Mark Chouinard
