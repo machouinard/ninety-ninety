@@ -1,9 +1,9 @@
 # Ninety in Ninety 
 **Contributors:** machouinard  
-**Tags:** AA, NA, Recovery  
+**Tags:** AA, Alcoholics Anonymous, NA, Recovery  
 **Requires at least:** 5.2  
 **Tested up to:** 5.2.3  
-**Stable tag:** 1.0.0  
+**Stable tag:** 0.1.0  
 **Requires PHP:** 5.6  
 **License:** GPLv2 or later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
@@ -79,7 +79,7 @@ Also:
 * Map only: `[ninety_map]`
 * Map with title: `[ninety_map title="Title Text Here"]`
 * Map with chart: `[ninety_map show_chart=1]`
-* Specify chart type: `[ninety_map show_chart=1 char_type="bar"]`
+* Specify chart type: `[ninety_map show_chart=1 chart_type="bar"]`
 * Show chart only: `[ninety_map show_map=0 show_chart=1]`
 
 ## ACF Notes  
