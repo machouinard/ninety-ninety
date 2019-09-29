@@ -9,7 +9,7 @@
 
 /**
  * Plugin Name: 90 in 90
- * Plugin URI:
+ * Plugin URI: https://90in90.xyz/
  * Description: Track 90 meetings in 90 days, for starters.  Built for AA but customizable to any program.
  * Version: 0.1.0
  * Author: Mark Chouinard
@@ -1174,6 +1174,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 					$coords = [];
 
 					$args['offset'] += $limit;
+					// We currently have meetings but if the query returned less than $limit we need to set $continue to false
+					// since this means the next query would return 0 results.
 					if ( count( $meetings ) < $limit ) {
 						$continue = false;
 					}
@@ -1206,6 +1208,8 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 						$coords[ $location->slug ]['coords'] = get_field( 'ninety_location_coords', $location );
 
 					}
+				} else {
+					$continue = false;
 				}
 
 				// Create feature for each location, add properties for displaying on map.
