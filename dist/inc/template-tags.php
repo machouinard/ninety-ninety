@@ -13,10 +13,11 @@ if ( ! function_exists( 'ninety_meeting_entry_content' ) ) {
 	 */
 	function ninety_meeting_entry_content() {
 
-		$location = get_field( 'ninety_meeting_location', get_the_ID() );
-		$notes    = get_field( 'ninety_meeting_notes', get_the_ID() );
-		$speaker  = get_field( 'ninety_meeting_speaker', get_the_ID() );
-		$topic    = get_field( 'ninety_meeting_topic', get_the_ID() );
+		$location  = get_field( 'ninety_meeting_location', get_the_ID() );
+		$notes     = get_field( 'ninety_meeting_notes', get_the_ID() );
+		$speaker   = get_field( 'ninety_meeting_speaker', get_the_ID() );
+		$topic     = get_field( 'ninety_meeting_topic', get_the_ID() );
+		$secretary = get_field( 'ninety_meeting_secretary', get_the_ID() );
 
 		if ( $location instanceof WP_Term ) {
 			$url = get_site_url( null, '/meetings/' ) . esc_attr( $location->slug );
@@ -25,20 +26,26 @@ if ( ! function_exists( 'ninety_meeting_entry_content' ) ) {
 
 		echo '<div class="single-details">';
 
-		if ( $speaker ) {
+		if ( apply_filters( 'ninety_show_secretary', $secretary ) ) {
+			echo '<p class="ninety-secretary">';
+			echo esc_html( __( 'Secretary', 'ninety-ninety' ) . ':&nbsp;' . $secretary );
+			echo '</p>';
+		}
+
+		if ( apply_filters( 'ninety_show_speaker', $speaker ) ) {
 			echo '<p class="ninety-speaker">';
 			echo esc_html( __( 'Speaker', 'ninety-ninety' ) . ':&nbsp;' . $speaker );
 			echo '</p>';
 		}
 
-		if ( $topic ) {
+		if ( apply_filters( 'ninety_show_topic', $topic ) ) {
 			echo '<p class="ninety-topic">';
 			echo esc_html( __( 'Topic', 'ninety-ninety' ) . ':&nbsp;' . $topic );
 			echo '</p>';
 		}
 
 		// If we have notes, put 'em on the page.
-		if ( $notes ) {
+		if ( apply_filters( 'ninety_show_notes', $notes ) ) {
 			echo '<div class="ninety-notes-container">';
 			echo apply_filters( 'the_content', $notes );
 			echo '</div>';

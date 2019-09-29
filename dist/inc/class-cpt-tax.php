@@ -270,7 +270,7 @@ class NinetyNinety_CPT {
 			'Business',
 			'12 & 12',
 			'Big Book',
-			'Fireball',
+			'Tag',
 		];
 
 		$self->register_taxonomies();

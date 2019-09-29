@@ -1,10 +1,9 @@
 === Ninety in Ninety ===
 Contributors: machouinard
-Donate link: https://example.com
 Tags: AA, NA, Recovery
 Requires at least: 5.2
 Tested up to: 5.2.2
-Stable tag: 1.0.0
+Stable tag: 0.1.0
 Requires PHP: 5.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -67,13 +66,20 @@ Also:
 	* **Start Date / End Date for PDF**: Optionally specify a date range of meetings to include
 
 == Installation ==
-[Brief setup video](https://youtu.be/f7zZNWh5pig)
+[Brief, amateurish setup video](https://youtu.be/f7zZNWh5pig)
 1. Upload "ninety-ninety" folder to the "/wp-content/plugins/" directory.
 1. Activate the plugin ( 90 in 90 ) through the "Plugins" menu in WordPress.
 1. [Sign up for free](https://www.mapbox.com/pricing/) at [MapBox ](https://account.mapbox.com/auth/signup/) to obtain an API key for geolocating meeting addresses.
 1. Use **Meetings -> Options** screen to set up plugin options.
 1. Add some meeting locations.
 1. Start tracking your meetings.
+
+== Shortcode Usage for Maps ==
+* Map only: `[ninety_map]`
+* Map with title: `[ninety_map title="Title Text Here"]`
+* Map with chart: `[ninety_map show_chart=1]`
+* Specify chart type: `[ninety_map show_chart=1 char_type="bar"]`
+* Show chart only: `[ninety_map show_map=0 show_chart=1]`
 
 == ACF Notes ==
 * Requires Advanced Custom Fields plugin, standard or Pro.
@@ -84,6 +90,7 @@ Also:
 
 ## Actions & Filters
 * `ninety_programs` customize the available Meeting Programs to choose from - AA, NA, GA, OA, SA...
+* More info to follow
 
 == Development ==
 * Development is on [GitHub](https://github.com/machouinard/ninety-ninety).
@@ -102,8 +109,11 @@ Development is on [GitHub](https://github.com/machouinard/ninety-ninety).
 
 == Screenshots ==
 
-1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif).
-2. This is the second screen shot
+1. Meetings archive pages.
+2. Meetings map shortcode in a post.
+3. Meetings map shortcode in a page with title and doughnut chart.
+4. Map with clustered meetings.
+5. Different groups meeting at the same location.
 
 == Changelog ==
 

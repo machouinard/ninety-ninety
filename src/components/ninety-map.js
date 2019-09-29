@@ -49,11 +49,13 @@ const meetingMap = ( zoom ) => {
 				riseOnHover: true,
 			};
 
+			let meetingString = p.count > 1 ? 'meetings' : 'meeting';
+
 			// Create popup content for Marker.
 			let popupContent = `<h4><a href="${ p.link }" alt="Meeging title">${ p.title }</a></h4>`;
 			popupContent += `<p>${ p.address }</p>`;
 			popupContent += `<p>${ p.description }</p>`;
-			popupContent += `<p>${ p.count }</p>`;
+			popupContent += `<p>${ p.count + ' ' + meetingString} </p>`;
 			// Create Circle Marker - Believe me, if markers aren't showing up don't waste time, just swap lat/lng!!!!!
 			const marker = L.circleMarker( L.latLng( g[ 1 ], g[ 0 ] ), circleMarkerOptions );
 			// Create Marker

@@ -308,7 +308,7 @@ class Ninety_Meeting_Calendar extends WP_Widget {
 	}
 
 	private function maybe_bold_day( $day, $num_meetings ) {
-		$day = $num_meetings > 1 ? '<strong>' . $day . '</strong>' : strval( $day );
+		$day = $num_meetings > 1 ? '<strong class="ninety-multiple-meetings">' . $day . '</strong>' : strval( $day );
 
 		return $day;
 	}

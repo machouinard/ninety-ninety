@@ -9,7 +9,7 @@
 
 /**
  * Plugin Name: 90 in 90
- * Plugin URI:
+ * Plugin URI: https://90in90.xyz/
  * Description: Track 90 meetings in 90 days, for starters.  Built for AA but customizable to any program.
  * Version: 0.1.0
  * Author: Mark Chouinard
@@ -594,7 +594,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			$chart_type = false !== $map_options['chart_type'] ? $map_options['chart_type'] : ninety_ninety()->get_option( 'ninety_chart_type', 'pie' );
 
-			$show_chart = false !== $map_options['show_chart'] ? true : ninety_ninety()->get_option( 'ninety_show_chart', false );
+			$show_chart = false !== $map_options['show_chart'] ? $map_options['show_chart'] : ninety_ninety()->get_option( 'ninety_show_chart', false );
 
 			$zoom = false !== $map_options['zoom'] ? intval( $map_options['zoom'] ) : ninety_ninety()->get_option( 'ninety_map_zoom', 1 );
 
@@ -1100,20 +1100,38 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		public function get_meetings( $args = [] ) {
 
+			$continue = true;
+			$posts = [];
+			$limit = $this->get_option( 'ninety_query_limit', 50 );
+			$offset = 0;
+
 			// Query Meetings
 			$default = [
 				'post_type'      => 'ninety_meeting',
 				'post_status'    => 'publish',
-				'posts_per_page' => - 1,
+				'posts_per_page' => $limit,
+				'offset'         => $offset,
 				'order'          => 'ASC',
 			];
 
 			$new_args = wp_parse_args( $args, $default );
 
-			$q = get_posts( $new_args );
+			while ( $continue ) {
+				$q = get_posts( $new_args );
+				$posts = array_merge( $posts, $q );
+
+				$new_args['offset'] += $limit;
+
+				if ( count( $q ) < $limit ) {
+					$continue = false;
+				}
+
+			}
+
+
 
 			// Return all Meetings returned.
-			return $q;
+			return $posts;
 
 		}
 
@@ -1126,13 +1144,18 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		 */
 		protected function get_meeting_data() {
 
+			$continue = true;
+			$limit = 50;
+			$offset = 0;
+
 			$args = [
 				'post_type'      => 'ninety_meeting',
 				'post_status'    => 'publish',
-				'posts_per_page' => - 1,
+				'posts_per_page' => $limit,
+				'offset'         => $offset,
 			];
 
-			$meetings = get_posts( $args );
+
 
 			$geojson = [
 				'features' => [],
@@ -1140,60 +1163,87 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 
 			];
 
-			$coords = [];
 
-			if ( ! empty( $meetings ) ) {
 
-				foreach ( $meetings as $meeting ) {
+			while ( $continue ) {
 
-					// Reduce meetings into array of locations with counts.
-					$location = get_field( 'ninety_meeting_location', $meeting->ID );
+				$meetings = get_posts( $args );
 
-					if ( ! $location ) {
-						continue;
+				if ( ! empty( $meetings ) ) {
+
+					$coords = [];
+
+					$args['offset'] += $limit;
+					// We currently have meetings but if the query returned less than $limit we need to set $continue to false
+					// since this means the next query would return 0 results.
+					if ( count( $meetings ) < $limit ) {
+						$continue = false;
 					}
 
-					$address = get_term_meta( $location->term_id, 'ninety_location_address', true );
+					foreach ( $meetings as $meeting ) {
 
-					if ( ! $address ) {
-						continue;
+						// Reduce meetings into array of locations with counts.
+						$location = get_field( 'ninety_meeting_location', $meeting->ID );
+
+						if ( ! $location ) {
+							continue;
+						}
+
+						$address = get_term_meta( $location->term_id, 'ninety_location_address', true );
+
+						if ( ! $address ) {
+							continue;
+						}
+
+						if ( isset( $coords[ $location->slug ] ) ) {
+							$coords[ $location->slug ]['count'] ++;
+						} else {
+							$coords[ $location->slug ]['count']       = 1;
+							$coords[ $location->slug ]['name']        = $location->name;
+							$coords[ $location->slug ]['slug']        = $location->slug;
+							$coords[ $location->slug ]['address']     = $address;
+							$coords[ $location->slug ]['description'] = $location->description;
+						}
+
+						$coords[ $location->slug ]['coords'] = get_field( 'ninety_location_coords', $location );
+
 					}
-
-					if ( isset( $coords[ $location->slug ] ) ) {
-						$coords[ $location->slug ]['count'] ++;
-					} else {
-						$coords[ $location->slug ]['count']       = 1;
-						$coords[ $location->slug ]['name']        = $location->name;
-						$coords[ $location->slug ]['slug']        = $location->slug;
-						$coords[ $location->slug ]['address']     = $address;
-						$coords[ $location->slug ]['description'] = $location->description;
-					}
-
-					$coords[ $location->slug ]['coords'] = get_field( 'ninety_location_coords', $location );
-
+				} else {
+					$continue = false;
 				}
+
+				// Create feature for each location, add properties for displaying on map.
+				foreach ( $coords as $coord ) {
+					$feature = [
+						'type'       => 'Feature',
+						'properties' => [
+							'title'       => $coord['name'],
+							// translators: singular and plural forms of Meeting.
+//							'count'       => sprintf( _n( '%d meeting', '%d meetings', $coord['count'], 'ninety-ninety' ), number_format_i18n( $coord['count'] ) ),
+							'count'       => $coord['count'],
+							'link'        => get_site_url() . '/meetings/' . $coord['slug'],
+							'address'     => $coord['address'],
+							'description' => $coord['description'],
+						],
+						'geometry'   => [
+							'coordinates' => $coord['coords'],
+							'type'        => 'Point',
+						],
+					];
+
+					if ( isset( $geojson['features'][$feature['properties']['title']] ) ) {
+						$geojson['features'][$feature['properties']['title']]['properties']['count'] += $feature['properties']['count'];
+					} else {
+						$geojson['features'][$feature['properties']['title']] = $feature;
+					}
+
+//					array_push( $geojson['features'], $feature );
+				}
+
 			}
 
-			// Create feature for each location, add properties for displaying on map.
-			foreach ( $coords as $coord ) {
-				$feature = [
-					'type'       => 'Feature',
-					'properties' => [
-						'title'       => $coord['name'],
-						// translators: singular and plural forms of Meeting.
-						'count'       => sprintf( _n( '%d meeting', '%d meetings', $coord['count'], 'ninety-ninety' ), number_format_i18n( $coord['count'] ) ),
-						'link'        => get_site_url() . '/meetings/' . $coord['slug'],
-						'address'     => $coord['address'],
-						'description' => $coord['description'],
-					],
-					'geometry'   => [
-						'coordinates' => $coord['coords'],
-						'type'        => 'Point',
-					],
-				];
-
-				$geojson['features'][] = $feature;
-			}
+			// Convert associative array to numeric array for JS handling
+			$geojson['features'] = array_values( $geojson['features'] );
 
 			// https://color.adobe.com/ninety-color-theme-12942667.
 			$default_colors = [
