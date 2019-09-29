@@ -65,7 +65,6 @@ Also:
 	* **Start Date / End Date for PDF**: Optionally specify a date range of meetings to include
 
 == Installation ==
-[Brief, amateurish setup video](https://youtu.be/f7zZNWh5pig)
 1. Upload "ninety-ninety" folder to the "/wp-content/plugins/" directory.
 1. Activate the plugin ( 90 in 90 ) through the "Plugins" menu in WordPress.
 1. [Sign up for free](https://www.mapbox.com/pricing/) at [MapBox ](https://account.mapbox.com/auth/signup/) to obtain an API key for geolocating meeting addresses.
