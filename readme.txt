@@ -82,7 +82,7 @@ Also:
 == ACF Notes ==
 * Requires Advanced Custom Fields plugin, standard or Pro.
 * Loads ACF standard version if no ACF plugin is active.
-* ACF standard version included: 5.8.3.
+* ACF standard version included: 5.8.5
 * ACF fields are used for Meetings.
 * Options page is not built with ACF since that requires Pro version.
 
