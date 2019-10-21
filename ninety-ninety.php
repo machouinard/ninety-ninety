@@ -11,7 +11,7 @@
  * Plugin Name: 90 in 90
  * Plugin URI: https://90in90.xyz/
  * Description: Track 90 meetings in 90 days, for starters.  Keep yourself accountable.
- * Version: 0.1.0
+ * Version: 0.1.1
  * Author: Mark Chouinard
  * Author URI: https://chouinard.me
  * Text Domain: ninety-ninety
@@ -34,7 +34,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 		/**
 		 * @var string Plugin version
 		 */
-		public $version = '0.1.0';
+		public $version = '0.1.1';
 		/**
 		 * @var array Settings array
 		 */
