@@ -2,7 +2,7 @@
 Contributors: machouinard
 Tags: AA, Alcoholics Anonymous, NA, Recovery
 Requires at least: 5.2
-Tested up to: 5.2.3
+Tested up to: 5.2.4
 Stable tag: 0.1.1
 Requires PHP: 5.6
 License: GPLv2 or later
@@ -18,7 +18,7 @@ This plugin is a simple way to track your progress making it to these meetings.
 
 It's flexible enough to be used for any 12 Step program.
 
-[Demo site](https://90in90.xyz/) using child theme for [Primer](https://wordpress.org/themes/primer/), a randomly chosen theme to demo, on DigitalOcean.
+[Demo site](https://90in90.xyz/) using child theme for [Primer](https://wordpress.org/themes/primer/), a randomly chosen theme.
 
 
 
@@ -115,6 +115,14 @@ Development is on [GitHub](https://github.com/machouinard/ninety-ninety).
 
 == Changelog ==
 
+= 0.1.1 =
+* Update included ACF version to 5.8.5
+
+= 0.1.0 =
+* Initial release
+
 
 == Upgrade Notice ==
 
+= 0.1.1 =
+Update the included ACF version to 5.8.5
