@@ -25,12 +25,46 @@ class NinetyNinety_CPT {
 			add_action( 'wp', [ $this, 'redirect_anon_users' ] );
 		}
 
+		// Support for title exists for REST but title is set programmatically and needs to be removed from admin.
+		add_action( 'admin_init', [ $this, 'remove_title_support' ] );
+		// TODO: find way to save Gutenberg when no additional content is added
+		add_filter( 'use_block_editor_for_post_type', [ $this, 'remove_block_editor' ], 10, 2 );
+
+	}
+
+	/**
+	 * Don't support Gutenberg
+	 *
+	 * @param $use
+	 * @param $post_type
+	 *
+	 * @return bool
+	 * @since 0.1.1
+	 */
+	function remove_block_editor( $use, $post_type ) {
+		if ( 'ninety_meeting' === $post_type ) {
+			return false;
+		}
+
+		return $use;
+	}
+
+	/**
+	 * Remove title support in admin.
+	 * Support is needed for REST API
+	 *
+	 * @return void
+	 * @since 0.1.1
+	 */
+	function remove_title_support() {
+		remove_post_type_support( 'ninety_meeting', 'title' );
 	}
 
 	/**
 	 * Add Meeting CPT
 	 *
 	 * @return void
+	 * @since 0.1.2 add REST support
 	 * @since 0.1.0
 	 */
 	function register_post_type() {
@@ -67,6 +101,8 @@ class NinetyNinety_CPT {
 			'show_in_menu'        => true,
 			'show_in_nav_menu'    => false,
 			'show_in_admin_bar'   => true,
+			'show_in_rest'        => true,
+			'rest_base'           => 'meetings',
 			'query_var'           => true,
 			'capability_type'     => 'post',
 			'rewrite'             => [
@@ -76,7 +112,7 @@ class NinetyNinety_CPT {
 			'has_archive'         => true,
 			'hierarchical'        => false,
 			'menu_position'       => 25,
-			'supports'            => [ 'editor', 'permalink', 'genesis-cpt-archives-settings' ],
+			'supports'            => [ 'title', 'editor', 'permalink', 'genesis-cpt-archives-settings' ],
 			'exclude_from_search' => true,
 			'taxonomies'          => [ 'ninety_meeting_location', 'ninety_meeting_type' ],
 		];
@@ -89,6 +125,7 @@ class NinetyNinety_CPT {
 	 * Add Meeting Type & Location taxonomies
 	 *
 	 * @return void
+	 * @since 0.1.2 add REST support
 	 * @since 0.1.0
 	 */
 	function register_taxonomies() {
@@ -122,6 +159,8 @@ class NinetyNinety_CPT {
 			'public'             => true,
 			'show_ui'            => true,
 			'show_in_quick_edit' => false,
+			'show_in_rest'       => true,
+			'rest_base'          => 'locations',
 			'show_admin_column'  => true,
 			'show_in_nav_menus'  => true,
 			'show_tagcloud'      => true,
@@ -206,7 +245,7 @@ class NinetyNinety_CPT {
 						$rules[ $post_type_slug . '/' . $term->slug . '/page/([0-9]{1,})/?' ] = 'index.php?post_type=' . $post_type_name . '&' . $term->taxonomy . '=' . $term->slug . '&paged=$matches[1]';
 						$rules[ $post_type_slug . '/' . $term->slug . '/([^/]+)/?$' ]         = 'index.php?post_type=' . $post_type_name . '&' . $post_type_name . '=$matches[1]&' . $term->taxonomy . '=' . $term->slug;
 //						$rules[ $post_type_slug . '/' . $term->slug . '/([^/]+)/?$' ]         = 'index.php?post_type=' . $post_type_name . '&' . $term->taxonomy . '=' . $term->slug . '&' . $post_type_name . '=$matches[1]';
-						$rules[ $post_type_slug . '/' . $term->slug . '/?$' ]                 = 'index.php?post_type=' . $post_type_name . '&' . $term->taxonomy . '=' . $term->slug;
+						$rules[ $post_type_slug . '/' . $term->slug . '/?$' ] = 'index.php?post_type=' . $post_type_name . '&' . $term->taxonomy . '=' . $term->slug;
 					}
 				}
 			}
