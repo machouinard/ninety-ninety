@@ -115,9 +115,9 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 			// Add options page for plugin settings.
 			require_once NINETY_NINETY_PATH . 'inc/class-options-page.php';
 			// Require included ACF ( free version ) if ACF is not already active.
-			if ( ! class_exists( 'ACF' ) ) {
-				require_once NINETY_ACF_PATH . 'acf.php';
-			}
+//			if ( ! class_exists( 'ACF' ) ) {
+//				require_once NINETY_ACF_PATH . 'acf.php';
+//			}
 
 			require_once $path . 'inc/mapbox/Mapbox.php';
 
@@ -588,6 +588,7 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				'show_chart' => false,
 				'title'      => false,
 				'zoom'       => false,
+				'show_since' => false,
 			];
 
 			$map_options = wp_parse_args( $atts, $defaults );
@@ -613,7 +614,29 @@ if ( ! class_exists( 'NinetyNinety' ) ) :
 				}
 
 				if ( $map_options['show_count'] ) {
-					$output .= sprintf( '<h4>%d %s</h4>', $count, __( 'Meetings', 'ninety-ninety' ) );
+					if ( $map_options['show_since'] ) {
+						try {
+							$date = sanitize_title_with_dashes( $map_options['show_since'] );
+							$then = new DateTime( $date );
+							$now = new DateTime();
+							$since = $now->diff( $then );
+							$days = $since->format( '%a' );
+
+							$output .= sprintf(
+								'<h4>%d %s in %d days</h4>',
+								$count,
+								__( 'Meetings', 'ninety-ninety' ),
+								$days );
+						} catch ( Exception $exception ) {
+
+						}
+
+					} else {
+						$output .= sprintf(
+							'<h4>%d %s</h4>',
+							$count,
+							__( 'Meetings', 'ninety-ninety' ) );
+					}
 				}
 
 				$output .= '<div id="ninety-map" style="height: 400px" data-zoom="' . $zoom . '"></div>';
